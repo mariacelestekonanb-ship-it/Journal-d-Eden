@@ -3,7 +3,7 @@ import { Clock, CalendarDays } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Heading } from "@/components/ui/heading";
 import { SummaryBox } from "@/components/comprendre/fiche/summary-box";
-import { ShareButtons } from "@/components/comprendre/fiche/share-buttons";
+import { ShareButtons } from "@/components/shared/share-buttons";
 import { formatDate, labelDomaine } from "@/lib/format";
 import type { QuestionItem, Theme } from "@/types";
 

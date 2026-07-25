@@ -11,9 +11,9 @@ export interface BreadcrumbProps {
 }
 
 /**
- * Fil d'Ariane générique (Accueil > Comprendre > Catégorie > Titre). Le
- * dernier élément est toujours rendu comme texte courant (`aria-current`),
- * jamais comme lien.
+ * Fil d'Ariane générique (Accueil > Comprendre > Catégorie > Titre, ou
+ * Accueil > Veille juridique > Catégorie > Titre). Le dernier élément est
+ * toujours rendu comme texte courant (`aria-current`), jamais comme lien.
  */
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (

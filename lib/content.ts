@@ -3,7 +3,7 @@ import { veilleItems } from "@/data/veille";
 import { questions } from "@/data/questions";
 import { glossaireTermes } from "@/data/glossaire";
 import { themes } from "@/data/themes";
-import type { QuestionItem } from "@/types";
+import type { QuestionItem, VeilleItem } from "@/types";
 
 export function getCategorieBySlug(slug: string) {
   return categories.find((categorie) => categorie.slug === slug);
@@ -54,6 +54,34 @@ export function getRelatedQuestions(
       if (seen.has(item.slug)) continue;
       seen.add(item.slug);
       result.push(item);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Analyses similaires à une analyse donnée, pour la section « Analyses
+ * similaires ». Priorité à la même catégorie fine, puis au même domaine,
+ * puis complété par le reste du corpus pour toujours retourner `count`
+ * résultats si le contenu disponible le permet.
+ */
+export function getRelatedVeille(item: VeilleItem, count = 4): VeilleItem[] {
+  const seen = new Set([item.slug]);
+  const result: VeilleItem[] = [];
+
+  const pools = [
+    veilleItems.filter((candidate) => candidate.categorie === item.categorie),
+    veilleItems.filter((candidate) => candidate.domaine === item.domaine),
+    veilleItems,
+  ];
+
+  for (const pool of pools) {
+    for (const candidate of pool) {
+      if (result.length >= count) break;
+      if (seen.has(candidate.slug)) continue;
+      seen.add(candidate.slug);
+      result.push(candidate);
     }
   }
 

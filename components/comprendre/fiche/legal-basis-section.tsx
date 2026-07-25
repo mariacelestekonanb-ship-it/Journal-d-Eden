@@ -1,6 +1,6 @@
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { LegalReference } from "@/components/comprendre/fiche/legal-reference";
+import { LegalReference } from "@/components/shared/legal-reference";
 import type { ReferenceJuridique } from "@/types";
 
 export interface LegalBasisSectionProps {

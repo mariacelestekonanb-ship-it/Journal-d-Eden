@@ -6,13 +6,18 @@ import {
   type TocItem,
 } from "@/components/shared/table-of-contents";
 import { ReadingProgress } from "@/components/shared/reading-progress";
+import { CategoryBadge } from "@/components/veille/category-badge";
+import { InstitutionCard } from "@/components/veille/analyse/institution-card";
 import { formatDate } from "@/lib/format";
+import type { Domaine } from "@/types";
 
-export interface FicheSidebarProps {
+export interface AnalyseSidebarProps {
   tocItems: TocItem[];
   articleId: string;
   tempsLecture: number;
   dateMiseAJour: string;
+  domaine: Domaine;
+  institution: string;
 }
 
 function SidebarContent({
@@ -20,7 +25,9 @@ function SidebarContent({
   articleId,
   tempsLecture,
   dateMiseAJour,
-}: FicheSidebarProps) {
+  domaine,
+  institution,
+}: AnalyseSidebarProps) {
   return (
     <>
       <TableOfContents items={tocItems} />
@@ -38,7 +45,15 @@ function SidebarContent({
             {formatDate(dateMiseAJour)}
           </dd>
         </div>
+        <div className="flex items-center justify-between">
+          <dt className="text-muted-foreground">Catégorie</dt>
+          <dd>
+            <CategoryBadge domaine={domaine} />
+          </dd>
+        </div>
       </dl>
+      <Divider className="my-6" />
+      <InstitutionCard institution={institution} />
       <Divider className="my-6" />
       <a
         href="#top"
@@ -52,12 +67,12 @@ function SidebarContent({
 }
 
 /**
- * Barre latérale de la fiche : sommaire, progression de lecture, métadonnées
- * et retour en haut. Fixe (sticky) sur desktop ; repliée dans un `<details>`
- * natif sur mobile — accessible et pliable sans JavaScript supplémentaire
- * pour le repli lui-même.
+ * Barre latérale d'une analyse : sommaire, progression de lecture,
+ * métadonnées et retour en haut. Fixe (sticky) sur desktop ; repliée dans un
+ * `<details>` natif sur mobile — même motif que `FicheSidebar`, complété par
+ * la catégorie et l'institution source propres à une analyse de veille.
  */
-export function FicheSidebar(props: FicheSidebarProps) {
+export function AnalyseSidebar(props: AnalyseSidebarProps) {
   return (
     <>
       <aside className="border-border bg-card sticky top-28 hidden max-h-[calc(100vh-8rem)] overflow-y-auto rounded-2xl border p-6 lg:block">

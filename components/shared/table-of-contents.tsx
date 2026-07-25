@@ -14,10 +14,11 @@ export interface TableOfContentsProps {
 }
 
 /**
- * Sommaire de la fiche avec suivi de la section active (IntersectionObserver)
- * pendant le défilement. `rootMargin` restreint la zone de détection à la
- * partie haute du viewport pour un surlignage qui correspond à ce que le
- * lecteur est réellement en train de lire.
+ * Sommaire d'une page de contenu long (fiche, analyse de veille) avec suivi
+ * de la section active (IntersectionObserver) pendant le défilement.
+ * `rootMargin` restreint la zone de détection à la partie haute du viewport
+ * pour un surlignage qui correspond à ce que le lecteur est réellement en
+ * train de lire.
  */
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = React.useState<string | null>(

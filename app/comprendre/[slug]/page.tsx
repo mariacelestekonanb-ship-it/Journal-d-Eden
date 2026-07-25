@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Section } from "@/components/ui/section";
 import { Divider } from "@/components/ui/divider";
-import { Breadcrumb } from "@/components/comprendre/fiche/breadcrumb";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { FicheHeader } from "@/components/comprendre/fiche/fiche-header";
 import { QuickAnswer } from "@/components/comprendre/fiche/quick-answer";
 import { ContextSection } from "@/components/comprendre/fiche/context-section";

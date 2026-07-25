@@ -9,9 +9,10 @@ export interface LegalReferenceProps {
 
 /**
  * Carte de citation d'une source juridique (traité, loi, règlement,
- * convention, directive, décision ou site officiel). Réutilisée telle
- * quelle par « Ce que dit le droit » et par « Références » : seul le
- * regroupement autour d'elle change d'une section à l'autre.
+ * convention, directive, décision, jurisprudence ou site officiel).
+ * Réutilisée par « Ce que dit le droit » et « Références » (fiche
+ * pédagogique) ainsi que par « Le contexte juridique » (analyse de veille) :
+ * seul le regroupement autour d'elle change d'une section à l'autre.
  */
 export function LegalReference({ reference }: LegalReferenceProps) {
   return (

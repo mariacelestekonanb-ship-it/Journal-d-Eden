@@ -1,6 +1,6 @@
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { LegalReference } from "@/components/comprendre/fiche/legal-reference";
+import { LegalReference } from "@/components/shared/legal-reference";
 import type { ReferenceJuridique, TypeReference } from "@/types";
 
 export interface ReferencesSectionProps {
@@ -15,6 +15,7 @@ const PLURAL_LABELS: Record<TypeReference, string> = {
   Convention: "Conventions",
   Directive: "Directives",
   Décision: "Décisions",
+  Jurisprudence: "Jurisprudence",
   "Site officiel": "Sites officiels",
 };
 

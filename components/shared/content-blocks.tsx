@@ -1,21 +1,23 @@
-import { Info, AlertTriangle } from "lucide-react";
+import { Info, AlertTriangle, Quote } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
 import type { ContentBlock } from "@/types";
 
-export interface ExplicationBlocksProps {
+export interface ContentBlocksProps {
   blocks: ContentBlock[];
 }
 
 /**
- * Rendu du contenu par blocs typés de « Notre explication » : paragraphes,
- * sous-titres, encadrés et listes. Modèle volontairement simple — chaque
- * bloc est une donnée, pas du HTML brut — pour rester compatible avec un
- * futur CMS headless sans jamais interpréter de markup non maîtrisé.
+ * Rendu d'un corps de texte long par blocs typés : paragraphes, sous-titres,
+ * encadrés, listes et citations. Modèle volontairement simple — chaque bloc
+ * est une donnée, pas du HTML brut — pour rester compatible avec un futur
+ * CMS headless sans jamais interpréter de markup non maîtrisé. Réutilisé par
+ * « Notre explication » (fiche pédagogique) et « Notre analyse » (analyse de
+ * veille juridique).
  */
-export function ExplicationBlocks({ blocks }: ExplicationBlocksProps) {
+export function ContentBlocks({ blocks }: ContentBlocksProps) {
   return (
     <div className="space-y-5">
       {blocks.map((block, index) => {
@@ -32,6 +34,30 @@ export function ExplicationBlocks({ blocks }: ExplicationBlocksProps) {
             <Paragraph key={index} tone="muted">
               {block.text}
             </Paragraph>
+          );
+        }
+
+        if (block.type === "quote") {
+          return (
+            <blockquote
+              key={index}
+              className="border-accent bg-muted/60 flex gap-3 rounded-xl border-l-4 py-4 pr-5 pl-4"
+            >
+              <Quote
+                aria-hidden
+                className="text-accent mt-0.5 size-4.5 shrink-0"
+              />
+              <div>
+                <Paragraph className="text-foreground italic">
+                  {block.text}
+                </Paragraph>
+                {block.source ? (
+                  <p className="text-muted-foreground mt-2 text-sm font-medium">
+                    — {block.source}
+                  </p>
+                ) : null}
+              </div>
+            </blockquote>
           );
         }
 

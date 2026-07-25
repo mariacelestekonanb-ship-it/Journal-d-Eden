@@ -21,49 +21,22 @@ export interface Categorie {
   nombreArticles: number;
 }
 
-/**
- * Nature de la publication de veille — distincte de `TypeReference` (les
- * sources citées à l'intérieur d'une fiche) : ici, c'est la publication
- * elle-même qui est classée.
- */
-export type TypeVeille =
-  | "Décision"
-  | "Loi"
-  | "Règlement"
-  | "Convention"
-  | "Jurisprudence"
-  | "Institution";
-
-export interface VeilleItem {
-  slug: string;
-  titre: string;
-  resume: string;
-  contenu: string[];
-  pointsCles: string[];
-  domaine: Domaine;
-  categorie: string;
-  type: TypeVeille;
-  date: string;
-  /** Institution ou organisme source (ex. « Commission européenne », « CNIL »). */
-  source: string;
-  tempsLecture: number;
-  aLaUne?: boolean;
-}
-
 export type Niveau = "Débutant" | "Intermédiaire" | "Avancé";
 
 /**
- * Bloc de contenu riche pour la section « Notre explication » d'une fiche.
- * Modèle par blocs typés — volontairement proche de ce que renverrait un
- * CMS headless (Sanity, Contentful…), pour que brancher une vraie source de
- * contenu plus tard revienne à remplacer le tableau, pas le composant qui
- * le rend (voir `ExplicationBlocks`).
+ * Bloc de contenu riche pour un corps de texte long (« Notre explication »
+ * d'une fiche, « Notre analyse » d'une analyse de veille). Modèle par blocs
+ * typés — volontairement proche de ce que renverrait un CMS headless (Sanity,
+ * Contentful…), pour que brancher une vraie source de contenu plus tard
+ * revienne à remplacer le tableau, pas le composant qui le rend (voir
+ * `ContentBlocks`).
  */
 export type ContentBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; text: string }
   | { type: "callout"; text: string; tone?: "info" | "warning" }
-  | { type: "list"; items: string[]; ordered?: boolean };
+  | { type: "list"; items: string[]; ordered?: boolean }
+  | { type: "quote"; text: string; source?: string };
 
 export type TypeReference =
   | "Traité"
@@ -72,6 +45,7 @@ export type TypeReference =
   | "Convention"
   | "Directive"
   | "Décision"
+  | "Jurisprudence"
   | "Site officiel";
 
 export interface ReferenceJuridique {
@@ -104,7 +78,8 @@ export interface QuestionItem {
 
 /**
  * Grand thème de navigation (distinct de `Categorie`, plus fin) utilisé par
- * la page Comprendre pour regrouper les fiches par domaine d'étude.
+ * la page Comprendre pour regrouper les fiches par domaine d'étude, et par
+ * la Veille juridique pour son filtre « Domaine ».
  */
 export interface Theme {
   slug: string;
@@ -113,8 +88,85 @@ export interface Theme {
   icone: string;
   /** Nombre de fiches affiché sur la carte — volontairement indicatif tant que le contenu réel n'est pas connecté. */
   nombreFichesApprox: number;
-  /** Slugs de `categorie` (voir `QuestionItem`) rattachés à ce thème. */
+  /** Slugs de `categorie` (voir `QuestionItem.categorie` et `VeilleItem.categorie`) rattachés à ce thème. */
   categoriesAssociees: string[];
+}
+
+/**
+ * Nature de la publication de veille — distincte de `TypeReference` (les
+ * sources citées à l'intérieur d'une analyse) : ici, c'est la publication
+ * elle-même qui est classée.
+ */
+export type TypeVeille =
+  | "Décision"
+  | "Loi"
+  | "Règlement"
+  | "Convention"
+  | "Jurisprudence"
+  | "Institution";
+
+/** Événement daté de la section « Les faits » (composant `Timeline`). */
+export interface EvenementChronologie {
+  date: string;
+  titre: string;
+  description?: string;
+}
+
+/**
+ * Conséquences d'une analyse, groupées par nature — section « Pourquoi cette
+ * décision est importante ». `economique` reste optionnel : seules certaines
+ * analyses ont un volet économique pertinent.
+ */
+export interface ImpactAnalyse {
+  juridique?: string[];
+  pratique?: string[];
+  institutionnel?: string[];
+  economique?: string[];
+}
+
+export type TypeReferenceOfficielle =
+  "Texte officiel" | "Communiqué" | "Site officiel" | "Document PDF";
+
+/**
+ * Source officielle citée en fin d'analyse — section « Références
+ * officielles ». Distinct de `ReferenceJuridique` : ce n'est pas
+ * nécessairement un texte normatif (peut être un communiqué de presse, un
+ * site institutionnel ou un document PDF).
+ */
+export interface ReferenceOfficielle {
+  type: TypeReferenceOfficielle;
+  titre: string;
+  organisme: string;
+  url: string;
+}
+
+export interface VeilleItem {
+  slug: string;
+  titre: string;
+  resume: string;
+  /** 3 à 5 points pour l'encadré « À retenir en 1 minute » (composant `AnalysisSummary`). */
+  pointsCles: string[];
+  domaine: Domaine;
+  categorie: string;
+  type: TypeVeille;
+  /** Date de publication initiale de l'analyse. */
+  date: string;
+  /** Date de dernière mise à jour — distincte de `date` lorsque l'analyse a été révisée. */
+  dateMiseAJour: string;
+  /** Institution ou organisme source (ex. « Commission européenne », « CNIL »). */
+  source: string;
+  tempsLecture: number;
+  aLaUne?: boolean;
+  /** Chronologie des faits, dans l'ordre — section « Les faits » (composant `Timeline`). */
+  chronologie: EvenementChronologie[];
+  /** Textes applicables cités par l'analyse — section « Le contexte juridique » (composant `LegalContext`). */
+  contexteJuridique: ReferenceJuridique[];
+  /** Corps principal de l'analyse, par blocs typés — section « Notre analyse ». */
+  analyse: ContentBlock[];
+  /** Conséquences par catégorie — section « Pourquoi cette décision est importante » (composant `ImpactSection`). */
+  impact: ImpactAnalyse;
+  /** Sources officielles citées — section « Références officielles » (composant `OfficialReference`). */
+  referencesOfficielles: ReferenceOfficielle[];
 }
 
 export interface GlossaireTerme {
