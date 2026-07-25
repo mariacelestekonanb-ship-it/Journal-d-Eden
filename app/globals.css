@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.875rem;
+
+  /* Bleu nuit — couleur de marque principale */
+  --navy-950: #050b18;
+  --navy-900: #0a1428;
+  --navy-800: #0f1d3a;
+  --navy-700: #16294d;
+  --navy-600: #1f3763;
+  --navy-500: #2c4a80;
+
+  /* Gris clair */
+  --gray-50: #f7f8fa;
+  --gray-100: #eef0f4;
+  --gray-200: #e2e5eb;
+  --gray-300: #cbd0da;
+  --gray-400: #9aa2b1;
+  --gray-500: #6b7383;
+  --gray-600: #4c5566;
+
+  /* Accent doré */
+  --gold-600: #a3781f;
+  --gold-500: #c9a227;
+  --gold-400: #d9b94a;
+  --gold-300: #e6cd7c;
+  --gold-100: #f5ead0;
+
+  --background: #ffffff;
+  --foreground: var(--navy-950);
+
+  --card: #ffffff;
+  --card-foreground: var(--navy-950);
+
+  --popover: #ffffff;
+  --popover-foreground: var(--navy-950);
+
+  --primary: var(--navy-900);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--navy-900);
+
+  --muted: var(--gray-50);
+  --muted-foreground: var(--gray-500);
+
+  --accent: var(--gold-500);
+  --accent-foreground: var(--navy-950);
+
+  --destructive: #b3261e;
+
+  --border: var(--gray-200);
+  --input: var(--gray-200);
+  --ring: var(--gold-500);
+}
+
+.dark {
+  --background: var(--navy-950);
+  --foreground: var(--gray-50);
+
+  --card: var(--navy-900);
+  --card-foreground: var(--gray-50);
+
+  --popover: var(--navy-900);
+  --popover-foreground: var(--gray-50);
+
+  --primary: #ffffff;
+  --primary-foreground: var(--navy-950);
+
+  --secondary: var(--navy-800);
+  --secondary-foreground: var(--gray-50);
+
+  --muted: var(--navy-800);
+  --muted-foreground: var(--gray-400);
+
+  --accent: var(--gold-400);
+  --accent-foreground: var(--navy-950);
+
+  --destructive: #ff6b61;
+
+  --border: var(--navy-700);
+  --input: var(--navy-700);
+  --ring: var(--gold-400);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-500: var(--navy-500);
+
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+
+  --color-gold-600: var(--gold-600);
+  --color-gold-500: var(--gold-500);
+  --color-gold-400: var(--gold-400);
+  --color-gold-300: var(--gold-300);
+  --color-gold-100: var(--gold-100);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer utilities {
+  .container-lexwatch {
+    @apply mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .bg-grid-navy {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in oklab, var(--gold-500) 18%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 28px 28px;
+  }
+}
