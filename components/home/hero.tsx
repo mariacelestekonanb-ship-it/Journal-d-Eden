@@ -1,15 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
 
 import { Section } from "@/components/ui/section";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/lib/site-config";
+import { PrimaryActions } from "@/components/home/primary-actions";
+import { OrbitalIllustration } from "@/components/home/orbital-illustration";
 import { usePrefersReducedMotion } from "@/hooks/use-media-query";
 
 const fadeUp = {
@@ -18,9 +15,10 @@ const fadeUp = {
 };
 
 /**
- * Hero de la page d'accueil. Les animations d'entrée respectent
- * `prefers-reduced-motion` : elles sont désactivées côté utilisateurs qui
- * ont demandé une expérience sans mouvement.
+ * Hero de la page d'accueil : promesse de la plateforme à gauche,
+ * illustration orbitale abstraite à droite. Occupe environ 80% de la
+ * hauteur d'écran. Les animations d'entrée respectent
+ * `prefers-reduced-motion`.
  */
 export function Hero() {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -29,68 +27,69 @@ export function Hero() {
     : { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const };
 
   return (
-    <Section tone="navy" spacing="lg" className="relative overflow-hidden">
+    <Section
+      tone="navy"
+      spacing="none"
+      className="relative flex min-h-[80vh] items-center overflow-hidden py-20"
+    >
       <div className="bg-grid-navy absolute inset-0 opacity-40" aria-hidden />
-      <div
-        className="bg-gold-500/20 pointer-events-none absolute top-[-10%] left-1/2 h-[36rem] w-[36rem] -translate-x-1/2 rounded-full blur-[140px]"
-        aria-hidden
-      />
 
-      <div className="relative flex flex-col items-center text-center">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          transition={transition}
-        >
-          <Badge
-            variant="outline"
-            className="border-white/15 bg-white/5 text-gray-200 backdrop-blur"
+      <div className="relative grid w-full items-center gap-16 lg:grid-cols-2 lg:gap-12">
+        <div>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            transition={transition}
           >
-            <Sparkles className="text-gold-400 size-3.5" aria-hidden />
-            {siteConfig.tagline}
-          </Badge>
-        </motion.div>
+            <Heading as="h1" size="xl" className="text-white">
+              Le droit spatial et le droit du numérique accessibles à tous.
+            </Heading>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            transition={{
+              ...transition,
+              delay: prefersReducedMotion ? 0 : 0.1,
+            }}
+          >
+            <Paragraph
+              tone="muted"
+              size="lg"
+              className="mt-6 max-w-xl text-gray-300"
+            >
+              Comprendre simplement les règles qui encadrent l&apos;espace et
+              les technologies numériques grâce à des fiches pédagogiques et une
+              veille juridique.
+            </Paragraph>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            transition={{
+              ...transition,
+              delay: prefersReducedMotion ? 0 : 0.2,
+            }}
+            className="mt-10"
+          >
+            <PrimaryActions />
+          </motion.div>
+        </div>
 
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.1 }}
+          initial={
+            prefersReducedMotion ? undefined : { opacity: 0, scale: 0.94 }
+          }
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.25 }}
+          className="mx-auto hidden w-full max-w-md md:block lg:max-w-lg"
         >
-          <Heading as="h1" size="xl" className="mt-8 max-w-3xl text-white">
-            {siteConfig.name}
-          </Heading>
-          <Paragraph
-            tone="muted"
-            size="lg"
-            className="mx-auto mt-5 max-w-2xl text-balance text-gray-300"
-          >
-            {siteConfig.description}
-          </Paragraph>
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.2 }}
-          className="mt-10 flex flex-col gap-4 sm:flex-row"
-        >
-          <Button asChild variant="accent" size="lg">
-            <Link href="/veille-juridique">
-              Explorer la veille
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          </Button>
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="border-white/20 text-white hover:bg-white/10"
-          >
-            <Link href="/comprendre">Comprendre les fondamentaux</Link>
-          </Button>
+          <OrbitalIllustration />
         </motion.div>
       </div>
     </Section>
