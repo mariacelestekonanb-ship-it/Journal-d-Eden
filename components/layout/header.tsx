@@ -1,12 +1,13 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Scale } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { mainNav, siteConfig } from "@/lib/site-config";
+import { mainNav } from "@/lib/site-config";
+import { useDisclosure } from "@/hooks/use-disclosure";
+import { useScrolled } from "@/hooks/use-scrolled";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -16,17 +17,19 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { Logo } from "@/components/shared/logo";
+import { SearchDialog } from "@/components/shared/search-dialog";
 
+/**
+ * En-tête global de la plateforme : navigation desktop, recherche globale et
+ * menu tiroir sur mobile. Sticky avec fond flouté et ombre discrète dès que
+ * la page défile (voir `useScrolled`).
+ */
 export function Header() {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = React.useState(false);
-
-  React.useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const isScrolled = useScrolled();
+  const mobileNav = useDisclosure();
+  const search = useDisclosure();
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -34,30 +37,26 @@ export function Header() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300",
+        "sticky top-0 z-40 w-full transition-all duration-300",
         isScrolled
-          ? "border-b border-border bg-background/80 backdrop-blur-lg"
-          : "border-b border-transparent bg-background/60 backdrop-blur-sm",
+          ? "border-border bg-background/80 border-b shadow-[0_1px_0_0_rgba(15,29,58,0.04)] backdrop-blur-lg"
+          : "bg-background/60 border-b border-transparent backdrop-blur-sm",
       )}
     >
-      <div className="container-lexwatch flex h-20 items-center justify-between py-3">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 font-heading text-lg font-bold tracking-tight text-foreground"
-        >
-          <span className="flex size-9 items-center justify-center rounded-full bg-navy-900 text-accent">
-            <Scale className="size-4.5" />
-          </span>
-          {siteConfig.name}
-        </Link>
+      <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
+        <Logo />
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav
+          aria-label="Navigation principale"
+          className="hidden items-center gap-1 lg:flex"
+        >
           {mainNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive(item.href) ? "page" : undefined}
               className={cn(
-                "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                "focus-visible:ring-ring rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
                 isActive(item.href)
                   ? "bg-secondary text-foreground"
                   : "text-muted-foreground hover:bg-secondary hover:text-foreground",
@@ -68,52 +67,72 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-2 lg:flex">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Rechercher"
+            onClick={search.open}
+          >
+            <Search className="size-4.5" />
+          </Button>
           <Button asChild variant="accent" size="sm">
             <Link href="/veille-juridique">Voir la veille</Link>
           </Button>
         </div>
 
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              aria-label="Ouvrir le menu"
-            >
-              <Menu className="size-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right">
-            <SheetHeader>
-              <SheetTitle>{siteConfig.name}</SheetTitle>
-            </SheetHeader>
-            <nav className="flex flex-col gap-1 px-6">
-              {mainNav.map((item) => (
-                <SheetClose asChild key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "rounded-xl px-4 py-3 text-base font-medium transition-colors",
-                      isActive(item.href)
-                        ? "bg-secondary text-foreground"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-                    )}
-                  >
-                    {item.label}
-                  </Link>
-                </SheetClose>
-              ))}
-            </nav>
-            <div className="mt-auto px-6 pb-6">
-              <Button asChild variant="accent" className="w-full">
-                <Link href="/veille-juridique">Voir la veille</Link>
+        <div className="flex items-center gap-1 lg:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Rechercher"
+            onClick={search.open}
+          >
+            <Search className="size-4.5" />
+          </Button>
+
+          <Sheet open={mobileNav.isOpen} onOpenChange={mobileNav.setIsOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Ouvrir le menu">
+                <Menu className="size-5" />
               </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
+            </SheetTrigger>
+            <SheetContent side="right" open={mobileNav.isOpen}>
+              <SheetHeader>
+                <SheetTitle>Navigation</SheetTitle>
+              </SheetHeader>
+              <nav
+                aria-label="Navigation principale"
+                className="flex flex-col gap-1 px-6"
+              >
+                {mainNav.map((item) => (
+                  <SheetClose asChild key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={isActive(item.href) ? "page" : undefined}
+                      className={cn(
+                        "focus-visible:ring-ring rounded-xl px-4 py-3 text-base font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none",
+                        isActive(item.href)
+                          ? "bg-secondary text-foreground"
+                          : "text-muted-foreground hover:bg-secondary hover:text-foreground",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </nav>
+              <div className="mt-auto px-6 pb-6">
+                <Button asChild variant="accent" className="w-full">
+                  <Link href="/veille-juridique">Voir la veille</Link>
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
+
+      <SearchDialog open={search.isOpen} onOpenChange={search.setIsOpen} />
     </header>
   );
 }

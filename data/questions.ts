@@ -33,7 +33,8 @@ export const questions: QuestionItem[] = [
   },
   {
     slug: "peut-on-exploiter-lune",
-    question: "Une entreprise privée peut-elle exploiter des ressources sur la Lune ?",
+    question:
+      "Une entreprise privée peut-elle exploiter des ressources sur la Lune ?",
     reponseCourte:
       "Le droit international ne l'interdit pas explicitement, mais le régime juridique applicable à l'appropriation des ressources reste débattu entre États.",
     reponseDetaillee: [
@@ -108,7 +109,8 @@ export const questions: QuestionItem[] = [
   },
   {
     slug: "dsa-obligations-plateformes",
-    question: "Quelles obligations le DSA impose-t-il aux grandes plateformes ?",
+    question:
+      "Quelles obligations le DSA impose-t-il aux grandes plateformes ?",
     reponseCourte:
       "Le Digital Services Act impose transparence algorithmique, modération renforcée et audits indépendants aux très grandes plateformes en ligne.",
     reponseDetaillee: [

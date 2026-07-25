@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { BookMarked } from "lucide-react";
 
-import { PageHeader } from "@/components/sections/page-header";
-import { GlossaireExplorer } from "@/components/sections/glossaire-explorer";
-import { glossaireTermes } from "@/data/glossaire";
+import { ContentPageShell } from "@/components/shared/content-page-shell";
 
 export const metadata: Metadata = {
   title: "Glossaire",
@@ -12,18 +11,14 @@ export const metadata: Metadata = {
 
 export default function GlossairePage() {
   return (
-    <>
-      <PageHeader
-        eyebrow="Glossaire"
-        title="Le vocabulaire juridique, en clair"
-        description="Traités, règlements, notions techniques : retrouvez la définition précise de chaque terme clé du droit spatial et du droit du numérique."
-      />
-
-      <section className="py-16 sm:py-20">
-        <div className="container-lexwatch">
-          <GlossaireExplorer termes={glossaireTermes} />
-        </div>
-      </section>
-    </>
+    <ContentPageShell
+      eyebrow="Glossaire"
+      title="Le vocabulaire juridique, en clair"
+      description="Traités, règlements, notions techniques : retrouvez la définition précise de chaque terme clé du droit spatial et du droit du numérique."
+      searchPlaceholder="Rechercher un terme…"
+      icon={BookMarked}
+      emptyTitle="Le glossaire arrive bientôt"
+      emptyDescription="Cette page listera, par ordre alphabétique, les définitions des notions clés du droit spatial et du droit du numérique."
+    />
   );
 }

@@ -2,12 +2,18 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Conteneur générique en carte, composé de sous-composants
+ * (`CardHeader`, `CardTitle`, `CardDescription`, `CardContent`,
+ * `CardFooter`) à assembler selon le besoin — aucun ne rend le fond ou la
+ * bordure sans le `<Card>` parent.
+ */
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "flex flex-col rounded-2xl border border-border bg-card text-card-foreground shadow-sm",
+        "border-border bg-card text-card-foreground flex flex-col rounded-2xl border shadow-sm",
         className,
       )}
       {...props}
@@ -29,20 +35,17 @@ function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
       data-slot="card-title"
-      className={cn("text-lg font-semibold leading-snug", className)}
+      className={cn("text-lg leading-snug font-semibold", className)}
       {...props}
     />
   );
 }
 
-function CardDescription({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
   );

@@ -21,13 +21,17 @@ const badgeVariants = cva(
   },
 );
 
-function Badge({
-  className,
-  variant,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+export interface BadgeProps
+  extends React.ComponentProps<"span">, VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
+
+/**
+ * Étiquette de statut ou de catégorisation porteuse de sens (domaine,
+ * niveau, état). Voir `Tag` pour un libellé neutre sans signification
+ * particulière.
+ */
+function Badge({ className, variant, asChild = false, ...props }: BadgeProps) {
   const Comp = asChild ? Slot : "span";
 
   return (

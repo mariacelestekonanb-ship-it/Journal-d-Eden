@@ -70,7 +70,8 @@ export const veilleItems: VeilleItem[] = [
   },
   {
     slug: "ai-act-codes-conduite",
-    titre: "AI Act : publication des codes de conduite pour les modèles à usage général",
+    titre:
+      "AI Act : publication des codes de conduite pour les modèles à usage général",
     resume:
       "La Commission européenne publie les lignes directrices attendues par les fournisseurs de modèles d'IA à usage général soumis aux obligations de transparence.",
     contenu: [

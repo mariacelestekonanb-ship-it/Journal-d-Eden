@@ -36,3 +36,8 @@ export const footerNav = {
     { label: "Glossaire", href: "/glossaire" },
   ],
 };
+
+export const legalNav: NavItem[] = [
+  { label: "Mentions légales", href: "/mentions-legales" },
+  { label: "Confidentialité", href: "/confidentialite" },
+];

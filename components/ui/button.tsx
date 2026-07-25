@@ -32,16 +32,24 @@ const buttonVariants = cva(
   },
 );
 
+export interface ButtonProps
+  extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
+  /** Fusionne les props sur son unique enfant (via Radix `Slot`) au lieu de rendre un `<button>` — utile pour un `<Link>` stylé comme un bouton. */
+  asChild?: boolean;
+}
+
+/**
+ * Bouton d'action principal du design system.
+ * `variant="accent"` porte l'accent doré et doit rester rare sur une page
+ * (un seul appel à l'action principal par section).
+ */
 function Button({
   className,
   variant,
   size,
   asChild = false,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot : "button";
 
   return (

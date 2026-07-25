@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Mail, Clock, MapPin } from "lucide-react";
+import { Mail, Clock, MapPin, Send } from "lucide-react";
 
-import { PageHeader } from "@/components/sections/page-header";
-import { ContactForm } from "@/components/sections/contact-form";
+import { PageHeader } from "@/components/shared/page-header";
+import { Section } from "@/components/ui/section";
+import { Card } from "@/components/ui/card";
+import { Heading } from "@/components/ui/heading";
+import { Paragraph } from "@/components/ui/paragraph";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -12,16 +17,8 @@ export const metadata: Metadata = {
 };
 
 const infos = [
-  {
-    icon: Mail,
-    titre: "E-mail",
-    valeur: siteConfig.email,
-  },
-  {
-    icon: Clock,
-    titre: "Délai de réponse",
-    valeur: "Sous 48 heures ouvrées",
-  },
+  { icon: Mail, titre: "E-mail", valeur: siteConfig.email },
+  { icon: Clock, titre: "Délai de réponse", valeur: "Sous 48 heures ouvrées" },
   {
     icon: MapPin,
     titre: "Zone de couverture",
@@ -38,32 +35,104 @@ export default function ContactPage() {
         description="Notre équipe éditoriale vous répond pour toute question sur le droit spatial, le droit du numérique ou une demande de veille personnalisée."
       />
 
-      <section className="py-16 sm:py-20">
-        <div className="container-lexwatch grid gap-12 lg:grid-cols-[1fr_1.4fr]">
+      <Section>
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr]">
           <div className="space-y-4">
             {infos.map((info) => (
-              <div
-                key={info.titre}
-                className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6"
-              >
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-navy-900 text-accent">
-                  <info.icon className="size-5" />
+              <Card key={info.titre} className="flex-row items-start gap-4 p-6">
+                <span className="bg-navy-900 text-accent flex size-11 shrink-0 items-center justify-center rounded-xl">
+                  <info.icon className="size-5" aria-hidden />
                 </span>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <Paragraph size="sm" tone="muted">
                     {info.titre}
-                  </p>
-                  <p className="mt-1 font-heading text-base font-semibold text-foreground">
+                  </Paragraph>
+                  <Heading as="h2" size="xs" className="mt-1">
                     {info.valeur}
-                  </p>
+                  </Heading>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
 
-          <ContactForm />
+          <Card
+            className="p-8"
+            aria-label="Formulaire de contact — bientôt disponible"
+          >
+            <form className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="nom"
+                    className="text-foreground text-sm font-medium"
+                  >
+                    Nom complet
+                  </label>
+                  <Input id="nom" name="nom" placeholder="Jeanne Dupont" />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="email"
+                    className="text-foreground text-sm font-medium"
+                  >
+                    Adresse e-mail
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="jeanne.dupont@email.com"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="sujet"
+                  className="text-foreground text-sm font-medium"
+                >
+                  Sujet
+                </label>
+                <Input
+                  id="sujet"
+                  name="sujet"
+                  placeholder="Demande de veille personnalisée"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="message"
+                  className="text-foreground text-sm font-medium"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={6}
+                  placeholder="Décrivez votre demande…"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/40 w-full rounded-2xl border px-5 py-4 text-sm shadow-xs outline-none focus-visible:ring-2"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                variant="accent"
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled
+              >
+                Envoyer le message
+                <Send className="size-4" aria-hidden />
+              </Button>
+              <Paragraph size="sm" tone="muted">
+                L&apos;envoi du formulaire sera activé prochainement.
+              </Paragraph>
+            </form>
+          </Card>
         </div>
-      </section>
+      </Section>
     </>
   );
 }

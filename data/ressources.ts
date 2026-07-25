@@ -2,7 +2,8 @@ import type { Ressource } from "@/types";
 
 export const ressources: Ressource[] = [
   {
-    titre: "Traité sur les principes régissant les activités des États en matière d'exploration et d'utilisation de l'espace extra-atmosphérique",
+    titre:
+      "Traité sur les principes régissant les activités des États en matière d'exploration et d'utilisation de l'espace extra-atmosphérique",
     description:
       "Texte fondateur du droit spatial international, adopté en 1967 et ratifié par plus de 110 États.",
     type: "Texte officiel",
@@ -56,7 +57,8 @@ export const ressources: Ressource[] = [
     organisme: "Union européenne",
   },
   {
-    titre: "Publication : gouvernance des données spatiales et souveraineté numérique",
+    titre:
+      "Publication : gouvernance des données spatiales et souveraineté numérique",
     description:
       "Étude croisant les enjeux du droit spatial et du droit du numérique autour de la souveraineté des infrastructures critiques.",
     type: "Publication",

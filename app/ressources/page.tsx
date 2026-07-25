@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { FileText } from "lucide-react";
 
-import { PageHeader } from "@/components/sections/page-header";
-import { RessourcesExplorer } from "@/components/sections/ressources-explorer";
-import { ressources } from "@/data/ressources";
+import { ContentPageShell } from "@/components/shared/content-page-shell";
 
 export const metadata: Metadata = {
   title: "Ressources",
@@ -12,18 +11,14 @@ export const metadata: Metadata = {
 
 export default function RessourcesPage() {
   return (
-    <>
-      <PageHeader
-        eyebrow="Ressources"
-        title="Les sources, pas les rumeurs"
-        description="Textes officiels, rapports institutionnels et guides pratiques soigneusement sélectionnés pour aller plus loin sur chaque sujet."
-      />
-
-      <section className="py-16 sm:py-20">
-        <div className="container-lexwatch">
-          <RessourcesExplorer ressources={ressources} />
-        </div>
-      </section>
-    </>
+    <ContentPageShell
+      eyebrow="Ressources"
+      title="Les sources, pas les rumeurs"
+      description="Textes officiels, rapports institutionnels et guides pratiques soigneusement sélectionnés pour aller plus loin sur chaque sujet."
+      searchPlaceholder="Rechercher un texte, un organisme…"
+      icon={FileText}
+      emptyTitle="Les ressources arrivent bientôt"
+      emptyDescription="Cette page listera les textes officiels, rapports et guides pratiques recommandés par la rédaction."
+    />
   );
 }

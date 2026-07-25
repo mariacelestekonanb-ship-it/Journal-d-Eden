@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
+import { HelpCircle } from "lucide-react";
 
-import { PageHeader } from "@/components/sections/page-header";
-import { ComprendreExplorer } from "@/components/sections/comprendre-explorer";
-import { questions } from "@/data/questions";
+import { ContentPageShell } from "@/components/shared/content-page-shell";
 
 export const metadata: Metadata = {
   title: "Comprendre",
@@ -12,18 +11,14 @@ export const metadata: Metadata = {
 
 export default function ComprendrePage() {
   return (
-    <>
-      <PageHeader
-        eyebrow="Comprendre"
-        title="Les fondamentaux, sans jargon"
-        description="Chaque notion clé du droit spatial et du droit du numérique expliquée en une question et une réponse claire, classée par niveau de complexité."
-      />
-
-      <section className="py-16 sm:py-20">
-        <div className="container-lexwatch">
-          <ComprendreExplorer questions={questions} />
-        </div>
-      </section>
-    </>
+    <ContentPageShell
+      eyebrow="Comprendre"
+      title="Les fondamentaux, sans jargon"
+      description="Chaque notion clé du droit spatial et du droit du numérique expliquée en une question et une réponse claire, classée par niveau de complexité."
+      searchPlaceholder="Rechercher une question…"
+      icon={HelpCircle}
+      emptyTitle="Les questions arrivent bientôt"
+      emptyDescription="Cette page listera les questions essentielles du droit spatial et du droit du numérique, avec leurs réponses détaillées."
+    />
   );
 }
