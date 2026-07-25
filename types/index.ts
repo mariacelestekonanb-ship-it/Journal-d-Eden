@@ -35,6 +35,8 @@ export interface VeilleItem {
   aLaUne?: boolean;
 }
 
+export type Niveau = "Débutant" | "Intermédiaire" | "Avancé";
+
 export interface QuestionItem {
   slug: string;
   question: string;
@@ -42,7 +44,24 @@ export interface QuestionItem {
   reponseDetaillee: string[];
   domaine: Domaine;
   categorie: string;
-  niveau: "Débutant" | "Intermédiaire" | "Avancé";
+  niveau: Niveau;
+  tempsLecture: number;
+  dateMiseAJour: string;
+}
+
+/**
+ * Grand thème de navigation (distinct de `Categorie`, plus fin) utilisé par
+ * la page Comprendre pour regrouper les fiches par domaine d'étude.
+ */
+export interface Theme {
+  slug: string;
+  titre: string;
+  description: string;
+  icone: string;
+  /** Nombre de fiches affiché sur la carte — volontairement indicatif tant que le contenu réel n'est pas connecté. */
+  nombreFichesApprox: number;
+  /** Slugs de `categorie` (voir `QuestionItem`) rattachés à ce thème. */
+  categoriesAssociees: string[];
 }
 
 export interface GlossaireTerme {

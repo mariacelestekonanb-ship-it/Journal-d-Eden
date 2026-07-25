@@ -2,6 +2,7 @@ import { categories } from "@/data/categories";
 import { veilleItems } from "@/data/veille";
 import { questions } from "@/data/questions";
 import { glossaireTermes } from "@/data/glossaire";
+import { themes } from "@/data/themes";
 
 export function getCategorieBySlug(slug: string) {
   return categories.find((categorie) => categorie.slug === slug);
@@ -21,6 +22,24 @@ export function getVeilleParCategorie(categorieSlug: string) {
 
 export function getQuestionsParCategorie(categorieSlug: string) {
   return questions.filter((item) => item.categorie === categorieSlug);
+}
+
+export function getThemeBySlug(slug: string) {
+  return themes.find((theme) => theme.slug === slug);
+}
+
+/**
+ * Fiches rattachées à un thème via `categoriesAssociees`. Un thème sans
+ * catégorie associée retourne un tableau vide (voir `EmptyState` sur la
+ * page Comprendre).
+ */
+export function getQuestionsParTheme(themeSlug: string) {
+  const theme = getThemeBySlug(themeSlug);
+  if (!theme) return [];
+
+  return questions.filter((item) =>
+    theme.categoriesAssociees.includes(item.categorie),
+  );
 }
 
 export function getGlossaireGroupeParLettre() {

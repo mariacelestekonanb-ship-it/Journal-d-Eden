@@ -15,6 +15,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-spatial",
     categorie: "traites-spatiaux",
     niveau: "Débutant",
+    tempsLecture: 4,
+    dateMiseAJour: "2026-05-12",
   },
   {
     slug: "responsabilite-collision-satellites",
@@ -30,6 +32,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-spatial",
     categorie: "debris-spatiaux",
     niveau: "Intermédiaire",
+    tempsLecture: 6,
+    dateMiseAJour: "2026-06-02",
   },
   {
     slug: "peut-on-exploiter-lune",
@@ -46,6 +50,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-spatial",
     categorie: "exploitation-ressources",
     niveau: "Avancé",
+    tempsLecture: 7,
+    dateMiseAJour: "2026-07-08",
   },
   {
     slug: "licence-lancement-fusee",
@@ -61,6 +67,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-spatial",
     categorie: "new-space",
     niveau: "Débutant",
+    tempsLecture: 5,
+    dateMiseAJour: "2026-04-20",
   },
   {
     slug: "quest-ce-que-rgpd",
@@ -76,6 +84,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-numerique",
     categorie: "protection-donnees",
     niveau: "Débutant",
+    tempsLecture: 4,
+    dateMiseAJour: "2026-06-15",
   },
   {
     slug: "ia-act-systemes-haut-risque",
@@ -91,6 +101,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-numerique",
     categorie: "intelligence-artificielle",
     niveau: "Intermédiaire",
+    tempsLecture: 6,
+    dateMiseAJour: "2026-07-20",
   },
   {
     slug: "obligation-notification-incident",
@@ -106,6 +118,8 @@ export const questions: QuestionItem[] = [
     domaine: "droit-numerique",
     categorie: "cybersecurite",
     niveau: "Intermédiaire",
+    tempsLecture: 5,
+    dateMiseAJour: "2026-05-30",
   },
   {
     slug: "dsa-obligations-plateformes",
@@ -122,5 +136,25 @@ export const questions: QuestionItem[] = [
     domaine: "droit-numerique",
     categorie: "plateformes-numeriques",
     niveau: "Avancé",
+    tempsLecture: 6,
+    dateMiseAJour: "2026-07-01",
+  },
+  {
+    slug: "attribution-frequences-satellites",
+    question:
+      "Comment les fréquences satellites sont-elles attribuées au niveau international ?",
+    reponseCourte:
+      "L'Union internationale des télécommunications coordonne l'attribution des fréquences et des positions orbitales entre États pour prévenir les interférences.",
+    reponseDetaillee: [
+      "Le Règlement des radiocommunications de l'Union internationale des télécommunications (UIT) répartit le spectre en bandes de fréquences allouées à différents services, dont les services spatiaux.",
+      "Tout opérateur souhaitant exploiter un satellite doit faire enregistrer sa fréquence et, le cas échéant, sa position orbitale géostationnaire auprès du Bureau des radiocommunications de l'UIT, via son administration nationale.",
+      "La coordination entre administrations vise à prévenir les interférences nuisibles entre systèmes satellitaires voisins, selon un principe de priorité tempéré par un objectif d'accès équitable pour tous les États.",
+      "Ce cadre technique international se double d'autorisations nationales de station spatiale et de station terrienne, qui relèvent du droit interne de chaque État de lancement ou d'exploitation.",
+    ],
+    domaine: "droit-spatial",
+    categorie: "telecommunications",
+    niveau: "Intermédiaire",
+    tempsLecture: 5,
+    dateMiseAJour: "2026-07-22",
   },
 ];

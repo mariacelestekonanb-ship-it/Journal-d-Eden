@@ -6,6 +6,9 @@ import {
   Cpu,
   Lock,
   Layers,
+  Bot,
+  Radio,
+  Landmark,
   Scale,
   type LucideIcon,
 } from "lucide-react";
@@ -19,6 +22,9 @@ export const iconMap: Record<string, LucideIcon> = {
   Cpu,
   Lock,
   Layers,
+  Bot,
+  Radio,
+  Landmark,
 };
 
 export function resolveIcon(name: string): LucideIcon {
