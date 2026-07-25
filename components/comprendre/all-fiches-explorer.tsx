@@ -31,7 +31,7 @@ export interface AllFichesExplorerProps {
  * (alphabétique / plus récent) et chargement progressif. Les données
  * viennent de `data/questions.ts` ; brancher une base de données revient à
  * remplacer les deux tableaux importés par un appel réseau retournant la
- * même forme (voir aussi `FicheErrorState`, prêt pour ce cas).
+ * même forme (voir aussi `ContentErrorState`, prêt pour ce cas).
  *
  * Le délai de chargement simulé sur changement de filtre n'existe que pour
  * donner à voir l'état `chargement` avant qu'une vraie requête n'existe.

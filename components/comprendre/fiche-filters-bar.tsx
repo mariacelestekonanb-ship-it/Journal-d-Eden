@@ -2,7 +2,7 @@ import { Divider } from "@/components/ui/divider";
 import {
   FilterPills,
   type FilterOption,
-} from "@/components/comprendre/filter-pills";
+} from "@/components/shared/filter-pills";
 import { themes } from "@/data/themes";
 import type { Niveau } from "@/types";
 

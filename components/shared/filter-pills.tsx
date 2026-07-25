@@ -15,7 +15,8 @@ export interface FilterPillsProps<T extends string> {
 /**
  * Groupe de filtres à sélection unique, construit sur `<Tag asButton>` —
  * le design system prévoit déjà ce composant pour un usage de filtre.
- * Générique : réutilisé pour le thème, le niveau et le tri.
+ * Générique : réutilisé pour le thème, le niveau, le type et le tri, sur
+ * Comprendre comme sur Veille juridique.
  */
 export function FilterPills<T extends string>({
   label,

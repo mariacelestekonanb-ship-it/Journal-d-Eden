@@ -21,6 +21,19 @@ export interface Categorie {
   nombreArticles: number;
 }
 
+/**
+ * Nature de la publication de veille — distincte de `TypeReference` (les
+ * sources citées à l'intérieur d'une fiche) : ici, c'est la publication
+ * elle-même qui est classée.
+ */
+export type TypeVeille =
+  | "Décision"
+  | "Loi"
+  | "Règlement"
+  | "Convention"
+  | "Jurisprudence"
+  | "Institution";
+
 export interface VeilleItem {
   slug: string;
   titre: string;
@@ -29,7 +42,9 @@ export interface VeilleItem {
   pointsCles: string[];
   domaine: Domaine;
   categorie: string;
+  type: TypeVeille;
   date: string;
+  /** Institution ou organisme source (ex. « Commission européenne », « CNIL »). */
   source: string;
   tempsLecture: number;
   aLaUne?: boolean;

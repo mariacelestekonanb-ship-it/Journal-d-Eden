@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
 import { ComprendreHero } from "@/components/comprendre/hero";
-import { SearchExperience } from "@/components/comprendre/search-experience";
+import { SearchExperience } from "@/components/shared/search-experience";
 import { CategoriesSection } from "@/components/comprendre/categories-section";
 import { PopularQuestionsSection } from "@/components/comprendre/popular-questions-section";
 import { AllFichesExplorer } from "@/components/comprendre/all-fiches-explorer";
+import { questions } from "@/data/questions";
 
 export const metadata: Metadata = {
   title: "Comprendre",
@@ -30,7 +31,18 @@ export default async function ComprendrePage({
   return (
     <>
       <ComprendreHero />
-      <SearchExperience initialQuery={q} />
+      <SearchExperience
+        items={questions.map((item) => ({
+          key: item.slug,
+          label: item.question,
+          href: `/comprendre/${item.slug}`,
+        }))}
+        placeholder="Rechercher une notion, une question ou un sujet…"
+        panelId="comprendre-search-panel"
+        recentSearches={["RGPD", "satellites", "AI Act"]}
+        initialQuery={q}
+        resultLabel="fiche"
+      />
       <CategoriesSection activeTheme={theme} />
       <PopularQuestionsSection />
       <AllFichesExplorer initialTheme={theme} />
