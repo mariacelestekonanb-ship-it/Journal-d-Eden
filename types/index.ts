@@ -37,11 +37,49 @@ export interface VeilleItem {
 
 export type Niveau = "Débutant" | "Intermédiaire" | "Avancé";
 
+/**
+ * Bloc de contenu riche pour la section « Notre explication » d'une fiche.
+ * Modèle par blocs typés — volontairement proche de ce que renverrait un
+ * CMS headless (Sanity, Contentful…), pour que brancher une vraie source de
+ * contenu plus tard revienne à remplacer le tableau, pas le composant qui
+ * le rend (voir `ExplicationBlocks`).
+ */
+export type ContentBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; text: string }
+  | { type: "callout"; text: string; tone?: "info" | "warning" }
+  | { type: "list"; items: string[]; ordered?: boolean };
+
+export type TypeReference =
+  | "Traité"
+  | "Loi"
+  | "Règlement"
+  | "Convention"
+  | "Directive"
+  | "Décision"
+  | "Site officiel";
+
+export interface ReferenceJuridique {
+  type: TypeReference;
+  titre: string;
+  /** Citation précise (article, numéro, année…), ex. « Article II, 1967 ». */
+  citation: string;
+  organisme: string;
+  url?: string;
+}
+
 export interface QuestionItem {
   slug: string;
   question: string;
   reponseCourte: string;
-  reponseDetaillee: string[];
+  /** Paragraphes courts répondant à « Pourquoi cette question se pose ? ». */
+  contexte: string[];
+  /** Contenu principal de la fiche (« Notre explication »). */
+  explication: ContentBlock[];
+  /** 3 à 5 points pour la section « À retenir ». */
+  pointsCles: string[];
+  /** Sources citées : sert à la fois « Ce que dit le droit » (textes normatifs) et « Références » (bibliographie complète). */
+  references: ReferenceJuridique[];
   domaine: Domaine;
   categorie: string;
   niveau: Niveau;

@@ -3,6 +3,7 @@ import { veilleItems } from "@/data/veille";
 import { questions } from "@/data/questions";
 import { glossaireTermes } from "@/data/glossaire";
 import { themes } from "@/data/themes";
+import type { QuestionItem } from "@/types";
 
 export function getCategorieBySlug(slug: string) {
   return categories.find((categorie) => categorie.slug === slug);
@@ -24,8 +25,50 @@ export function getQuestionsParCategorie(categorieSlug: string) {
   return questions.filter((item) => item.categorie === categorieSlug);
 }
 
+export function getQuestionBySlug(slug: string) {
+  return questions.find((item) => item.slug === slug);
+}
+
+/**
+ * Fiches similaires à une question donnée, pour la section « Questions
+ * associées » d'une fiche. Priorité à la même catégorie fine, puis au même
+ * domaine, puis complété par le reste du corpus pour toujours retourner
+ * `count` résultats si le contenu disponible le permet.
+ */
+export function getRelatedQuestions(
+  question: QuestionItem,
+  count = 4,
+): QuestionItem[] {
+  const seen = new Set([question.slug]);
+  const result: QuestionItem[] = [];
+
+  const pools = [
+    questions.filter((item) => item.categorie === question.categorie),
+    questions.filter((item) => item.domaine === question.domaine),
+    questions,
+  ];
+
+  for (const pool of pools) {
+    for (const item of pool) {
+      if (result.length >= count) break;
+      if (seen.has(item.slug)) continue;
+      seen.add(item.slug);
+      result.push(item);
+    }
+  }
+
+  return result;
+}
+
 export function getThemeBySlug(slug: string) {
   return themes.find((theme) => theme.slug === slug);
+}
+
+/** Thème parent d'une `categorie` fine (voir `QuestionItem.categorie`). */
+export function getThemeForCategorie(categorieSlug: string) {
+  return themes.find((theme) =>
+    theme.categoriesAssociees.includes(categorieSlug),
+  );
 }
 
 /**
