@@ -3,7 +3,7 @@ import { veilleItems } from "@/data/veille";
 import { questions } from "@/data/questions";
 import { glossaireTermes } from "@/data/glossaire";
 import { themes } from "@/data/themes";
-import type { QuestionItem, VeilleItem } from "@/types";
+import type { GlossaireTerme, QuestionItem, VeilleItem } from "@/types";
 
 export function getCategorieBySlug(slug: string) {
   return categories.find((categorie) => categorie.slug === slug);
@@ -111,6 +111,31 @@ export function getQuestionsParTheme(themeSlug: string) {
   return questions.filter((item) =>
     theme.categoriesAssociees.includes(item.categorie),
   );
+}
+
+/**
+ * Résout les slugs de `contenusAssocies` en véritables fiches et analyses
+ * (titre, lien) — c'est ce qui permet à une définition du glossaire
+ * d'orienter réellement vers le contenu pédagogique et les analyses de
+ * LexWatch plutôt que vers un simple compteur. Un slug qui ne correspond à
+ * aucun contenu existant est silencieusement ignoré.
+ */
+export function getContenusAssociesResolus(terme: GlossaireTerme) {
+  const fiches = (terme.contenusAssocies?.fiches ?? [])
+    .map((slug) => getQuestionBySlug(slug))
+    .filter((item): item is QuestionItem => item !== undefined);
+
+  const analyses = (terme.contenusAssocies?.analyses ?? [])
+    .map((slug) => getVeilleBySlug(slug))
+    .filter((item): item is VeilleItem => item !== undefined);
+
+  return { fiches, analyses };
+}
+
+/** Nombre de contenus réellement associés à un terme, affiché sur `GlossaryCard`. */
+export function countContenusAssocies(terme: GlossaireTerme): number {
+  const { fiches, analyses } = getContenusAssociesResolus(terme);
+  return fiches.length + analyses.length;
 }
 
 export function getGlossaireGroupeParLettre() {

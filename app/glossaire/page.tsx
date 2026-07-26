@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { BookMarked } from "lucide-react";
 
-import { ContentPageShell } from "@/components/shared/content-page-shell";
+import { GlossaireHero } from "@/components/glossaire/hero";
+import { SearchExperience } from "@/components/shared/search-experience";
+import { Section } from "@/components/ui/section";
+import { GlossaryExplorer } from "@/components/glossaire/glossary-explorer";
+import { glossaireTermes } from "@/data/glossaire";
+import { slugifyTerme } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Glossaire",
@@ -9,16 +13,44 @@ export const metadata: Metadata = {
     "Le glossaire LexWatch : toutes les notions clés du droit spatial et du droit du numérique, classées par ordre alphabétique.",
 };
 
-export default function GlossairePage() {
+interface GlossairePageProps {
+  searchParams: Promise<{ theme?: string; q?: string }>;
+}
+
+/**
+ * Page Glossaire : porte d'entrée vers les connaissances de LexWatch, pas
+ * un simple dictionnaire. `theme` et `q` sont lus côté serveur pour
+ * pré-filtrer/pré-remplir la page sans JavaScript — même principe que
+ * Comprendre et Veille juridique. Chaque terme n'a volontairement pas de
+ * route de détail : la recherche cible directement l'ancre de sa carte
+ * dans la liste (voir `GlossaryExplorer`), qui révèle fiches et analyses
+ * associées au clic sur « Voir la définition ».
+ */
+export default async function GlossairePage({
+  searchParams,
+}: GlossairePageProps) {
+  const { theme, q } = await searchParams;
+
   return (
-    <ContentPageShell
-      eyebrow="Glossaire"
-      title="Le vocabulaire juridique, en clair"
-      description="Traités, règlements, notions techniques : retrouvez la définition précise de chaque terme clé du droit spatial et du droit du numérique."
-      searchPlaceholder="Rechercher un terme…"
-      icon={BookMarked}
-      emptyTitle="Le glossaire arrive bientôt"
-      emptyDescription="Cette page listera, par ordre alphabétique, les définitions des notions clés du droit spatial et du droit du numérique."
-    />
+    <>
+      <GlossaireHero />
+
+      <SearchExperience
+        items={glossaireTermes.map((terme) => ({
+          key: terme.terme,
+          label: terme.terme,
+          href: `/glossaire#${slugifyTerme(terme.terme)}`,
+        }))}
+        placeholder="Rechercher un terme, un sigle, une notion…"
+        panelId="glossaire-search-panel"
+        recentSearches={["RGPD", "AI Act", "Débris orbital"]}
+        initialQuery={q}
+        resultLabel="terme"
+      />
+
+      <Section>
+        <GlossaryExplorer initialTheme={theme} />
+      </Section>
+    </>
   );
 }

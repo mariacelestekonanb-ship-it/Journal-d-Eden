@@ -169,12 +169,25 @@ export interface VeilleItem {
   referencesOfficielles: ReferenceOfficielle[];
 }
 
+/**
+ * Contenus réellement rattachés à un terme du glossaire — slugs vers
+ * `data/questions.ts` (fiches) et `data/veille.ts` (analyses). Optionnel :
+ * un terme peut n'avoir aucun contenu associé pour l'instant, auquel cas la
+ * carte affiche « Aucun contenu associé » plutôt qu'un lien mort.
+ */
+export interface ContenusAssocies {
+  fiches?: string[];
+  analyses?: string[];
+}
+
 export interface GlossaireTerme {
   terme: string;
   definition: string;
-  domaine: Domaine;
+  /** Slug de `Theme` (voir `data/themes.ts`) — sert de filtre « Catégorie » du glossaire. */
+  theme: string;
   lettre: string;
   voirAussi?: string[];
+  contenusAssocies?: ContenusAssocies;
 }
 
 export interface Ressource {
