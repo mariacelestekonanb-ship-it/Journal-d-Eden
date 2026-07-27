@@ -73,6 +73,18 @@ export function AllFichesExplorer({ initialTheme }: AllFichesExplorerProps) {
   const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
   const [isLoading, setIsLoading] = React.useState(false);
 
+  // `useState(initialThemeFiltre)` ne s'applique qu'au tout premier rendu :
+  // en navigation interne (clic sur une carte de catégorie depuis cette
+  // même page), Next.js réutilise l'instance existante de ce composant
+  // client sans le remonter, donc le filtre restait bloqué sur sa toute
+  // première valeur. Cet effet le resynchronise à chaque changement réel
+  // du paramètre d'URL `?theme=`.
+  React.useEffect(() => {
+    setThemeFiltre(initialThemeFiltre);
+    setVisibleCount(PAGE_SIZE);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ne doit réagir qu'à un changement du paramètre d'URL, pas à `initialThemeFiltre` recalculé à chaque rendu.
+  }, [initialTheme]);
+
   React.useEffect(() => {
     setIsLoading(true);
     const timeout = window.setTimeout(

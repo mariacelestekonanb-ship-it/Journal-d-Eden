@@ -47,6 +47,18 @@ export function RecentAnalysesExplorer({
   const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
   const [isLoading, setIsLoading] = React.useState(false);
 
+  // `useState(initialDomaineFiltre)` ne s'applique qu'au tout premier
+  // rendu : en navigation interne (clic sur une catégorie depuis cette
+  // même page), Next.js réutilise l'instance existante de ce composant
+  // client sans le remonter, donc le filtre restait bloqué sur sa toute
+  // première valeur. Cet effet le resynchronise à chaque changement réel
+  // du paramètre d'URL `?domaine=`.
+  React.useEffect(() => {
+    setDomaineFiltre(initialDomaineFiltre);
+    setVisibleCount(PAGE_SIZE);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ne doit réagir qu'à un changement du paramètre d'URL, pas à `initialDomaineFiltre` recalculé à chaque rendu.
+  }, [initialDomaine]);
+
   React.useEffect(() => {
     setIsLoading(true);
     const timeout = window.setTimeout(

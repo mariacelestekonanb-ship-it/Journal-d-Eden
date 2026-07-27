@@ -11,35 +11,35 @@ const themes: ThemeCardProps[] = [
     title: "Droit spatial",
     description:
       "Traités internationaux, exploitation des ressources et régulation des lancements.",
-    href: "/veille-juridique?theme=droit-spatial",
+    href: "/veille-juridique?domaine=droit-spatial",
   },
   {
     icon: Cpu,
     title: "Droit du numérique",
     description:
       "Protection des données, plateformes en ligne et cybersécurité.",
-    href: "/veille-juridique?theme=droit-numerique",
+    href: "/veille-juridique?domaine=droit-numerique",
   },
   {
     icon: Bot,
     title: "Intelligence artificielle",
     description:
       "Classification des risques, gouvernance algorithmique et responsabilité.",
-    href: "/veille-juridique?theme=intelligence-artificielle",
+    href: "/veille-juridique?domaine=intelligence-artificielle",
   },
   {
     icon: Radio,
     title: "Télécommunications",
     description:
       "Fréquences, satellites de communication et régulation des réseaux.",
-    href: "/veille-juridique?theme=telecommunications",
+    href: "/veille-juridique?domaine=telecommunications",
   },
   {
     icon: Landmark,
     title: "Institutions",
     description:
       "ONU, agences spatiales et autorités de régulation qui font la norme.",
-    href: "/veille-juridique?theme=institutions",
+    href: "/veille-juridique?domaine=institutions",
   },
 ];
 

@@ -48,6 +48,17 @@ export function GlossaryExplorer({ initialTheme }: GlossaryExplorerProps) {
     string | null
   >(null);
 
+  // `useState(initialThemeFiltre)` ne s'applique qu'au tout premier rendu :
+  // en navigation interne, Next.js réutilise l'instance existante de ce
+  // composant client sans le remonter, donc le filtre resterait bloqué sur
+  // sa toute première valeur. Cet effet le resynchronise à chaque
+  // changement réel du paramètre d'URL `?theme=`.
+  React.useEffect(() => {
+    setThemeFiltre(initialThemeFiltre);
+    setVisibleCount(PAGE_SIZE);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ne doit réagir qu'à un changement du paramètre d'URL, pas à `initialThemeFiltre` recalculé à chaque rendu.
+  }, [initialTheme]);
+
   React.useEffect(() => {
     setIsLoading(true);
     const timeout = window.setTimeout(
