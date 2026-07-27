@@ -27,6 +27,7 @@ const iconMap: Record<string, LucideIcon> = {
   Landmark,
 };
 
+/** Résout le nom d'icône stocké sur un `Theme` (`data/themes.ts`) vers son composant Lucide — `Scale` en repli si le nom est inconnu. */
 export function resolveIcon(name: string): LucideIcon {
   return iconMap[name] ?? Scale;
 }

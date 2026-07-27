@@ -1,0 +1,17 @@
+# Configuration de déploiement Netlify.
+#
+# LexWatch est un framework Next.js natif : Vercel reste la cible de
+# déploiement recommandée (zéro configuration, voir vercel.json). Ce fichier
+# rend un déploiement sur Netlify possible via son plugin officiel, qui
+# traduit les Server Components / Server Actions / routes dynamiques de
+# l'App Router en fonctions Netlify — sans lui, Netlify ne sait servir que
+# du contenu statique et la majorité du site (recherche, espace
+# d'administration, routes API implicites des Server Actions) cesserait de
+# fonctionner.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

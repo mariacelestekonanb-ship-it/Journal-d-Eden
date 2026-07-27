@@ -14,6 +14,7 @@ export default function AnalyseError({ reset }: { reset: () => void }) {
       <ContentErrorState
         title="Impossible de charger cette analyse"
         onRetry={reset}
+        headingAs="h1"
       />
     </Section>
   );

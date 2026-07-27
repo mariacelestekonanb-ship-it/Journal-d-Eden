@@ -11,8 +11,8 @@ export interface EmptyStateProps extends React.ComponentProps<"div"> {
   description?: string;
   /** Zone d'action optionnelle (bouton, lien…) affichée sous le texte. */
   action?: React.ReactNode;
-  /** Balise du titre — h3 par défaut ; passer h2 quand l'état vide suit directement un h1 sans titre de section intermédiaire. */
-  headingAs?: "h2" | "h3";
+  /** Balise du titre — h3 par défaut ; passer h2 quand l'état vide suit directement un h1 sans titre de section intermédiaire, ou h1 quand l'état vide EST le contenu principal de la page (ex. une frontière d'erreur ou un 404 qui remplace toute la page). */
+  headingAs?: "h1" | "h2" | "h3";
 }
 
 /**

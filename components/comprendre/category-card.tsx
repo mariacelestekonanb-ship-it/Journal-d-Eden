@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { resolveIcon } from "@/components/cards/icon-map";
+import { resolveIcon } from "@/lib/icon-map";
 import type { Theme } from "@/types";
 
 export interface CategoryCardProps {

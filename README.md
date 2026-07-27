@@ -1,98 +1,219 @@
 # LexWatch
 
-Plateforme premium de vulgarisation et de veille juridique sur le droit spatial et le droit du numérique.
+Plateforme éditoriale de veille juridique et de vulgarisation sur le droit spatial et le droit du numérique.
 
-Ce dépôt contient les **fondations techniques** du projet : architecture, design
-system et squelettes de pages. Les pages ne portent pas encore de contenu
-métier — chacune n'utilise que les composants du design system, prête à
-recevoir son contenu réel dans une phase ultérieure.
+**Statut : Release Candidate 1 (RC1)** — fonctionnellement complet pour une V1, prêt à être déployé sur un environnement de préproduction. Voir [ROADMAP.md](./ROADMAP.md) pour ce qui reste hors périmètre (authentification réelle, base de données) avant une mise en production commerciale.
 
-## Stack
+---
 
-- [Next.js 15](https://nextjs.org) (App Router) + [React 19](https://react.dev)
-- TypeScript strict (aucun `any`)
-- [Tailwind CSS v4](https://tailwindcss.com)
-- Design system maison façon shadcn/ui (Radix UI + `class-variance-authority`)
-- [Lucide React](https://lucide.dev) pour les icônes
-- [Framer Motion](https://motion.dev) pour les animations (menu mobile, Hero)
-- Polices [Manrope](https://fonts.google.com/specimen/Manrope) (titres) et [Inter](https://fonts.google.com/specimen/Inter) (texte), via `next/font/google`
-- ESLint + Prettier (avec `prettier-plugin-tailwindcss`)
+## Sommaire
 
-## Démarrage
+- [Présentation](#présentation)
+- [Objectifs](#objectifs)
+- [Architecture](#architecture)
+- [Technologies utilisées](#technologies-utilisées)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Variables d'environnement](#variables-denvironnement)
+- [Lancement en développement](#lancement-en-développement)
+- [Build de production](#build-de-production)
+- [Structure du projet](#structure-du-projet)
+- [Conventions de code](#conventions-de-code)
+- [Contribuer](#contribuer)
+- [Checklist avant publication](#checklist-avant-publication)
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Ouvrir [http://localhost:3000](http://localhost:3000).
+## Présentation
+
+LexWatch est un site éditorial qui explique le droit spatial et le droit du numérique à un public de professionnels, chercheurs et curieux, à travers quatre familles de contenus :
+
+- **Comprendre** — une bibliothèque de fiches pédagogiques (« En bref / Pourquoi cette question / Ce que dit le droit / Notre explication / À retenir / Références »).
+- **Veille juridique** — des analyses d'actualité juridique structurées (chronologie des faits, contexte, analyse, portée).
+- **Glossaire** — un dictionnaire de notions avec définitions, explications et contenus associés.
+- **Ressources** — une sélection de textes officiels, rapports et guides.
+
+Le site public est entièrement statique/pré-rendu à partir de contenus versionnés dans `data/`. Un espace d'administration (`/admin`) simule un back-office éditorial complet (édition riche, workflow de statuts, médiathèque, SEO par page) sur un **dépôt de données en mémoire**, pensé pour être remplacé par une vraie base de données sans changer l'interface (voir [Architecture](#architecture)).
+
+## Objectifs
+
+- Offrir une expérience de lecture soignée et accessible sur des sujets juridiques réputés arides.
+- Démontrer une architecture Next.js moderne, typée de bout en bout, avec un design system cohérent.
+- Fournir à une rédaction un espace de création de contenu agréable (éditeur par blocs, aperçu fidèle, SEO intégré) sans dépendre d'un CMS tiers.
+- Rester extensible : chaque brique (données, repository admin, design system) est conçue pour être substituée (CMS headless, base de données, authentification réelle) sans réécrire les pages.
 
 ## Architecture
 
 ```
-app/                    Pages (App Router) — structure uniquement
-  comprendre/
-  veille-juridique/
-  glossaire/
-  ressources/
-  a-propos/
-  contact/
-  mentions-legales/     Page légale squelette (lien de pied de page)
-  confidentialite/      Page légale squelette (lien de pied de page)
-  layout.tsx            Layout racine, polices, metadata SEO
-  sitemap.ts            Sitemap généré
-  robots.ts             robots.txt généré
-  manifest.ts           Manifest PWA généré
-  icon.tsx              Favicon généré (image navy/or)
-  apple-icon.tsx         Icône iOS générée
-  opengraph-image.tsx   Image Open Graph / Twitter par défaut
-
-components/
-  ui/                   Design system : Container, Section, Button, Input,
-                        Badge, Card, Heading, Paragraph, Tag, Divider,
-                        EmptyState, SearchInput, Sheet
-  layout/               Header (nav + recherche + drawer), Footer
-  shared/               Composants transverses : PageHeader, Logo,
-                        SearchDialog, ContentPageShell
-  home/                 Composants propres à l'accueil (Hero)
-  cards/                QuestionCard, VeilleCard, CategorieCard
-                        (prêtes pour la prochaine phase, pas encore utilisées)
-
-hooks/                  useDisclosure, useScrolled, useMediaQuery /
-                        usePrefersReducedMotion
-lib/                    cn(), formatage, configuration du site (nav, SEO),
-                        accès aux données
-data/                   Contenus d'exemple (catégories, veille, questions,
-                        glossaire, ressources) — pas encore branchés aux pages
-types/                  Types TypeScript partagés
-styles/globals.css      Thème (couleurs, typographie, animations)
-public/images, public/icons   Emplacements réservés aux assets statiques
+┌─────────────────────┐        ┌──────────────────────────┐
+│   Site public        │        │   Espace d'administration │
+│   app/(pages)         │        │   app/admin/**             │
+│   données statiques   │        │   lib/admin/repository.ts  │
+│   data/*.ts           │        │   (en mémoire, globalThis) │
+└──────────┬───────────┘        └──────────────┬─────────────┘
+           │                                    │
+           │        components/ui + shared      │
+           └──────────────┬─────────────────────┘
+                          │
+                 styles/globals.css (design tokens)
 ```
 
-## Design system
+Points clés :
 
-Chaque composant de `components/ui` est documenté par un commentaire décrivant
-son rôle et ses cas d'usage. Règles générales :
+- **App Router (Next.js 15)** : pages publiques majoritairement en Server Components, données lues directement depuis `data/*.ts` (pas d'appel réseau). Les pages avec filtres interactifs (Comprendre, Veille, Glossaire) pré-filtrent côté serveur via `searchParams`, puis délèguent l'interaction fine à un explorateur client (`*-explorer.tsx`).
+- **Le back-office et le site public sont architecturalement séparés.** L'admin lit et écrit dans un dépôt en mémoire (`lib/admin/repository.ts`, adossé à `globalThis` pour survivre au rechargement à chaud en dev) ; les pages publiques lisent `data/*.ts`. C'est un choix assumé de cette phase : brancher une vraie base de données ne touche que `lib/admin/repository.ts` et les fonctions de `lib/content.ts`, jamais les composants.
+- **Design system centralisé** (`components/ui`, tokens dans `styles/globals.css`) : toutes les couleurs, rayons et ombres passent par des tokens Tailwind v4 (`@theme inline`), aucune couleur ni taille codée en dur dans les composants.
+- **SEO transversal** : un générateur de métadonnées unique (`lib/metadata.ts`), des builders JSON-LD par type de contenu (`lib/json-ld.ts`), un fil d'Ariane qui génère son propre `BreadcrumbList`, des sitemaps par catégorie et un sitemap plat, `robots.ts` interdisant `/admin`.
 
-- moins de 250 lignes par composant
-- TypeScript strict, aucun `any`
-- `Badge` porte du sens (domaine, statut) ; `Tag` est un libellé neutre
-- `Container`/`Section` centralisent la mise en page : ne pas dupliquer les
-  classes `mx-auto max-w-* px-*` dans les pages
+## Technologies utilisées
 
-## Accessibilité
+| Domaine             | Choix                                                                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework           | [Next.js 15](https://nextjs.org) (App Router, Server Components, Server Actions)                                                                 |
+| UI                  | [React 19](https://react.dev)                                                                                                                    |
+| Langage             | TypeScript strict (aucun `any`)                                                                                                                  |
+| Styles              | [Tailwind CSS v4](https://tailwindcss.com) (configuration CSS-native, pas de `tailwind.config.js`)                                               |
+| Composants headless | [Radix UI](https://www.radix-ui.com) (`Dialog`, `DropdownMenu`, `Slot`)                                                                          |
+| Variants            | [class-variance-authority](https://cva.style)                                                                                                    |
+| Animations          | [Framer Motion](https://motion.dev)                                                                                                              |
+| Icônes              | [Lucide React](https://lucide.dev)                                                                                                               |
+| Polices             | [Manrope](https://fonts.google.com/specimen/Manrope) (titres) / [Inter](https://fonts.google.com/specimen/Inter) (texte), via `next/font/google` |
+| Qualité             | ESLint (`next/core-web-vitals`, `next/typescript`), Prettier + `prettier-plugin-tailwindcss`                                                     |
 
-- Lien d'évitement (« Aller au contenu principal ») dans le layout racine
-- Navigation clavier complète (focus visibles, `aria-current`, Échap ferme les
-  panneaux via Radix)
-- Menu mobile et recherche globale respectent `prefers-reduced-motion`
-- Palette vérifiée pour un contraste AA sur fond clair
+Aucune base de données, aucun ORM, aucun service d'authentification n'est branché à ce stade : voir [ROADMAP.md](./ROADMAP.md).
 
-## Scripts
+## Installation
 
-- `npm run dev` — serveur de développement
-- `npm run build` — build de production
-- `npm run start` — serveur de production
-- `npm run lint` — ESLint
-- `npm run format` / `npm run format:check` — Prettier
-- `npm run typecheck` — vérification TypeScript
+Prérequis : **Node.js ≥ 18.18** (recommandé : 20 LTS ou plus récent) et npm.
+
+```bash
+git clone <url-du-dépôt>
+cd lexwatch
+npm install
+```
+
+## Configuration
+
+La configuration du site (nom, description, URL canonique, réseaux sociaux, navigation) est centralisée dans [`lib/site-config.ts`](./lib/site-config.ts) — c'est le seul fichier à modifier pour adapter les métadonnées globales du site à un environnement réel. Avant toute mise en ligne, remplacer :
+
+- `siteConfig.url` (actuellement un domaine d'exemple),
+- `siteConfig.twitterHandle` (placeholder).
+
+## Variables d'environnement
+
+Toutes les variables sont **optionnelles** : le site fonctionne intégralement sans elles (aucun script tiers n'est chargé tant qu'une variable n'est pas définie). Copier `.env.example` vers `.env.local` et renseigner ce qui est utile :
+
+```bash
+cp .env.example .env.local
+```
+
+Voir [`.env.example`](./.env.example) pour le détail de chaque variable. Aucun secret réel n'est requis par l'architecture actuelle (pas de clé d'API privée, pas de chaîne de connexion) : toutes les variables consommées sont préfixées `NEXT_PUBLIC_` (identifiants analytics et jetons de vérification webmaster, publics par nature).
+
+## Lancement en développement
+
+```bash
+npm run dev
+```
+
+Ouvrir [http://localhost:3000](http://localhost:3000) pour le site public, [http://localhost:3000/admin](http://localhost:3000/admin) pour l'espace d'administration (aucune authentification n'est requise dans cette phase — voir [SECURITY.md](./SECURITY.md)).
+
+## Build de production
+
+```bash
+npm run build
+npm run start
+```
+
+`npm run build` échoue si TypeScript ou ESLint rapporte une erreur (vérification intégrée au build Next.js). Avant tout déploiement, faire tourner :
+
+```bash
+npm run typecheck
+npm run lint
+npm run format:check
+npm run build
+```
+
+## Structure du projet
+
+```
+app/                       Routes (App Router)
+  (site public)
+    comprendre/             Bibliothèque de fiches + page de détail [slug]
+    veille-juridique/       Liste d'analyses + page de détail [slug]
+    glossaire/              Glossaire (une seule page, ancres par terme)
+    ressources/             Sélection de ressources externes
+    a-propos/, contact/,
+    mentions-legales/,
+    confidentialite/        Pages institutionnelles
+    sitemap.ts, sitemap/    Sitemaps (plat + par catégorie) et sitemap-index.xml
+    robots.ts               robots.txt généré (interdit /admin)
+    manifest.ts             Web App Manifest
+    icon.tsx, apple-icon.tsx, opengraph-image.tsx   Assets générés dynamiquement
+    layout.tsx              Layout racine (polices, metadata, JSON-LD global)
+    error.tsx, global-error.tsx, not-found.tsx, loading.tsx   Écrans d'erreur/chargement racine
+  admin/                    Back-office (fiches, veille, glossaire, ressources,
+                             catégories, médiathèque) — voir lib/admin/
+
+components/
+  ui/                       Design system (Button, Card, Badge, Tag, Input, Select,
+                             Heading, Paragraph, Section, Container, Sheet, EmptyState…)
+  layout/                   Header, Footer, habillage du site public
+  shared/                   Composants transverses (Breadcrumb, PageHeader,
+                             ContentBlocks, LegalReference, Timeline, SearchExperience…)
+  admin/                    Composants propres au back-office (éditeur de blocs,
+                             médiathèque, formulaires, panneau SEO…)
+  home/, comprendre/, veille/, glossaire/, about/, search/, seo/, analytics/
+                             Composants propres à chaque section du site public
+
+lib/                        Logique applicative : accès aux données (content.ts),
+                             SEO (metadata.ts, json-ld.ts, sitemap.ts), configuration
+                             (site-config.ts, analytics-config.ts), utilitaires
+  admin/                    Repository en mémoire, server actions, auth stub,
+                             recherche admin, journal d'activité
+
+hooks/                      Hooks partagés (useDisclosure, useScrolled, useMediaQuery,
+                             useDebouncedValue, useRecentSearches, useAutosave)
+data/                       Contenus éditoriaux du site public (TypeScript typé)
+types/                      Types partagés entre data/, lib/ et components/
+styles/globals.css          Design tokens (couleurs, rayons, animations) et thème Tailwind v4
+public/                     Assets statiques (icônes/images réservées, voir PWA ci-dessous)
+```
+
+### Progressive Web App (préparation)
+
+L'architecture est prête à accueillir une PWA complète sans réorganisation :
+
+- `app/manifest.ts` génère déjà un Web App Manifest valide.
+- `app/icon.tsx` / `app/apple-icon.tsx` génèrent dynamiquement les favicons.
+- `public/icons/` et `public/images/` sont réservés aux assets statiques (icônes 192×192/512×512 maskables, splash screens iOS) qui restent à produire.
+
+Ce dépôt **n'active pas** de service worker ni de mode hors-ligne : ce n'est pas fait ici volontairement (voir [ROADMAP.md](./ROADMAP.md)).
+
+## Conventions de code
+
+- TypeScript strict, aucun `any`.
+- Un composant = un rôle ; au-delà d'environ 250 lignes, découper.
+- Toute couleur ou rayon de bordure passe par un token Tailwind (`bg-navy-900`, `rounded-xl`…), jamais de valeur arbitraire type `bg-[#...]`.
+- `Badge` porte du sens (domaine, statut) ; `Tag` est un libellé neutre (filtre, métadonnée) — ne pas les confondre.
+- `Container` / `Section` centralisent la mise en page : ne pas dupliquer `mx-auto max-w-* px-*` dans une page.
+- Les commentaires expliquent le **pourquoi** (une contrainte, un choix d'architecture), jamais le **quoi** — le code doit rester lisible sans eux.
+- Formatage et imports : ESLint + Prettier font foi, pas de style manuel divergent (`npm run lint`, `npm run format`).
+
+## Contribuer
+
+Voir [CONTRIBUTING.md](./CONTRIBUTING.md) pour le workflow de contribution, et [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) pour les règles de conduite. Les vulnérabilités de sécurité se signalent selon la procédure décrite dans [SECURITY.md](./SECURITY.md), pas via une issue publique.
+
+## Checklist avant publication
+
+À vérifier avant toute mise en ligne réelle (au-delà d'une démonstration) :
+
+- [ ] `siteConfig.url` remplacé par le domaine réel de production (`lib/site-config.ts`).
+- [ ] `siteConfig.twitterHandle` remplacé ou retiré s'il n'existe pas de compte réel.
+- [ ] Variables d'environnement analytics/Search Console renseignées si ces outils sont utilisés (voir `.env.example`).
+- [ ] **Authentification réelle mise en place sur `/admin`** — l'espace d'administration n'a aujourd'hui aucun contrôle d'accès (voir [SECURITY.md](./SECURITY.md)) : à ne jamais exposer publiquement en l'état.
+- [ ] Persistance réelle branchée sur `lib/admin/repository.ts` — le dépôt actuel est en mémoire et perd toute modification au redémarrage du serveur.
+- [ ] `npm run typecheck`, `npm run lint`, `npm run format:check` et `npm run build` passent sans erreur.
+- [ ] En-têtes de sécurité vérifiés en environnement réel (voir `next.config.ts` et [SECURITY.md](./SECURITY.md)).
+- [ ] Icônes PWA statiques (192×192, 512×512) ajoutées si l'installation en PWA est souhaitée.
+
+Voir aussi [CHANGELOG.md](./CHANGELOG.md) pour l'historique des versions et [ROADMAP.md](./ROADMAP.md) pour les évolutions prévues.

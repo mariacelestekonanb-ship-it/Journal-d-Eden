@@ -14,6 +14,7 @@ export default function FicheError({ reset }: { reset: () => void }) {
       <ContentErrorState
         title="Impossible de charger cette fiche"
         onRetry={reset}
+        headingAs="h1"
       />
     </Section>
   );

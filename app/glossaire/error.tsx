@@ -14,6 +14,7 @@ export default function GlossaireError({ reset }: { reset: () => void }) {
       <ContentErrorState
         title="Impossible de charger le glossaire"
         onRetry={reset}
+        headingAs="h1"
       />
     </Section>
   );
