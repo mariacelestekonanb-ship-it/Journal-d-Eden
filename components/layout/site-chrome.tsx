@@ -6,6 +6,13 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/json-ld";
+import type { SiteSettings } from "@/lib/admin/types";
+
+export interface SiteChromeProps {
+  children: React.ReactNode;
+  /** Réglages du site (voir `/admin/reglages`), lus par `RootLayout` (Server Component) et transmis ici puisque `SiteChrome` est un Client Component. */
+  settings: SiteSettings;
+}
 
 /**
  * Habillage du site public (lien d'évitement, Header, Footer, JSON-LD
@@ -15,7 +22,7 @@ import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/json-ld";
  * site public et l'espace d'administration, sans déplacer les routes
  * publiques existantes dans un groupe de routes dédié.
  */
-export function SiteChrome({ children }: { children: React.ReactNode }) {
+export function SiteChrome({ children, settings }: SiteChromeProps) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
@@ -30,11 +37,15 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       >
         Aller au contenu principal
       </a>
-      <Header />
+      <Header logoUrl={settings.branding.logoUrl} />
       <main id="main-content" className="flex-1">
         {children}
       </main>
-      <Footer />
+      <Footer
+        logoUrl={settings.branding.logoUrl}
+        email={settings.contact.email}
+        liensSociaux={settings.contact.liensSociaux}
+      />
     </>
   );
 }

@@ -4,6 +4,7 @@ import {
   seedFiches,
   seedGlossaire,
   seedRessources,
+  seedSiteSettings,
 } from "@/lib/admin/seed";
 import type {
   AdminMeta,
@@ -12,6 +13,7 @@ import type {
   FicheAdmin,
   GlossaireTermeAdmin,
   RessourceAdmin,
+  SiteSettings,
 } from "@/lib/admin/types";
 
 export interface Repository<T extends AdminMeta> {
@@ -141,4 +143,49 @@ export const ressourcesRepository = createRepository<RessourceAdmin>(
 export const categoriesRepository = createRepository<CategorieAdmin>(
   "categories",
   seedCategories(),
+);
+
+export interface SingletonStore<T> {
+  get(): Promise<T>;
+  update(patch: Partial<T>): Promise<T>;
+}
+
+/**
+ * Variante de `createRepository` pour un objet unique plutôt qu'une liste
+ * (les réglages du site n'ont ni identifiant, ni statut éditorial, ni
+ * réorganisation) — même ancrage `globalThis` pour la même raison (voir
+ * `globalStore`), mais une API réduite à `get`/`update`.
+ */
+function globalSingleton<T>(key: string, seed: T): { value: T } {
+  const globalKey = `__lexwatch_admin_singleton__${key}`;
+  const store = globalThis as unknown as Record<
+    string,
+    { value: T } | undefined
+  >;
+  if (!store[globalKey]) {
+    store[globalKey] = { value: seed };
+  }
+  return store[globalKey]!;
+}
+
+export function createSingletonStore<T>(
+  key: string,
+  seed: T,
+): SingletonStore<T> {
+  const store = globalSingleton<T>(key, seed);
+
+  return {
+    async get() {
+      return { ...store.value };
+    },
+    async update(patch) {
+      store.value = { ...store.value, ...patch };
+      return { ...store.value };
+    },
+  };
+}
+
+export const siteSettingsStore = createSingletonStore<SiteSettings>(
+  "site-settings",
+  seedSiteSettings(),
 );

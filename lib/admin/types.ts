@@ -77,7 +77,15 @@ export interface RessourceAdmin extends Ressource, AdminMeta {}
 export interface CategorieAdmin extends Categorie, AdminMeta {}
 
 export type AdminEntityType =
-  "fiche" | "analyse" | "glossaire" | "ressource" | "categorie";
+  "fiche" | "analyse" | "glossaire" | "ressource" | "categorie" | "parametres";
+
+/**
+ * Sous-ensemble d'`AdminEntityType` géré par un dépôt en liste (voir
+ * `lib/admin/actions.ts` — statut, duplication, suppression). Exclut
+ * `"parametres"`, un objet unique sans identifiant ni statut éditorial,
+ * jamais manipulé via ces actions génériques.
+ */
+export type ListEntityType = Exclude<AdminEntityType, "parametres">;
 
 /** N'importe quel contenu géré par l'admin, réduit à ce que les vues génériques (tableau, recherche) ont besoin de connaître. */
 export type AnyAdminContent =
@@ -118,4 +126,91 @@ export interface MediaAsset {
   tailleKo: number;
   ajouteLe: string;
   alt?: string;
+}
+
+/**
+ * Palette de couleurs du site — un jeu fermé de thèmes prêts à l'emploi
+ * plutôt qu'un sélecteur de couleur libre, pour garantir que chaque
+ * combinaison reste conforme au contraste WCAG AA déjà audité (voir
+ * `styles/globals.css`). Chaque valeur correspond à un jeu de surcharges
+ * des mêmes variables CSS (`--navy-*`, `--gold-*`, `--accent`), appliqué
+ * via `lib/color-palettes.ts` — aucun composant n'a besoin de connaître la
+ * palette active, ils continuent d'utiliser les mêmes classes Tailwind.
+ */
+export type ColorPalette =
+  "navy-or" | "navy-emeraude" | "ardoise-bordeaux" | "nuit-cuivre";
+
+export const COLOR_PALETTES: ColorPalette[] = [
+  "navy-or",
+  "navy-emeraude",
+  "ardoise-bordeaux",
+  "nuit-cuivre",
+];
+
+/**
+ * Média illustrant le héros de la page d'accueil. `"illustration"` garde
+ * le rendu vectoriel actuel (`OrbitalIllustration`) sans dépendre d'un
+ * fichier ; `"image"`/`"video"` affichent le fichier réellement déposé par
+ * la rédactrice via l'upload (voir `app/api/upload/route.ts`).
+ */
+export interface HeroMedia {
+  type: "illustration" | "image" | "video";
+  url?: string;
+}
+
+/**
+ * Libellés seulement — les destinations des deux boutons (`/comprendre`,
+ * `/veille-juridique`) restent fixes : ce sont les deux sections
+ * structurantes du site, pas des liens éditoriaux (voir
+ * `components/home/primary-actions.tsx`).
+ */
+export interface SiteSettingsHero {
+  headline: string;
+  description: string;
+  ctaPrimaryLabel: string;
+  ctaSecondaireLabel: string;
+  media: HeroMedia;
+}
+
+export interface SocialLink {
+  label: string;
+  href: string;
+}
+
+export interface SiteSettingsContact {
+  email: string;
+  liensSociaux: SocialLink[];
+}
+
+export interface SiteSettingsBranding {
+  /** Image de logo réellement uploadée — si absente, le logo actuel (icône + nom) reste inchangé. */
+  logoUrl?: string;
+  palette: ColorPalette;
+}
+
+/**
+ * Contenu des pages légales, en blocs riches (voir `AdminBlock` /
+ * `ContentBlocks`) — le même éditeur et le même rendu que les fiches et
+ * analyses, pas un système séparé pour ces deux pages.
+ */
+export interface SiteSettingsLegal {
+  mentionsLegales: AdminBlock[];
+  confidentialite: AdminBlock[];
+}
+
+/**
+ * Réglages globaux du site — un objet unique, pas une liste (voir
+ * `createSingletonStore` dans `lib/admin/repository.ts`), édité depuis
+ * `/admin/reglages` et lu par les pages publiques concernées (Logo,
+ * Hero, Footer, Contact, pages légales) pour que la rédactrice garde la
+ * main sur l'identité et le contenu institutionnel du site sans dépendre
+ * d'une intervention dans le code.
+ */
+export interface SiteSettings {
+  branding: SiteSettingsBranding;
+  hero: SiteSettingsHero;
+  contact: SiteSettingsContact;
+  legal: SiteSettingsLegal;
+  updatedAt: string;
+  updatedBy: string;
 }

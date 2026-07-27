@@ -10,6 +10,7 @@ import {
   FolderOpen,
   FolderTree,
   Image as ImageIcon,
+  Settings,
   ExternalLink,
   type LucideIcon,
 } from "lucide-react";
@@ -31,15 +32,22 @@ const NAV_ENTRIES: NavEntry[] = [
   { label: "Ressources", href: "/admin/ressources", icon: FolderOpen },
   { label: "Catégories", href: "/admin/categories", icon: FolderTree },
   { label: "Médiathèque", href: "/admin/medias", icon: ImageIcon },
+  { label: "Réglages", href: "/admin/reglages", icon: Settings },
 ];
 
 export interface AdminSidebarProps {
   className?: string;
   onNavigate?: () => void;
+  /** Logo déposé depuis /admin/reglages (voir `SiteSettings.branding.logoUrl`). */
+  logoUrl?: string;
 }
 
 /** Navigation principale de l'espace d'administration — identité visuellement distincte du site public (fond bleu nuit plein). */
-export function AdminSidebar({ className, onNavigate }: AdminSidebarProps) {
+export function AdminSidebar({
+  className,
+  onNavigate,
+  logoUrl,
+}: AdminSidebarProps) {
   const pathname = usePathname();
 
   function isActive(href: string) {
@@ -55,7 +63,7 @@ export function AdminSidebar({ className, onNavigate }: AdminSidebarProps) {
       )}
     >
       <div className="flex h-20 items-center px-6">
-        <Logo inverted />
+        <Logo inverted logoUrl={logoUrl} />
       </div>
 
       <nav aria-label="Navigation de l'administration" className="flex-1 px-3">

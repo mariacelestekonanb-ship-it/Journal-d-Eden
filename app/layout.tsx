@@ -4,6 +4,8 @@ import { Manrope, Inter } from "next/font/google";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { AnalyticsScripts } from "@/components/analytics/analytics-scripts";
 import { siteConfig, searchConsoleVerification } from "@/lib/site-config";
+import { siteSettingsStore } from "@/lib/admin/repository";
+import { buildPaletteStyle } from "@/lib/color-palettes";
 import "@/styles/globals.css";
 
 const manrope = Manrope({
@@ -66,11 +68,13 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await siteSettingsStore.get();
+
   return (
     <html
       lang="fr"
@@ -78,7 +82,16 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground flex min-h-full flex-col font-sans">
-        <SiteChrome>{children}</SiteChrome>
+        {/* Surcharge la palette de couleurs choisie dans /admin/reglages —
+            après l'import de styles/globals.css, donc l'emporte sur les
+            variables de couleur qu'elle redéfinit (voir
+            lib/color-palettes.ts) sans toucher au reste du thème. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: buildPaletteStyle(settings.branding.palette),
+          }}
+        />
+        <SiteChrome settings={settings}>{children}</SiteChrome>
         <AnalyticsScripts />
       </body>
     </html>

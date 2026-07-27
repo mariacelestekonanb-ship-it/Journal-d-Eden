@@ -4,6 +4,7 @@ import { glossaireTermes } from "@/data/glossaire";
 import { ressources } from "@/data/ressources";
 import { categories } from "@/data/categories";
 import { slugifyTerme } from "@/lib/format";
+import { siteConfig } from "@/lib/site-config";
 import type {
   AdminStatus,
   AnalyseAdmin,
@@ -12,6 +13,7 @@ import type {
   GlossaireTermeAdmin,
   Revision,
   RessourceAdmin,
+  SiteSettings,
 } from "@/lib/admin/types";
 
 const AUTEURS = ["Camille Dupuis", "Younes Haddad", "Léa Moreau"];
@@ -156,4 +158,38 @@ export function seedCategories(): CategorieAdmin[] {
       versions: versionsFactices(categorie.slug, updatedAt, auteur),
     };
   });
+}
+
+/**
+ * Réglages de départ : reprend exactement les valeurs codées en dur
+ * aujourd'hui dans les composants publics (voir `components/home/hero.tsx`,
+ * `lib/site-config.ts`) — éditer ces réglages sans les modifier ne change
+ * donc rien tant que la rédactrice n'a pas explicitement choisi une valeur
+ * différente.
+ */
+export function seedSiteSettings(): SiteSettings {
+  return {
+    branding: {
+      logoUrl: undefined,
+      palette: "navy-or",
+    },
+    hero: {
+      headline: "Le droit spatial et le droit du numérique accessibles à tous.",
+      description:
+        "Comprendre simplement les règles qui encadrent l'espace et les technologies numériques grâce à des fiches pédagogiques et une veille juridique.",
+      ctaPrimaryLabel: "Explorer les fiches",
+      ctaSecondaireLabel: "Découvrir la veille",
+      media: { type: "illustration" },
+    },
+    contact: {
+      email: siteConfig.email,
+      liensSociaux: [],
+    },
+    legal: {
+      mentionsLegales: [],
+      confidentialite: [],
+    },
+    updatedAt: new Date().toISOString().slice(0, 10),
+    updatedBy: "Bénédicte Konan",
+  };
 }

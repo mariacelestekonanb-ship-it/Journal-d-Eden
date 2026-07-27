@@ -34,6 +34,16 @@ Les points suivants sont documentés en toute transparence :
   jamais des clés privées ou des chaînes de connexion.
 - **Formulaire de contact non fonctionnel.** Aucune donnée utilisateur
   n'est aujourd'hui transmise ou stockée via `app/contact`.
+- **Upload de médias sur disque local.** `app/api/upload/route.ts` (logo et
+  média du héros, `/admin/reglages`) régénère un nom de fichier aléatoire
+  (`randomUUID()`, jamais le nom fourni par le client) et valide type/taille
+  avant écriture dans `public/uploads/`, mais reste un upload non
+  authentifié : `/admin/reglages` hérite donc directement de l'absence
+  d'authentification décrite ci-dessus. De plus, l'écriture sur disque local
+  ne fonctionne pas sur un hébergeur serverless à système de fichiers
+  éphémère/lecture seule (Vercel, Netlify) — un stockage objet (S3, Supabase
+  Storage, Cloudinary…) est requis avant toute mise en ligne réelle sur ce
+  type d'hébergeur (voir ROADMAP.md).
 
 ## En-têtes de sécurité
 

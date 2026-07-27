@@ -33,7 +33,7 @@ LexWatch est un site éditorial qui explique le droit spatial et le droit du num
 - **Glossaire** — un dictionnaire de notions avec définitions, explications et contenus associés.
 - **Ressources** — une sélection de textes officiels, rapports et guides.
 
-Le site public est entièrement statique/pré-rendu à partir de contenus versionnés dans `data/`. Un espace d'administration (`/admin`) simule un back-office éditorial complet (édition riche, workflow de statuts, médiathèque, SEO par page) sur un **dépôt de données en mémoire**, pensé pour être remplacé par une vraie base de données sans changer l'interface (voir [Architecture](#architecture)).
+Le site public est entièrement statique/pré-rendu à partir de contenus versionnés dans `data/`. Un espace d'administration (`/admin`) simule un back-office éditorial complet (édition riche, workflow de statuts, médiathèque, SEO par page) sur un **dépôt de données en mémoire**, pensé pour être remplacé par une vraie base de données sans changer l'interface (voir [Architecture](#architecture)). Une page `/admin/reglages` fait exception à cette séparation : identité visuelle (logo, palette de couleurs), héros de la page d'accueil, coordonnées de contact et contenu des pages légales sont bien lus par le site public (voir plus bas).
 
 ## Objectifs
 
@@ -61,7 +61,8 @@ Le site public est entièrement statique/pré-rendu à partir de contenus versio
 Points clés :
 
 - **App Router (Next.js 15)** : pages publiques majoritairement en Server Components, données lues directement depuis `data/*.ts` (pas d'appel réseau). Les pages avec filtres interactifs (Comprendre, Veille, Glossaire) pré-filtrent côté serveur via `searchParams`, puis délèguent l'interaction fine à un explorateur client (`*-explorer.tsx`).
-- **Le back-office et le site public sont architecturalement séparés.** L'admin lit et écrit dans un dépôt en mémoire (`lib/admin/repository.ts`, adossé à `globalThis` pour survivre au rechargement à chaud en dev) ; les pages publiques lisent `data/*.ts`. C'est un choix assumé de cette phase : brancher une vraie base de données ne touche que `lib/admin/repository.ts` et les fonctions de `lib/content.ts`, jamais les composants.
+- **Le back-office et le site public sont architecturalement séparés**, à une exception près. L'admin lit et écrit dans un dépôt en mémoire (`lib/admin/repository.ts`, adossé à `globalThis` pour survivre au rechargement à chaud en dev) ; les pages publiques lisent `data/*.ts`. C'est un choix assumé de cette phase : brancher une vraie base de données ne touche que `lib/admin/repository.ts` et les fonctions de `lib/content.ts`, jamais les composants. **Exception** : `/admin/reglages` édite un objet singleton (`SiteSettings`, `lib/admin/repository.ts` → `siteSettingsStore`) que le site public lit directement (`app/layout.tsx`, `app/page.tsx`, `app/contact/page.tsx`, pages légales, `Footer`) — logo, palette, héros, contact et pages légales sont donc réellement modifiables sans redéploiement, contrairement au reste du contenu éditorial.
+- **Upload de médias (`/admin/reglages`)** : le logo et le média du héros sont envoyés via `app/api/upload/route.ts` et écrits sur le disque local (`public/uploads/`). Cela fonctionne en développement et sur un serveur Node traditionnel, mais **pas** sur un hébergeur serverless à système de fichiers éphémère/lecture seule (Vercel, Netlify) — voir [SECURITY.md](./SECURITY.md) et [ROADMAP.md](./ROADMAP.md) pour la bascule nécessaire vers un stockage objet (S3, Supabase Storage, Cloudinary…) avant une mise en ligne réelle.
 - **Design system centralisé** (`components/ui`, tokens dans `styles/globals.css`) : toutes les couleurs, rayons et ombres passent par des tokens Tailwind v4 (`@theme inline`), aucune couleur ni taille codée en dur dans les composants.
 - **SEO transversal** : un générateur de métadonnées unique (`lib/metadata.ts`), des builders JSON-LD par type de contenu (`lib/json-ld.ts`), un fil d'Ariane qui génère son propre `BreadcrumbList`, des sitemaps par catégorie et un sitemap plat, `robots.ts` interdisant `/admin`.
 
@@ -152,7 +153,9 @@ app/                       Routes (App Router)
     layout.tsx              Layout racine (polices, metadata, JSON-LD global)
     error.tsx, global-error.tsx, not-found.tsx, loading.tsx   Écrans d'erreur/chargement racine
   admin/                    Back-office (fiches, veille, glossaire, ressources,
-                             catégories, médiathèque) — voir lib/admin/
+                             catégories, médiathèque, réglages du site) — voir lib/admin/
+  api/upload/               Upload de fichiers pour /admin/reglages (disque local,
+                             voir la limitation ci-dessus)
 
 components/
   ui/                       Design system (Button, Card, Badge, Tag, Input, Select,
@@ -212,6 +215,7 @@ Voir [CONTRIBUTING.md](./CONTRIBUTING.md) pour le workflow de contribution, et [
 - [ ] Variables d'environnement analytics/Search Console renseignées si ces outils sont utilisés (voir `.env.example`).
 - [ ] **Authentification réelle mise en place sur `/admin`** — l'espace d'administration n'a aujourd'hui aucun contrôle d'accès (voir [SECURITY.md](./SECURITY.md)) : à ne jamais exposer publiquement en l'état.
 - [ ] Persistance réelle branchée sur `lib/admin/repository.ts` — le dépôt actuel est en mémoire et perd toute modification au redémarrage du serveur.
+- [ ] **Stockage objet réel branché sur `app/api/upload/route.ts`** (S3, Supabase Storage, Cloudinary…) avant toute mise en ligne sur un hébergeur serverless — l'upload sur disque local (`public/uploads/`) ne survit pas à un système de fichiers éphémère/lecture seule.
 - [ ] `npm run typecheck`, `npm run lint`, `npm run format:check` et `npm run build` passent sans erreur.
 - [ ] En-têtes de sécurité vérifiés en environnement réel (voir `next.config.ts` et [SECURITY.md](./SECURITY.md)).
 - [ ] Icônes PWA statiques (192×192, 512×512) ajoutées si l'installation en PWA est souhaitée.

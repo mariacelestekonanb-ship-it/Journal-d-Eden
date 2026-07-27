@@ -4,6 +4,7 @@ import {
   BookMarked,
   FolderOpen,
   FolderTree,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ export const ENTITY_PATHS: Record<AdminEntityType, string> = {
   glossaire: "glossaire",
   ressource: "ressources",
   categorie: "categories",
+  parametres: "reglages",
 };
 
 export const ENTITY_LABELS: Record<AdminEntityType, string> = {
@@ -35,6 +37,7 @@ export const ENTITY_LABELS: Record<AdminEntityType, string> = {
   glossaire: "Glossaire",
   ressource: "Ressource",
   categorie: "Catégorie",
+  parametres: "Réglages",
 };
 
 export const ENTITY_ICONS: Record<AdminEntityType, LucideIcon> = {
@@ -43,6 +46,7 @@ export const ENTITY_ICONS: Record<AdminEntityType, LucideIcon> = {
   glossaire: BookMarked,
   ressource: FolderOpen,
   categorie: FolderTree,
+  parametres: Settings,
 };
 
 /** Titre lisible d'un contenu admin, quelle que soit l'entité réelle derrière (`question`, `terme` ou `titre`). */
@@ -54,12 +58,13 @@ export function titreDe(item: AnyAdminContent): string {
 
 /**
  * Le module Catégories n'a pas de page de détail dédiée (voir
- * `lib/admin/actions.ts` — Créer/Renommer/Fusionner s'y font en place) :
- * son lien pointe toujours vers la liste.
+ * `lib/admin/actions.ts` — Créer/Renommer/Fusionner s'y font en place) et
+ * les Réglages sont un objet unique, pas une liste : ces deux entités
+ * pointent toujours vers leur unique page plutôt que vers `.../<id>`.
  */
 function hrefDe(entity: AdminEntityType, id: string): string {
-  return entity === "categorie"
-    ? `/admin/categories`
+  return entity === "categorie" || entity === "parametres"
+    ? `/admin/${ENTITY_PATHS[entity]}`
     : `/admin/${ENTITY_PATHS[entity]}/${id}`;
 }
 

@@ -24,12 +24,17 @@ import {
   preloadSearchDialog,
 } from "@/components/search/global-search";
 
+export interface HeaderProps {
+  /** Logo déposé depuis /admin/reglages (voir `SiteSettings.branding.logoUrl`). */
+  logoUrl?: string;
+}
+
 /**
  * En-tête global de la plateforme : navigation desktop, recherche globale et
  * menu tiroir sur mobile. Sticky avec fond flouté et ombre discrète dès que
  * la page défile (voir `useScrolled`).
  */
-export function Header() {
+export function Header({ logoUrl }: HeaderProps) {
   const pathname = usePathname();
   const isScrolled = useScrolled();
   const mobileNav = useDisclosure();
@@ -53,7 +58,7 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
-        <Logo />
+        <Logo logoUrl={logoUrl} />
 
         <nav
           aria-label="Navigation principale"

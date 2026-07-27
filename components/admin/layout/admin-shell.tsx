@@ -20,6 +20,8 @@ import type { AdminUser } from "@/lib/admin/auth";
 export interface AdminShellProps {
   user: AdminUser;
   children: ReactNode;
+  /** Logo déposé depuis /admin/reglages (voir `SiteSettings.branding.logoUrl`). */
+  logoUrl?: string;
 }
 
 /**
@@ -28,7 +30,7 @@ export interface AdminShellProps {
  * du site public), barre supérieure avec recherche globale et emplacement
  * utilisateur.
  */
-export function AdminShell({ user, children }: AdminShellProps) {
+export function AdminShell({ user, children, logoUrl }: AdminShellProps) {
   const mobileNav = useDisclosure();
 
   return (
@@ -39,7 +41,10 @@ export function AdminShell({ user, children }: AdminShellProps) {
       >
         Aller au contenu principal
       </a>
-      <AdminSidebar className="hidden w-64 shrink-0 lg:flex" />
+      <AdminSidebar
+        logoUrl={logoUrl}
+        className="hidden w-64 shrink-0 lg:flex"
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-border bg-background/95 sticky top-0 z-30 flex h-16 shrink-0 items-center gap-3 border-b px-4 backdrop-blur sm:px-6">
@@ -62,7 +67,11 @@ export function AdminShell({ user, children }: AdminShellProps) {
               <SheetHeader className="sr-only">
                 <SheetTitle>Navigation de l&apos;administration</SheetTitle>
               </SheetHeader>
-              <AdminSidebar className="h-full" onNavigate={mobileNav.close} />
+              <AdminSidebar
+                logoUrl={logoUrl}
+                className="h-full"
+                onNavigate={mobileNav.close}
+              />
             </SheetContent>
           </Sheet>
 

@@ -33,29 +33,40 @@ cette phase focalisée sur l'expérience éditoriale et publique :
    (perdu au redémarrage). Le remplacer par une vraie base de données ne
    touche que ce fichier et les server actions de `lib/admin/*-actions.ts` —
    aucun composant à modifier.
-3. **Connexion du back-office au site public.** Aujourd'hui, le contenu
-   édité dans `/admin` n'est jamais lu par les pages publiques (qui lisent
-   `data/*.ts`). Faire de l'admin la source de vérité réelle du site public
-   est le chantier qui donne tout son sens à l'espace de rédaction.
-4. **Page Ressources publique complète.** La page liste aujourd'hui un état
+3. **Connexion du back-office au site public.** Le contenu édité dans
+   `/admin` (fiches, veille, glossaire, ressources) n'est toujours pas lu par
+   les pages publiques (qui lisent `data/*.ts`) — à l'exception des réglages
+   du site (`/admin/reglages` → `SiteSettings`, voir README), bien lus par le
+   site public depuis cette RC. Faire de l'admin la source de vérité réelle
+   pour le reste du contenu éditorial est le chantier qui donne tout son sens
+   à l'espace de rédaction.
+4. **Stockage objet réel pour les médias uploadés.** Le logo et le média du
+   héros (`/admin/reglages`) sont écrits sur le disque local
+   (`app/api/upload/route.ts`, `public/uploads/`) : cela fonctionne en
+   développement et sur un serveur Node traditionnel, mais pas sur un
+   hébergeur serverless à système de fichiers éphémère/lecture seule (Vercel,
+   Netlify). Priorité avant toute mise en ligne réelle sur ce type
+   d'hébergeur : brancher un stockage objet (S3, Supabase Storage,
+   Cloudinary…) dans cette même route.
+5. **Page Ressources publique complète.** La page liste aujourd'hui un état
    "à venir" ; les données existent (`data/ressources.ts`) et le CRUD admin
    est fonctionnel — il ne manque qu'un explorateur public du même niveau
    que Comprendre/Veille/Glossaire.
-5. **Formulaire de contact fonctionnel.** Le formulaire est visuellement
+6. **Formulaire de contact fonctionnel.** Le formulaire est visuellement
    complet mais son bouton d'envoi est désactivé (aucun traitement serveur
    ni service d'e-mail branché).
-6. **Tests automatisés.** Aucun test unitaire, d'intégration ou end-to-end
+7. **Tests automatisés.** Aucun test unitaire, d'intégration ou end-to-end
    n'existe à ce jour. À prioriser dès qu'une vraie base de données est
    branchée (le risque de régression silencieuse augmente fortement).
-7. **PWA activée.** Le manifeste et les favicons dynamiques existent ; il
+8. **PWA activée.** Le manifeste et les favicons dynamiques existent ; il
    manque les icônes statiques 192×192/512×512 (maskables) et un service
    worker si le mode hors-ligne est souhaité.
-8. **Analytics et Search Console réels.** L'intégration existe
+9. **Analytics et Search Console réels.** L'intégration existe
    (`components/analytics/analytics-scripts.tsx`) mais n'est activée par
    aucun identifiant en l'état — à renseigner via les variables
    d'environnement documentées dans `.env.example`.
-9. **Domaine et identité sociale réels.** `siteConfig.url` et
-   `siteConfig.twitterHandle` sont des valeurs d'exemple.
+10. **Domaine et identité sociale réels.** `siteConfig.url` et
+    `siteConfig.twitterHandle` sont des valeurs d'exemple.
 
 ## Pistes V2 (au-delà de la remise à niveau ci-dessus)
 

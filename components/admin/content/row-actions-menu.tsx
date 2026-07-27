@@ -29,10 +29,10 @@ import {
   duplicateContent,
   deleteContent,
 } from "@/lib/admin/actions";
-import type { AdminEntityType, AdminStatus } from "@/lib/admin/types";
+import type { AdminStatus, ListEntityType } from "@/lib/admin/types";
 
 export interface RowActionsMenuProps {
-  entity: AdminEntityType;
+  entity: ListEntityType;
   id: string;
   titre: string;
   status: AdminStatus;

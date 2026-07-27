@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { AdminShell } from "@/components/admin/layout/admin-shell";
 import { getCurrentAdminUser } from "@/lib/admin/auth";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 // L'admin ne doit jamais être indexé — remplace le `robots` du layout
 // racine pour tout ce qui vit sous /admin (fusion Next.js par simple
@@ -26,7 +27,14 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentAdminUser();
+  const [user, settings] = await Promise.all([
+    getCurrentAdminUser(),
+    siteSettingsStore.get(),
+  ]);
 
-  return <AdminShell user={user}>{children}</AdminShell>;
+  return (
+    <AdminShell user={user} logoUrl={settings.branding.logoUrl}>
+      {children}
+    </AdminShell>
+  );
 }

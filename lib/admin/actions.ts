@@ -13,11 +13,7 @@ import {
 import { ENTITY_PATHS } from "@/lib/admin/content";
 import { logActivity } from "@/lib/admin/activity-log";
 import { getCurrentAdminUser } from "@/lib/admin/auth";
-import type {
-  AdminEntityType,
-  AdminMeta,
-  AdminStatus,
-} from "@/lib/admin/types";
+import type { AdminMeta, AdminStatus, ListEntityType } from "@/lib/admin/types";
 
 const REPOSITORIES = {
   fiche: fichesRepository,
@@ -41,11 +37,11 @@ const STATUS_ACTION_LABELS: Record<AdminStatus, string> = {
  * champs communs d'`AdminMeta` (statut, date, versions), d'où ce passage
  * par un dépôt vu à travers cette seule interface commune.
  */
-function repositoryFor(entity: AdminEntityType): Repository<AdminMeta> {
+function repositoryFor(entity: ListEntityType): Repository<AdminMeta> {
   return REPOSITORIES[entity] as unknown as Repository<AdminMeta>;
 }
 
-function revalidateEntity(entity: AdminEntityType, id?: string) {
+function revalidateEntity(entity: ListEntityType, id?: string) {
   revalidatePath(`/admin/${ENTITY_PATHS[entity]}`);
   if (id) revalidatePath(`/admin/${ENTITY_PATHS[entity]}/${id}`);
   revalidatePath("/admin");
@@ -53,7 +49,7 @@ function revalidateEntity(entity: AdminEntityType, id?: string) {
 
 /** Publier, dépublier, envoyer en relecture, marquer à corriger ou archiver — un seul point d'entrée pour tout changement de statut. */
 export async function setContentStatus(
-  entity: AdminEntityType,
+  entity: ListEntityType,
   id: string,
   status: AdminStatus,
   titre?: string,
@@ -75,7 +71,7 @@ export async function setContentStatus(
 }
 
 export async function duplicateContent(
-  entity: AdminEntityType,
+  entity: ListEntityType,
   id: string,
   titre?: string,
 ): Promise<string | undefined> {
@@ -97,7 +93,7 @@ export async function duplicateContent(
 }
 
 export async function deleteContent(
-  entity: AdminEntityType,
+  entity: ListEntityType,
   id: string,
   titre?: string,
 ) {

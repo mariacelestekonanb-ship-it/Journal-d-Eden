@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/lib/site-config";
 import { buildMetadata } from "@/lib/metadata";
 import { buildWebPageJsonLd } from "@/lib/json-ld";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 const TITLE = "Contact";
 const DESCRIPTION =
@@ -24,17 +25,26 @@ export const metadata: Metadata = buildMetadata({
   path: "/contact",
 });
 
-const infos = [
-  { icon: Mail, titre: "E-mail", valeur: siteConfig.email },
-  { icon: Clock, titre: "Délai de réponse", valeur: "Sous 48 heures ouvrées" },
-  {
-    icon: MapPin,
-    titre: "Zone de couverture",
-    valeur: "Union européenne et international",
-  },
-];
+export default async function ContactPage() {
+  const settings = await siteSettingsStore.get();
+  const infos = [
+    {
+      icon: Mail,
+      titre: "E-mail",
+      valeur: settings.contact.email || siteConfig.email,
+    },
+    {
+      icon: Clock,
+      titre: "Délai de réponse",
+      valeur: "Sous 48 heures ouvrées",
+    },
+    {
+      icon: MapPin,
+      titre: "Zone de couverture",
+      valeur: "Union européenne et international",
+    },
+  ];
 
-export default function ContactPage() {
   return (
     <>
       <JsonLd

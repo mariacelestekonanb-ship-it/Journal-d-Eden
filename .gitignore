@@ -34,6 +34,12 @@ yarn-error.log*
 .env*
 !.env.example
 
+# fichiers uploadés depuis l'admin (voir app/api/upload/route.ts) — contenu
+# généré à l'exécution, jamais versionné, comme le serait un vrai stockage
+# objet (S3, Supabase Storage…) une fois branché
+/public/uploads/*
+!/public/uploads/.gitkeep
+
 # vercel
 .vercel
 

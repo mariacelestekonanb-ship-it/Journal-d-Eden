@@ -8,19 +8,35 @@ import { Paragraph } from "@/components/ui/paragraph";
 import { PrimaryActions } from "@/components/home/primary-actions";
 import { OrbitalIllustration } from "@/components/home/orbital-illustration";
 import { usePrefersReducedMotion } from "@/hooks/use-media-query";
+import type { HeroMedia } from "@/lib/admin/types";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0 },
 };
 
+export interface HeroProps {
+  headline?: string;
+  description?: string;
+  ctaPrimaryLabel?: string;
+  ctaSecondaireLabel?: string;
+  /** Image ou vidéo déposée depuis /admin/reglages — l'illustration animée reste affichée tant qu'aucun fichier n'est renseigné. */
+  media?: HeroMedia;
+}
+
 /**
  * Hero de la page d'accueil : promesse de la plateforme à gauche,
- * illustration orbitale abstraite à droite. Occupe environ 80% de la
- * hauteur d'écran. Les animations d'entrée respectent
- * `prefers-reduced-motion`.
+ * illustration orbitale abstraite (ou média personnalisé, voir
+ * `/admin/reglages`) à droite. Occupe environ 80% de la hauteur d'écran.
+ * Les animations d'entrée respectent `prefers-reduced-motion`.
  */
-export function Hero() {
+export function Hero({
+  headline = "Le droit spatial et le droit du numérique accessibles à tous.",
+  description = "Comprendre simplement les règles qui encadrent l'espace et les technologies numériques grâce à des fiches pédagogiques et une veille juridique.",
+  ctaPrimaryLabel,
+  ctaSecondaireLabel,
+  media = { type: "illustration" },
+}: HeroProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const transition = prefersReducedMotion
     ? { duration: 0 }
@@ -43,7 +59,7 @@ export function Hero() {
             transition={transition}
           >
             <Heading as="h1" size="xl" className="text-white">
-              Le droit spatial et le droit du numérique accessibles à tous.
+              {headline}
             </Heading>
           </motion.div>
 
@@ -61,9 +77,7 @@ export function Hero() {
               size="lg"
               className="mt-6 max-w-xl text-gray-300"
             >
-              Comprendre simplement les règles qui encadrent l&apos;espace et
-              les technologies numériques grâce à des fiches pédagogiques et une
-              veille juridique.
+              {description}
             </Paragraph>
           </motion.div>
 
@@ -77,7 +91,10 @@ export function Hero() {
             }}
             className="mt-10"
           >
-            <PrimaryActions />
+            <PrimaryActions
+              primaryLabel={ctaPrimaryLabel}
+              secondaryLabel={ctaSecondaireLabel}
+            />
           </motion.div>
         </div>
 
@@ -89,9 +106,44 @@ export function Hero() {
           transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.25 }}
           className="mx-auto hidden w-full max-w-md md:block lg:max-w-lg"
         >
-          <OrbitalIllustration />
+          <HeroMediaFrame media={media} />
         </motion.div>
       </div>
     </Section>
   );
+}
+
+/** Illustration par défaut, ou le média réellement déposé depuis les réglages — même cadre visuel dans les deux cas. */
+function HeroMediaFrame({ media }: { media: HeroMedia }) {
+  if (media.type === "image" && media.url) {
+    return (
+      <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] border border-white/10">
+        {/* eslint-disable-next-line @next/next/no-img-element -- fichier réellement uploadé sur disque local (voir app/api/upload/route.ts), pas une image distante à optimiser. */}
+        <img
+          src={media.url}
+          alt=""
+          aria-hidden
+          className="size-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  if (media.type === "video" && media.url) {
+    return (
+      <div className="relative aspect-square w-full overflow-hidden rounded-[2.5rem] border border-white/10">
+        <video
+          src={media.url}
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden
+          className="size-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  return <OrbitalIllustration />;
 }

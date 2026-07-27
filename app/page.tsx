@@ -8,6 +8,7 @@ import { LatestInsights } from "@/components/home/latest-insights";
 import { CtaSection } from "@/components/home/cta-section";
 import { siteConfig } from "@/lib/site-config";
 import { buildMetadata } from "@/lib/metadata";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 export const metadata: Metadata = {
   ...buildMetadata({
@@ -21,10 +22,18 @@ export const metadata: Metadata = {
   title: { absolute: `${siteConfig.name} — ${siteConfig.tagline}` },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const settings = await siteSettingsStore.get();
+
   return (
     <>
-      <Hero />
+      <Hero
+        headline={settings.hero.headline}
+        description={settings.hero.description}
+        ctaPrimaryLabel={settings.hero.ctaPrimaryLabel}
+        ctaSecondaireLabel={settings.hero.ctaSecondaireLabel}
+        media={settings.hero.media}
+      />
       <SearchSection />
       <PopularQuestions />
       <ThemeExplorer />
