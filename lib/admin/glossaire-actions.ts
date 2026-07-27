@@ -6,8 +6,8 @@ import { glossaireRepository } from "@/lib/admin/repository";
 import { logActivity } from "@/lib/admin/activity-log";
 import { getCurrentAdminUser } from "@/lib/admin/auth";
 import { slugifyTerme } from "@/lib/format";
-import type { AdminStatus } from "@/lib/admin/types";
-import type { ContenusAssocies } from "@/types";
+import type { AdminStatus, SeoMeta } from "@/lib/admin/types";
+import type { ContentBlock, ContenusAssocies } from "@/types";
 
 export interface TermeFormInput {
   /** Absent = création. */
@@ -15,10 +15,12 @@ export interface TermeFormInput {
   terme: string;
   definition: string;
   theme: string;
+  explication: ContentBlock[];
   voirAussi: string[];
   fichesAssociees: string[];
   analysesAssociees: string[];
   status: AdminStatus;
+  seo?: SeoMeta;
 }
 
 function revalidateGlossaire(id?: string) {

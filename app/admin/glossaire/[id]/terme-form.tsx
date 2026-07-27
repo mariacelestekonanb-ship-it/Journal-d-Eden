@@ -11,19 +11,30 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/ui/tag";
 import { StatusBadge } from "@/components/admin/content/status-badge";
 import { ConfirmDialog } from "@/components/admin/content/confirm-dialog";
 import { SectionTabs } from "@/components/admin/content/section-tabs";
 import { StringListField } from "@/components/admin/content/string-list-field";
+import { ValidationSummary } from "@/components/admin/content/validation-summary";
+import { AutosaveIndicator } from "@/components/admin/content/autosave-indicator";
+import { PreviewDialog } from "@/components/admin/content/preview-dialog";
+import { SeoPanel } from "@/components/admin/content/seo-panel";
+import { WritingStats } from "@/components/admin/content/writing-stats";
+import { BlockEditor } from "@/components/admin/editor/block-editor";
 import { RevisionHistory } from "@/components/admin/revisions/revision-history";
+import { ContentBlocks } from "@/components/shared/content-blocks";
 import { saveTerme } from "@/lib/admin/glossaire-actions";
 import { deleteContent } from "@/lib/admin/actions";
+import { useAutosave } from "@/hooks/use-autosave";
 import { themes } from "@/data/themes";
 import {
   ADMIN_STATUSES,
   type AdminStatus,
   type GlossaireTermeAdmin,
+  type SeoMeta,
 } from "@/lib/admin/types";
+import type { ContentBlock } from "@/types";
 
 export interface TermeFormProps {
   terme: GlossaireTermeAdmin | null;
@@ -42,9 +53,11 @@ interface FormState {
   definition: string;
   theme: string;
   status: AdminStatus;
+  explication: ContentBlock[];
   voirAussi: string[];
   fichesAssociees: string[];
   analysesAssociees: string[];
+  seo: SeoMeta;
 }
 
 function toFormState(terme: GlossaireTermeAdmin | null): FormState {
@@ -54,9 +67,11 @@ function toFormState(terme: GlossaireTermeAdmin | null): FormState {
       definition: terme.definition,
       theme: terme.theme,
       status: terme.status,
+      explication: terme.explication ?? [],
       voirAussi: terme.voirAussi ?? [],
       fichesAssociees: terme.contenusAssocies?.fiches ?? [],
       analysesAssociees: terme.contenusAssocies?.analyses ?? [],
+      seo: terme.seo ?? {},
     };
   }
 
@@ -65,9 +80,11 @@ function toFormState(terme: GlossaireTermeAdmin | null): FormState {
     definition: "",
     theme: themes[0]?.slug ?? "",
     status: "brouillon",
+    explication: [],
     voirAussi: [],
     fichesAssociees: [],
     analysesAssociees: [],
+    seo: {},
   };
 }
 
@@ -76,13 +93,24 @@ export function TermeForm({ terme }: TermeFormProps) {
   const router = useRouter();
   const isNew = terme === null;
   const [form, setForm] = React.useState<FormState>(() => toFormState(terme));
-  const [tab, setTab] = React.useState<"contenu" | "historique">("contenu");
+  const [tab, setTab] = React.useState<"contenu" | "seo" | "historique">(
+    "contenu",
+  );
   const [isPending, startTransition] = React.useTransition();
   const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [previewOpen, setPreviewOpen] = React.useState(false);
+
+  const { lastSavedAt } = useAutosave(`terme-${terme?.id ?? "nouveau"}`, form);
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
+
+  const checks = [
+    { label: "Un terme", valid: form.terme.trim().length > 0 },
+    { label: "Une définition", valid: form.definition.trim().length > 0 },
+  ];
+  const isValid = checks.every((check) => check.valid);
 
   function handleSave(status?: AdminStatus) {
     startTransition(async () => {
@@ -122,17 +150,26 @@ export function TermeForm({ terme }: TermeFormProps) {
           <Heading as="h1" size="lg">
             {isNew ? "Nouveau terme" : form.terme || "Sans titre"}
           </Heading>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-3">
             <StatusBadge status={form.status} />
             {!isNew ? (
               <Paragraph tone="muted" size="sm">
                 Mis à jour le {terme.updatedAt} par {terme.updatedBy}
               </Paragraph>
             ) : null}
+            <AutosaveIndicator lastSavedAt={lastSavedAt} />
           </div>
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPreviewOpen(true)}
+          >
+            <Eye aria-hidden />
+            Aperçu
+          </Button>
           {!isNew && terme.status === "publie" ? (
             <Button variant="outline" size="sm" asChild>
               <a
@@ -140,8 +177,7 @@ export function TermeForm({ terme }: TermeFormProps) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <Eye aria-hidden />
-                Prévisualiser
+                Voir en ligne
               </a>
             </Button>
           ) : null}
@@ -179,7 +215,7 @@ export function TermeForm({ terme }: TermeFormProps) {
             <Button
               variant="accent"
               size="sm"
-              disabled={isPending || form.terme.trim().length === 0}
+              disabled={isPending || !isValid}
               onClick={() => handleSave("publie")}
             >
               Publier
@@ -188,25 +224,36 @@ export function TermeForm({ terme }: TermeFormProps) {
         </div>
       </div>
 
-      {isNew ? (
-        <TermeContentFields form={form} set={set} />
-      ) : (
-        <div className="space-y-6">
-          <SectionTabs
-            tabs={[
-              { id: "contenu", label: "Contenu" },
-              { id: "historique", label: "Historique" },
-            ]}
-            active={tab}
-            onChange={setTab}
+      <ValidationSummary checks={checks} />
+
+      <div className="space-y-6">
+        <SectionTabs
+          tabs={[
+            { id: "contenu", label: "Contenu" },
+            { id: "seo", label: "SEO" },
+            ...(isNew
+              ? []
+              : [{ id: "historique" as const, label: "Historique" }]),
+          ]}
+          active={tab}
+          onChange={setTab}
+        />
+        {tab === "contenu" ? (
+          <TermeContentFields form={form} set={set} />
+        ) : tab === "seo" ? (
+          <SeoPanel
+            value={form.seo}
+            onChange={(seo) => set("seo", seo)}
+            fallbackTitle={
+              form.terme ? `${form.terme} — Glossaire` : "Nouveau terme"
+            }
+            fallbackDescription={form.definition}
+            path="/glossaire"
           />
-          {tab === "contenu" ? (
-            <TermeContentFields form={form} set={set} />
-          ) : (
-            <RevisionHistory versions={terme.versions} />
-          )}
-        </div>
-      )}
+        ) : terme ? (
+          <RevisionHistory versions={terme.versions} />
+        ) : null}
+      </div>
 
       <ConfirmDialog
         open={deleteOpen}
@@ -217,6 +264,10 @@ export function TermeForm({ terme }: TermeFormProps) {
         onConfirm={handleDelete}
         isPending={isPending}
       />
+
+      <PreviewDialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <TermePreview form={form} />
+      </PreviewDialog>
     </div>
   );
 }
@@ -273,6 +324,22 @@ function TermeContentFields({ form, set }: TermeContentFieldsProps) {
       </section>
 
       <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <Heading as="h2" size="sm">
+            Explication
+          </Heading>
+          <WritingStats blocks={form.explication} />
+        </div>
+        <Paragraph tone="muted" size="sm">
+          Développement optionnel, affiché sous la définition courte.
+        </Paragraph>
+        <BlockEditor
+          value={form.explication}
+          onChange={(blocks) => set("explication", blocks)}
+        />
+      </section>
+
+      <section className="space-y-3">
         <Heading as="h2" size="sm">
           Voir aussi
         </Heading>
@@ -308,5 +375,36 @@ function TermeContentFields({ form, set }: TermeContentFieldsProps) {
         />
       </section>
     </div>
+  );
+}
+
+/** Aperçu du rendu public — définition, explication et renvois, tels qu'affichés dans `DefinitionPreview`. */
+function TermePreview({ form }: { form: FormState }) {
+  return (
+    <article className="space-y-5">
+      <Heading as="h1" size="lg">
+        {form.terme || "Sans titre"}
+      </Heading>
+      <Paragraph tone="muted">
+        {form.definition || "Aucune définition pour le moment."}
+      </Paragraph>
+
+      {form.explication.length > 0 ? (
+        <ContentBlocks blocks={form.explication} />
+      ) : null}
+
+      {form.voirAussi.length > 0 ? (
+        <div>
+          <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+            Voir aussi
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {form.voirAussi.map((autreTerme) => (
+              <Tag key={autreTerme}>{autreTerme}</Tag>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </article>
   );
 }

@@ -6,7 +6,7 @@ import { analysesRepository } from "@/lib/admin/repository";
 import { logActivity } from "@/lib/admin/activity-log";
 import { getCurrentAdminUser } from "@/lib/admin/auth";
 import { slugifyTerme } from "@/lib/format";
-import type { AdminStatus } from "@/lib/admin/types";
+import type { AdminStatus, Couverture, SeoMeta } from "@/lib/admin/types";
 import type {
   ContentBlock,
   Domaine,
@@ -38,6 +38,8 @@ export interface AnalyseFormInput {
   impact: ImpactAnalyse;
   referencesOfficielles: ReferenceOfficielle[];
   status: AdminStatus;
+  couverture?: Couverture;
+  seo?: SeoMeta;
 }
 
 function revalidateVeille(id?: string) {

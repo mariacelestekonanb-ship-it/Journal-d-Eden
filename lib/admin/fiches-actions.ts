@@ -6,7 +6,7 @@ import { fichesRepository } from "@/lib/admin/repository";
 import { logActivity } from "@/lib/admin/activity-log";
 import { getCurrentAdminUser } from "@/lib/admin/auth";
 import { slugifyTerme } from "@/lib/format";
-import type { AdminStatus } from "@/lib/admin/types";
+import type { AdminStatus, Couverture, SeoMeta } from "@/lib/admin/types";
 import type {
   ContentBlock,
   Domaine,
@@ -30,6 +30,8 @@ export interface FicheFormInput {
   tempsLecture: number;
   dateMiseAJour: string;
   status: AdminStatus;
+  couverture?: Couverture;
+  seo?: SeoMeta;
 }
 
 function revalidateFiches(id?: string) {

@@ -1,15 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Image as ImageIcon,
-  Shapes,
-  FileText,
-  File,
-  Palette,
-  ExternalLink,
-  type LucideIcon,
-} from "lucide-react";
+import { Image as ImageIcon, ExternalLink } from "lucide-react";
 
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
@@ -17,31 +9,15 @@ import { SearchInput } from "@/components/ui/search-input";
 import { Tag } from "@/components/ui/tag";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/format";
+import {
+  MEDIA_TYPE_ICONS,
+  MEDIA_TYPE_LABELS,
+  formatTailleMedia,
+} from "@/lib/admin/media";
 import type { MediaAsset, MediaType } from "@/lib/admin/types";
 
 export interface MediaGalleryProps {
   items: MediaAsset[];
-}
-
-const TYPE_LABELS: Record<MediaType, string> = {
-  image: "Images",
-  logo: "Logos",
-  pdf: "PDF",
-  document: "Documents",
-  illustration: "Illustrations",
-};
-
-const TYPE_ICONS: Record<MediaType, LucideIcon> = {
-  image: ImageIcon,
-  logo: Shapes,
-  pdf: FileText,
-  document: File,
-  illustration: Palette,
-};
-
-function formatTaille(ko: number): string {
-  if (ko < 1024) return `${ko} Ko`;
-  return `${(ko / 1024).toFixed(1)} Mo`;
 }
 
 /**
@@ -94,14 +70,14 @@ export function MediaGallery({ items }: MediaGalleryProps) {
           >
             Tous
           </Tag>
-          {(Object.keys(TYPE_LABELS) as MediaType[]).map((type) => (
+          {(Object.keys(MEDIA_TYPE_LABELS) as MediaType[]).map((type) => (
             <Tag
               key={type}
               asButton
               active={typeFilter === type}
               onClick={() => setTypeFilter(type)}
             >
-              {TYPE_LABELS[type]}
+              {MEDIA_TYPE_LABELS[type]}
             </Tag>
           ))}
         </div>
@@ -116,7 +92,7 @@ export function MediaGallery({ items }: MediaGalleryProps) {
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((item) => {
-            const Icon = TYPE_ICONS[item.type];
+            const Icon = MEDIA_TYPE_ICONS[item.type];
             return (
               <a
                 key={item.id}
@@ -137,7 +113,7 @@ export function MediaGallery({ items }: MediaGalleryProps) {
                     {item.nom}
                   </p>
                   <p className="text-muted-foreground flex items-center justify-between text-xs">
-                    <span>{formatTaille(item.tailleKo)}</span>
+                    <span>{formatTailleMedia(item.tailleKo)}</span>
                     <span>{formatDate(item.ajouteLe)}</span>
                   </p>
                 </div>

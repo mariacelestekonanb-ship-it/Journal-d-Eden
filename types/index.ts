@@ -31,13 +31,6 @@ export type Niveau = "Débutant" | "Intermédiaire" | "Avancé";
  * revienne à remplacer le tableau, pas le composant qui le rend (voir
  * `ContentBlocks`).
  */
-export type ContentBlock =
-  | { type: "paragraph"; text: string }
-  | { type: "heading"; text: string }
-  | { type: "callout"; text: string; tone?: "info" | "warning" }
-  | { type: "list"; items: string[]; ordered?: boolean }
-  | { type: "quote"; text: string; source?: string };
-
 export type TypeReference =
   | "Traité"
   | "Loi"
@@ -54,8 +47,31 @@ export interface ReferenceJuridique {
   /** Citation précise (article, numéro, année…), ex. « Article II, 1967 ». */
   citation: string;
   organisme: string;
+  /** Date d'adoption ou de publication du texte — distincte de l'année parfois présente dans `citation`. */
+  date?: string;
   url?: string;
 }
+
+/**
+ * Bloc de contenu riche pour un corps de texte long (« Notre explication »
+ * d'une fiche, « Notre analyse » d'une analyse de veille, « Explication »
+ * d'un terme de glossaire). Modèle par blocs typés — volontairement proche
+ * de ce que renverrait un CMS headless (Sanity, Contentful…), pour que
+ * brancher une vraie source de contenu plus tard revienne à remplacer le
+ * tableau, pas le composant qui le rend (voir `ContentBlocks`).
+ */
+export type ContentBlock =
+  | { type: "heading"; text: string }
+  | { type: "subheading"; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "quote"; text: string; source?: string }
+  | { type: "list"; items: string[]; ordered?: boolean }
+  | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "callout"; text: string; tone?: "info" | "warning" }
+  | { type: "legal-reference"; reference: ReferenceJuridique }
+  | { type: "image"; url: string; alt: string; caption?: string }
+  | { type: "separator" }
+  | { type: "button"; label: string; href: string };
 
 export interface QuestionItem {
   slug: string;
@@ -186,6 +202,8 @@ export interface GlossaireTerme {
   /** Slug de `Theme` (voir `data/themes.ts`) — sert de filtre « Catégorie » du glossaire. */
   theme: string;
   lettre: string;
+  /** Développement optionnel au-delà de la définition courte — affiché sous celle-ci dans `DefinitionPreview` quand présent. */
+  explication?: ContentBlock[];
   voirAussi?: string[];
   contenusAssocies?: ContenusAssocies;
 }

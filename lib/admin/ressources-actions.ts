@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { ressourcesRepository } from "@/lib/admin/repository";
 import { logActivity } from "@/lib/admin/activity-log";
 import { getCurrentAdminUser } from "@/lib/admin/auth";
-import type { AdminStatus } from "@/lib/admin/types";
+import type { AdminStatus, Couverture, SeoMeta } from "@/lib/admin/types";
 import type { Domaine } from "@/types";
 
 export interface RessourceFormInput {
@@ -18,6 +18,8 @@ export interface RessourceFormInput {
   url: string;
   organisme: string;
   status: AdminStatus;
+  couverture?: Couverture;
+  seo?: SeoMeta;
 }
 
 function revalidateRessources(id?: string) {

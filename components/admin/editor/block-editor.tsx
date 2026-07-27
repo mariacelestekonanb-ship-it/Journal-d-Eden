@@ -6,15 +6,17 @@ import {
   ChevronUp,
   ChevronDown,
   Heading1,
+  Heading2,
   Pilcrow,
   List,
   Quote,
-  MessageSquareWarning,
+  Info,
+  AlertTriangle,
   Scale,
   Table,
-  Link2,
   Image as ImageIcon,
-  Code,
+  Minus,
+  MousePointerClick,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,63 +34,129 @@ import type { AdminBlock } from "@/lib/admin/types";
 export interface BlockEditorProps {
   value: AdminBlock[];
   onChange: (blocks: AdminBlock[]) => void;
-  /** Restreint la palette « Ajouter un bloc » — utilisé quand le champ édité est typé plus étroitement que `AdminBlock[]` (ex. `ContentBlock[]` côté public). */
+  /** Restreint la palette « Ajouter un bloc » — utile si un champ doit rester plus étroit qu'`AdminBlock[]` complet. */
   allowedTypes?: AdminBlock["type"][];
 }
 
-const BLOCK_PALETTE: Array<{
+interface PaletteEntry {
+  /** Clé unique de la palette — distincte de `type` pour les deux encadrés, qui partagent le même bloc sous-jacent (`callout`) avec un `tone` différent. */
+  key: string;
   type: AdminBlock["type"];
   label: string;
   icon: LucideIcon;
-}> = [
-  { type: "heading", label: "Titre", icon: Heading1 },
-  { type: "paragraph", label: "Paragraphe", icon: Pilcrow },
-  { type: "list", label: "Liste", icon: List },
-  { type: "quote", label: "Citation", icon: Quote },
-  { type: "callout", label: "Encadré", icon: MessageSquareWarning },
-  { type: "legal-reference", label: "Référence juridique", icon: Scale },
-  { type: "table", label: "Tableau", icon: Table },
-  { type: "link", label: "Lien", icon: Link2 },
-  { type: "image", label: "Image", icon: ImageIcon },
-  { type: "code", label: "Code", icon: Code },
+  create: () => AdminBlock;
+}
+
+const BLOCK_PALETTE: PaletteEntry[] = [
+  {
+    key: "heading",
+    type: "heading",
+    label: "Titre",
+    icon: Heading1,
+    create: () => ({ type: "heading", text: "" }),
+  },
+  {
+    key: "subheading",
+    type: "subheading",
+    label: "Sous-titre",
+    icon: Heading2,
+    create: () => ({ type: "subheading", text: "" }),
+  },
+  {
+    key: "paragraph",
+    type: "paragraph",
+    label: "Paragraphe",
+    icon: Pilcrow,
+    create: () => ({ type: "paragraph", text: "" }),
+  },
+  {
+    key: "quote",
+    type: "quote",
+    label: "Citation",
+    icon: Quote,
+    create: () => ({ type: "quote", text: "", source: "" }),
+  },
+  {
+    key: "list",
+    type: "list",
+    label: "Liste",
+    icon: List,
+    create: () => ({ type: "list", items: [""], ordered: false }),
+  },
+  {
+    key: "table",
+    type: "table",
+    label: "Tableau",
+    icon: Table,
+    create: () => ({
+      type: "table",
+      headers: ["Colonne 1", "Colonne 2"],
+      rows: [["", ""]],
+    }),
+  },
+  {
+    key: "callout-info",
+    type: "callout",
+    label: "Encadré d'information",
+    icon: Info,
+    create: () => ({ type: "callout", text: "", tone: "info" }),
+  },
+  {
+    key: "callout-warning",
+    type: "callout",
+    label: "Encadré d'avertissement",
+    icon: AlertTriangle,
+    create: () => ({ type: "callout", text: "", tone: "warning" }),
+  },
+  {
+    key: "legal-reference",
+    type: "legal-reference",
+    label: "Référence juridique",
+    icon: Scale,
+    create: () => ({
+      type: "legal-reference",
+      reference: {
+        type: "Loi",
+        titre: "",
+        citation: "",
+        organisme: "",
+        date: "",
+        url: "",
+      },
+    }),
+  },
+  {
+    key: "image",
+    type: "image",
+    label: "Image",
+    icon: ImageIcon,
+    create: () => ({ type: "image", url: "", alt: "", caption: "" }),
+  },
+  {
+    key: "separator",
+    type: "separator",
+    label: "Séparateur",
+    icon: Minus,
+    create: () => ({ type: "separator" }),
+  },
+  {
+    key: "button",
+    type: "button",
+    label: "Bouton",
+    icon: MousePointerClick,
+    create: () => ({ type: "button", label: "", href: "" }),
+  },
 ];
 
-function blocVide(type: AdminBlock["type"]): AdminBlock {
-  switch (type) {
-    case "heading":
-      return { type: "heading", text: "" };
-    case "paragraph":
-      return { type: "paragraph", text: "" };
-    case "list":
-      return { type: "list", items: [""], ordered: false };
-    case "quote":
-      return { type: "quote", text: "", source: "" };
-    case "callout":
-      return { type: "callout", text: "", tone: "info" };
-    case "table":
-      return {
-        type: "table",
-        headers: ["Colonne 1", "Colonne 2"],
-        rows: [["", ""]],
-      };
-    case "code":
-      return { type: "code", language: "", code: "" };
-    case "image":
-      return { type: "image", url: "", alt: "", caption: "" };
-    case "legal-reference":
-      return {
-        type: "legal-reference",
-        reference: {
-          type: "Loi",
-          titre: "",
-          citation: "",
-          organisme: "",
-          url: "",
-        },
-      };
-    case "link":
-      return { type: "link", label: "", href: "" };
+/** Icône + libellé d'un bloc déjà présent — distingue les deux tons d'encadré, contrairement à `BLOCK_PALETTE` qui les liste comme deux entrées séparées. */
+function blockMeta(block: AdminBlock): { label: string; icon: LucideIcon } {
+  if (block.type === "callout") {
+    return block.tone === "warning"
+      ? { label: "Encadré d'avertissement", icon: AlertTriangle }
+      : { label: "Encadré d'information", icon: Info };
   }
+  const entry = BLOCK_PALETTE.find((p) => p.type === block.type);
+  return entry ?? { label: block.type, icon: Pilcrow };
 }
 
 /**
@@ -110,8 +178,8 @@ export function BlockEditor({
     ? BLOCK_PALETTE.filter((entry) => allowedTypes.includes(entry.type))
     : BLOCK_PALETTE;
 
-  function addBlock(type: AdminBlock["type"]) {
-    onChange([...value, blocVide(type)]);
+  function addBlock(entry: PaletteEntry) {
+    onChange([...value, entry.create()]);
   }
   function updateBlock(index: number, block: AdminBlock) {
     onChange(value.map((b, i) => (i === index ? block : b)));
@@ -137,15 +205,13 @@ export function BlockEditor({
       ) : (
         <ol className="space-y-3">
           {value.map((block, index) => {
-            const palette = BLOCK_PALETTE.find((p) => p.type === block.type);
+            const meta = blockMeta(block);
             return (
               <li key={index} className="border-border rounded-2xl border p-4">
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <span className="text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-wide uppercase">
-                    {palette ? (
-                      <palette.icon className="size-3.5" aria-hidden />
-                    ) : null}
-                    {palette?.label ?? block.type}
+                    <meta.icon className="size-3.5" aria-hidden />
+                    {meta.label}
                   </span>
                   <div className="flex items-center gap-1">
                     <Button
@@ -198,10 +264,7 @@ export function BlockEditor({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           {availableBlocks.map((entry) => (
-            <DropdownMenuItem
-              key={entry.type}
-              onSelect={() => addBlock(entry.type)}
-            >
+            <DropdownMenuItem key={entry.key} onSelect={() => addBlock(entry)}>
               <entry.icon aria-hidden />
               {entry.label}
             </DropdownMenuItem>

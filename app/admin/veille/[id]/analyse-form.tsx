@@ -19,18 +19,30 @@ import { ReferencesField } from "@/components/admin/content/references-field";
 import { ChronologyField } from "@/components/admin/content/chronology-field";
 import { ImpactField } from "@/components/admin/content/impact-field";
 import { OfficialReferencesField } from "@/components/admin/content/official-references-field";
+import { CoverImageField } from "@/components/admin/content/cover-image-field";
+import { WritingStats } from "@/components/admin/content/writing-stats";
+import { ValidationSummary } from "@/components/admin/content/validation-summary";
+import { AutosaveIndicator } from "@/components/admin/content/autosave-indicator";
+import { PreviewDialog } from "@/components/admin/content/preview-dialog";
+import { SeoPanel } from "@/components/admin/content/seo-panel";
 import { BlockEditor } from "@/components/admin/editor/block-editor";
 import { RevisionHistory } from "@/components/admin/revisions/revision-history";
+import { ContentBlocks } from "@/components/shared/content-blocks";
+import { LegalReference } from "@/components/shared/legal-reference";
+import { Timeline } from "@/components/shared/timeline";
 import { saveAnalyse } from "@/lib/admin/veille-actions";
 import { deleteContent } from "@/lib/admin/actions";
-import { slugifyTerme, labelDomaine } from "@/lib/format";
+import { slugifyTerme, labelDomaine, formatDate } from "@/lib/format";
+import { estimateReadingTime, generateExcerpt } from "@/lib/admin/reading-time";
+import { useAutosave } from "@/hooks/use-autosave";
 import {
   ADMIN_STATUSES,
   type AdminStatus,
   type AnalyseAdmin,
   type CategorieAdmin,
+  type Couverture,
+  type SeoMeta,
 } from "@/lib/admin/types";
-import type { AdminBlock } from "@/lib/admin/types";
 import type {
   ContentBlock,
   Domaine,
@@ -64,14 +76,6 @@ const TYPES_VEILLE: TypeVeille[] = [
   "Institution",
 ];
 
-const ANALYSE_BLOCK_TYPES: AdminBlock["type"][] = [
-  "heading",
-  "paragraph",
-  "callout",
-  "list",
-  "quote",
-];
-
 interface FormState {
   slug: string;
   titre: string;
@@ -82,7 +86,6 @@ interface FormState {
   source: string;
   date: string;
   dateMiseAJour: string;
-  tempsLecture: number;
   aLaUne: boolean;
   status: AdminStatus;
   pointsCles: string[];
@@ -91,6 +94,8 @@ interface FormState {
   analyse: ContentBlock[];
   impact: ImpactAnalyse;
   referencesOfficielles: ReferenceOfficielle[];
+  couverture: Couverture | undefined;
+  seo: SeoMeta;
 }
 
 function toFormState(
@@ -108,7 +113,6 @@ function toFormState(
       source: analyse.source,
       date: analyse.date,
       dateMiseAJour: analyse.dateMiseAJour,
-      tempsLecture: analyse.tempsLecture,
       aLaUne: analyse.aLaUne ?? false,
       status: analyse.status,
       pointsCles: analyse.pointsCles,
@@ -117,6 +121,8 @@ function toFormState(
       analyse: analyse.analyse,
       impact: analyse.impact,
       referencesOfficielles: analyse.referencesOfficielles,
+      couverture: analyse.couverture,
+      seo: analyse.seo ?? {},
     };
   }
 
@@ -132,7 +138,6 @@ function toFormState(
     source: "",
     date: today,
     dateMiseAJour: today,
-    tempsLecture: 5,
     aLaUne: false,
     status: "brouillon",
     pointsCles: [""],
@@ -141,6 +146,8 @@ function toFormState(
     analyse: [],
     impact: {},
     referencesOfficielles: [],
+    couverture: undefined,
+    seo: {},
   };
 }
 
@@ -151,9 +158,17 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
   const [form, setForm] = React.useState<FormState>(() =>
     toFormState(analyse, categories),
   );
-  const [tab, setTab] = React.useState<"contenu" | "historique">("contenu");
+  const [tab, setTab] = React.useState<"contenu" | "seo" | "historique">(
+    "contenu",
+  );
   const [isPending, startTransition] = React.useTransition();
   const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [previewOpen, setPreviewOpen] = React.useState(false);
+
+  const { lastSavedAt } = useAutosave(
+    `analyse-${analyse?.id ?? "nouveau"}`,
+    form,
+  );
 
   const categoriesDuDomaine = categories.filter(
     (c) => c.domaine === form.domaine,
@@ -167,12 +182,28 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
     set("slug", slugifyTerme(form.titre));
   }
 
+  function handleGenerateExcerpt() {
+    set("resume", generateExcerpt(form.analyse));
+  }
+
+  const checks = [
+    { label: "Un titre", valid: form.titre.trim().length > 0 },
+    { label: "Un résumé", valid: form.resume.trim().length > 0 },
+    { label: "Une catégorie", valid: form.categorie.trim().length > 0 },
+    {
+      label: "Un contenu dans « Notre analyse »",
+      valid: form.analyse.length > 0,
+    },
+  ];
+  const isValid = checks.every((check) => check.valid);
+
   function handleSave(status?: AdminStatus) {
     startTransition(async () => {
       const result = await saveAnalyse({
         id: analyse?.id,
         ...form,
         slug: form.slug || slugifyTerme(form.titre),
+        tempsLecture: estimateReadingTime(form.analyse) || 1,
         status: status ?? form.status,
       });
       if (isNew) {
@@ -206,17 +237,26 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
           <Heading as="h1" size="lg">
             {isNew ? "Nouvelle analyse" : form.titre || "Sans titre"}
           </Heading>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-3">
             <StatusBadge status={form.status} />
             {!isNew ? (
               <Paragraph tone="muted" size="sm">
                 Mis à jour le {analyse.updatedAt} par {analyse.updatedBy}
               </Paragraph>
             ) : null}
+            <AutosaveIndicator lastSavedAt={lastSavedAt} />
           </div>
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPreviewOpen(true)}
+          >
+            <Eye aria-hidden />
+            Aperçu
+          </Button>
           {!isNew && analyse.status === "publie" ? (
             <Button variant="outline" size="sm" asChild>
               <a
@@ -224,8 +264,7 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <Eye aria-hidden />
-                Prévisualiser
+                Voir en ligne
               </a>
             </Button>
           ) : null}
@@ -263,7 +302,7 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
             <Button
               variant="accent"
               size="sm"
-              disabled={isPending || form.titre.trim().length === 0}
+              disabled={isPending || !isValid}
               onClick={() => handleSave("publie")}
             >
               Publier
@@ -272,39 +311,42 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
         </div>
       </div>
 
-      {isNew ? (
-        <AnalyseContentFields
-          form={form}
-          set={set}
-          categories={categories}
-          categoriesDuDomaine={categoriesDuDomaine}
-          onGenerateSlug={handleGenerateSlug}
-          isNew
+      <ValidationSummary checks={checks} />
+
+      <div className="space-y-6">
+        <SectionTabs
+          tabs={[
+            { id: "contenu", label: "Contenu" },
+            { id: "seo", label: "SEO" },
+            ...(isNew
+              ? []
+              : [{ id: "historique" as const, label: "Historique" }]),
+          ]}
+          active={tab}
+          onChange={setTab}
         />
-      ) : (
-        <div className="space-y-6">
-          <SectionTabs
-            tabs={[
-              { id: "contenu", label: "Contenu" },
-              { id: "historique", label: "Historique" },
-            ]}
-            active={tab}
-            onChange={setTab}
+        {tab === "contenu" ? (
+          <AnalyseContentFields
+            form={form}
+            set={set}
+            categories={categories}
+            categoriesDuDomaine={categoriesDuDomaine}
+            onGenerateSlug={handleGenerateSlug}
+            onGenerateExcerpt={handleGenerateExcerpt}
+            isNew={isNew}
           />
-          {tab === "contenu" ? (
-            <AnalyseContentFields
-              form={form}
-              set={set}
-              categories={categories}
-              categoriesDuDomaine={categoriesDuDomaine}
-              onGenerateSlug={handleGenerateSlug}
-              isNew={false}
-            />
-          ) : (
-            <RevisionHistory versions={analyse.versions} />
-          )}
-        </div>
-      )}
+        ) : tab === "seo" ? (
+          <SeoPanel
+            value={form.seo}
+            onChange={(seo) => set("seo", seo)}
+            fallbackTitle={form.titre || "Nouvelle analyse"}
+            fallbackDescription={form.resume}
+            path={`/veille-juridique/${form.slug || "nouvelle-analyse"}`}
+          />
+        ) : analyse ? (
+          <RevisionHistory versions={analyse.versions} />
+        ) : null}
+      </div>
 
       <ConfirmDialog
         open={deleteOpen}
@@ -315,6 +357,10 @@ export function AnalyseForm({ analyse, categories }: AnalyseFormProps) {
         onConfirm={handleDelete}
         isPending={isPending}
       />
+
+      <PreviewDialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <AnalysePreview form={form} />
+      </PreviewDialog>
     </div>
   );
 }
@@ -325,6 +371,7 @@ interface AnalyseContentFieldsProps {
   categories: CategorieAdmin[];
   categoriesDuDomaine: CategorieAdmin[];
   onGenerateSlug: () => void;
+  onGenerateExcerpt: () => void;
   isNew: boolean;
 }
 
@@ -334,6 +381,7 @@ function AnalyseContentFields({
   categories,
   categoriesDuDomaine,
   onGenerateSlug,
+  onGenerateExcerpt,
   isNew,
 }: AnalyseContentFieldsProps) {
   return (
@@ -342,6 +390,12 @@ function AnalyseContentFields({
         <Heading as="h2" size="sm">
           Informations générales
         </Heading>
+
+        <CoverImageField
+          value={form.couverture}
+          onChange={(value) => set("couverture", value)}
+        />
+
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="titre">
             Titre
@@ -376,9 +430,15 @@ function AnalyseContentFields({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium" htmlFor="resume">
-            Résumé
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="text-sm font-medium" htmlFor="resume">
+              Résumé
+            </label>
+            <Button variant="ghost" size="sm" onClick={onGenerateExcerpt}>
+              <Sparkles aria-hidden />
+              Générer depuis l&apos;analyse
+            </Button>
+          </div>
           <Textarea
             id="resume"
             value={form.resume}
@@ -473,19 +533,6 @@ function AnalyseContentFields({
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium" htmlFor="tempsLecture">
-              Temps de lecture (min)
-            </label>
-            <Input
-              id="tempsLecture"
-              type="number"
-              min={1}
-              value={form.tempsLecture}
-              onChange={(e) => set("tempsLecture", Number(e.target.value))}
-            />
-          </div>
-
           <label className="flex items-center gap-2 self-end pb-2.5 text-sm font-medium">
             <input
               type="checkbox"
@@ -531,13 +578,15 @@ function AnalyseContentFields({
       </section>
 
       <section className="space-y-3">
-        <Heading as="h2" size="sm">
-          Notre analyse
-        </Heading>
+        <div className="flex items-center justify-between">
+          <Heading as="h2" size="sm">
+            Notre analyse
+          </Heading>
+          <WritingStats blocks={form.analyse} />
+        </div>
         <BlockEditor
           value={form.analyse}
-          onChange={(blocks) => set("analyse", blocks as ContentBlock[])}
-          allowedTypes={ANALYSE_BLOCK_TYPES}
+          onChange={(blocks) => set("analyse", blocks)}
         />
       </section>
 
@@ -561,5 +610,70 @@ function AnalyseContentFields({
         />
       </section>
     </div>
+  );
+}
+
+/** Aperçu du rendu public, composé des mêmes briques que le site (`ContentBlocks`, `LegalReference`, `Timeline`). */
+function AnalysePreview({ form }: { form: FormState }) {
+  return (
+    <article className="space-y-8">
+      <div>
+        <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          {labelDomaine(form.domaine)} · {form.type} · {form.source}
+        </p>
+        <Heading as="h1" size="lg" className="mt-2">
+          {form.titre || "Sans titre"}
+        </Heading>
+        <Paragraph tone="muted" size="lg" className="mt-3">
+          {form.resume || "Aucun résumé pour le moment."}
+        </Paragraph>
+        <p className="text-muted-foreground mt-3 text-xs">
+          Publié le {formatDate(form.date)} · Mis à jour le{" "}
+          {formatDate(form.dateMiseAJour)}
+        </p>
+      </div>
+
+      {form.pointsCles.length > 0 ? (
+        <div className="bg-muted/60 rounded-xl p-5">
+          <Heading as="h2" size="sm">
+            À retenir en 1 minute
+          </Heading>
+          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">
+            {form.pointsCles.map((point, index) => (
+              <li key={index}>{point}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {form.chronologie.length > 0 ? (
+        <div>
+          <Heading as="h2" size="sm" className="mb-4">
+            Les faits
+          </Heading>
+          <Timeline evenements={form.chronologie} />
+        </div>
+      ) : null}
+
+      {form.contexteJuridique.length > 0 ? (
+        <div className="space-y-3">
+          <Heading as="h2" size="sm">
+            Le contexte juridique
+          </Heading>
+          {form.contexteJuridique.map((reference, index) => (
+            <LegalReference key={index} reference={reference} />
+          ))}
+        </div>
+      ) : null}
+
+      {form.analyse.length > 0 ? (
+        <div>
+          <Heading as="h2" size="sm" className="mb-4">
+            Notre analyse
+          </Heading>
+          <ContentBlocks blocks={form.analyse} />
+        </div>
+      ) : null}
+    </article>
   );
 }

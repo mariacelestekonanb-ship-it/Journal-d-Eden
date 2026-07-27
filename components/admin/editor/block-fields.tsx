@@ -1,11 +1,14 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import * as React from "react";
+import { ImagePlus, Plus, X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { LegalReference } from "@/components/shared/legal-reference";
+import { MediaPickerDialog } from "@/components/admin/media/media-picker-dialog";
 import type { AdminBlock } from "@/lib/admin/types";
 import type { TypeReference } from "@/types";
 
@@ -34,6 +37,15 @@ export function BlockFields({ block, onChange }: BlockFieldsProps) {
           value={block.text}
           onChange={(e) => onChange({ ...block, text: e.target.value })}
           placeholder="Titre du bloc"
+        />
+      );
+
+    case "subheading":
+      return (
+        <Input
+          value={block.text}
+          onChange={(e) => onChange({ ...block, text: e.target.value })}
+          placeholder="Sous-titre du bloc"
         />
       );
 
@@ -91,56 +103,28 @@ export function BlockFields({ block, onChange }: BlockFieldsProps) {
     case "table":
       return <TableFields block={block} onChange={onChange} />;
 
-    case "code":
-      return (
-        <div className="space-y-2">
-          <Input
-            value={block.language}
-            onChange={(e) => onChange({ ...block, language: e.target.value })}
-            placeholder="Langage (ex. ts, json)"
-          />
-          <Textarea
-            value={block.code}
-            onChange={(e) => onChange({ ...block, code: e.target.value })}
-            placeholder="Code"
-            className="min-h-32 rounded-xl font-mono text-xs"
-          />
-        </div>
-      );
-
     case "image":
+      return <ImageFields block={block} onChange={onChange} />;
+
+    case "separator":
       return (
-        <div className="space-y-2">
-          <Input
-            value={block.url}
-            onChange={(e) => onChange({ ...block, url: e.target.value })}
-            placeholder="URL de l'image"
-          />
-          <Input
-            value={block.alt}
-            onChange={(e) => onChange({ ...block, alt: e.target.value })}
-            placeholder="Texte alternatif"
-          />
-          <Input
-            value={block.caption ?? ""}
-            onChange={(e) => onChange({ ...block, caption: e.target.value })}
-            placeholder="Légende (optionnel)"
-          />
-        </div>
+        <p className="text-muted-foreground border-border rounded-lg border border-dashed py-3 text-center text-xs">
+          Ligne de séparation — aucun réglage nécessaire.
+        </p>
       );
 
-    case "link":
+    case "button":
       return (
         <div className="grid gap-2 sm:grid-cols-2">
           <Input
             value={block.label}
             onChange={(e) => onChange({ ...block, label: e.target.value })}
-            placeholder="Libellé du lien"
+            placeholder="Libellé du bouton"
           />
           <Input
             value={block.href}
             onChange={(e) => onChange({ ...block, href: e.target.value })}
-            placeholder="URL"
+            placeholder="URL de destination"
           />
         </div>
       );
@@ -198,22 +182,95 @@ export function BlockFields({ block, onChange }: BlockFieldsProps) {
             }
             placeholder="Citation précise (article, numéro, année…)"
           />
-          <Input
-            value={block.reference.url ?? ""}
-            onChange={(e) =>
-              onChange({
-                ...block,
-                reference: { ...block.reference, url: e.target.value },
-              })
-            }
-            placeholder="URL (optionnel)"
-          />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Input
+              type="date"
+              value={block.reference.date ?? ""}
+              onChange={(e) =>
+                onChange({
+                  ...block,
+                  reference: { ...block.reference, date: e.target.value },
+                })
+              }
+              aria-label="Date du texte"
+            />
+            <Input
+              value={block.reference.url ?? ""}
+              onChange={(e) =>
+                onChange({
+                  ...block,
+                  reference: { ...block.reference, url: e.target.value },
+                })
+              }
+              placeholder="URL (optionnel)"
+            />
+          </div>
+          {block.reference.titre ? (
+            <div className="pt-1">
+              <LegalReference reference={block.reference} />
+            </div>
+          ) : null}
         </div>
       );
 
     default:
       return null;
   }
+}
+
+function ImageFields({
+  block,
+  onChange,
+}: {
+  block: Extract<AdminBlock, { type: "image" }>;
+  onChange: (block: AdminBlock) => void;
+}) {
+  const [pickerOpen, setPickerOpen] = React.useState(false);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Input
+          value={block.url}
+          onChange={(e) => onChange({ ...block, url: e.target.value })}
+          placeholder="URL de l'image"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="shrink-0"
+          onClick={() => setPickerOpen(true)}
+        >
+          <ImagePlus aria-hidden />
+          Médiathèque
+        </Button>
+      </div>
+      <Input
+        value={block.alt}
+        onChange={(e) => onChange({ ...block, alt: e.target.value })}
+        placeholder="Texte alternatif"
+      />
+      <Input
+        value={block.caption ?? ""}
+        onChange={(e) => onChange({ ...block, caption: e.target.value })}
+        placeholder="Légende (optionnel)"
+      />
+
+      <MediaPickerDialog
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        allowedTypes={["image", "illustration"]}
+        onSelect={(asset) =>
+          onChange({
+            ...block,
+            url: asset.url,
+            alt: block.alt || (asset.alt ?? asset.nom),
+          })
+        }
+      />
+    </div>
+  );
 }
 
 function ListFields({

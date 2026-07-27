@@ -11,17 +11,26 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/admin/content/status-badge";
 import { ConfirmDialog } from "@/components/admin/content/confirm-dialog";
 import { SectionTabs } from "@/components/admin/content/section-tabs";
+import { CoverImageField } from "@/components/admin/content/cover-image-field";
+import { ValidationSummary } from "@/components/admin/content/validation-summary";
+import { AutosaveIndicator } from "@/components/admin/content/autosave-indicator";
+import { PreviewDialog } from "@/components/admin/content/preview-dialog";
+import { SeoPanel } from "@/components/admin/content/seo-panel";
 import { RevisionHistory } from "@/components/admin/revisions/revision-history";
 import { saveRessource } from "@/lib/admin/ressources-actions";
 import { deleteContent } from "@/lib/admin/actions";
 import { labelDomaine } from "@/lib/format";
+import { useAutosave } from "@/hooks/use-autosave";
 import {
   ADMIN_STATUSES,
   type AdminStatus,
+  type Couverture,
   type RessourceAdmin,
+  type SeoMeta,
 } from "@/lib/admin/types";
 import type { Domaine } from "@/types";
 
@@ -53,6 +62,8 @@ interface FormState {
   url: string;
   organisme: string;
   status: AdminStatus;
+  couverture: Couverture | undefined;
+  seo: SeoMeta;
 }
 
 function toFormState(ressource: RessourceAdmin | null): FormState {
@@ -65,6 +76,8 @@ function toFormState(ressource: RessourceAdmin | null): FormState {
       url: ressource.url,
       organisme: ressource.organisme,
       status: ressource.status,
+      couverture: ressource.couverture,
+      seo: ressource.seo ?? {},
     };
   }
 
@@ -76,6 +89,8 @@ function toFormState(ressource: RessourceAdmin | null): FormState {
     url: "",
     organisme: "",
     status: "brouillon",
+    couverture: undefined,
+    seo: {},
   };
 }
 
@@ -86,13 +101,29 @@ export function RessourceForm({ ressource }: RessourceFormProps) {
   const [form, setForm] = React.useState<FormState>(() =>
     toFormState(ressource),
   );
-  const [tab, setTab] = React.useState<"contenu" | "historique">("contenu");
+  const [tab, setTab] = React.useState<"contenu" | "seo" | "historique">(
+    "contenu",
+  );
   const [isPending, startTransition] = React.useTransition();
   const [deleteOpen, setDeleteOpen] = React.useState(false);
+  const [previewOpen, setPreviewOpen] = React.useState(false);
+
+  const { lastSavedAt } = useAutosave(
+    `ressource-${ressource?.id ?? "nouveau"}`,
+    form,
+  );
 
   function set<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
+
+  const checks = [
+    { label: "Un titre", valid: form.titre.trim().length > 0 },
+    { label: "Une description", valid: form.description.trim().length > 0 },
+    { label: "Une URL", valid: form.url.trim().length > 0 },
+    { label: "Un organisme", valid: form.organisme.trim().length > 0 },
+  ];
+  const isValid = checks.every((check) => check.valid);
 
   function handleSave(status?: AdminStatus) {
     startTransition(async () => {
@@ -132,22 +163,30 @@ export function RessourceForm({ ressource }: RessourceFormProps) {
           <Heading as="h1" size="lg">
             {isNew ? "Nouvelle ressource" : form.titre || "Sans titre"}
           </Heading>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center gap-3">
             <StatusBadge status={form.status} />
             {!isNew ? (
               <Paragraph tone="muted" size="sm">
                 Mis à jour le {ressource.updatedAt} par {ressource.updatedBy}
               </Paragraph>
             ) : null}
+            <AutosaveIndicator lastSavedAt={lastSavedAt} />
           </div>
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPreviewOpen(true)}
+          >
+            <Eye aria-hidden />
+            Aperçu
+          </Button>
           {!isNew && ressource.status === "publie" ? (
             <Button variant="outline" size="sm" asChild>
               <a href="/ressources" target="_blank" rel="noreferrer">
-                <Eye aria-hidden />
-                Prévisualiser
+                Voir en ligne
               </a>
             </Button>
           ) : null}
@@ -185,7 +224,7 @@ export function RessourceForm({ ressource }: RessourceFormProps) {
             <Button
               variant="accent"
               size="sm"
-              disabled={isPending || form.titre.trim().length === 0}
+              disabled={isPending || !isValid}
               onClick={() => handleSave("publie")}
             >
               Publier
@@ -194,25 +233,34 @@ export function RessourceForm({ ressource }: RessourceFormProps) {
         </div>
       </div>
 
-      {isNew ? (
-        <RessourceContentFields form={form} set={set} />
-      ) : (
-        <div className="space-y-6">
-          <SectionTabs
-            tabs={[
-              { id: "contenu", label: "Contenu" },
-              { id: "historique", label: "Historique" },
-            ]}
-            active={tab}
-            onChange={setTab}
+      <ValidationSummary checks={checks} />
+
+      <div className="space-y-6">
+        <SectionTabs
+          tabs={[
+            { id: "contenu", label: "Contenu" },
+            { id: "seo", label: "SEO" },
+            ...(isNew
+              ? []
+              : [{ id: "historique" as const, label: "Historique" }]),
+          ]}
+          active={tab}
+          onChange={setTab}
+        />
+        {tab === "contenu" ? (
+          <RessourceContentFields form={form} set={set} />
+        ) : tab === "seo" ? (
+          <SeoPanel
+            value={form.seo}
+            onChange={(seo) => set("seo", seo)}
+            fallbackTitle={form.titre || "Nouvelle ressource"}
+            fallbackDescription={form.description}
+            path="/ressources"
           />
-          {tab === "contenu" ? (
-            <RessourceContentFields form={form} set={set} />
-          ) : (
-            <RevisionHistory versions={ressource.versions} />
-          )}
-        </div>
-      )}
+        ) : ressource ? (
+          <RevisionHistory versions={ressource.versions} />
+        ) : null}
+      </div>
 
       <ConfirmDialog
         open={deleteOpen}
@@ -223,6 +271,10 @@ export function RessourceForm({ ressource }: RessourceFormProps) {
         onConfirm={handleDelete}
         isPending={isPending}
       />
+
+      <PreviewDialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <RessourcePreview form={form} />
+      </PreviewDialog>
     </div>
   );
 }
@@ -239,6 +291,12 @@ function RessourceContentFields({ form, set }: RessourceContentFieldsProps) {
         <Heading as="h2" size="sm">
           Informations générales
         </Heading>
+
+        <CoverImageField
+          value={form.couverture}
+          onChange={(value) => set("couverture", value)}
+        />
+
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor="titre">
             Titre
@@ -320,5 +378,26 @@ function RessourceContentFields({ form, set }: RessourceContentFieldsProps) {
         </div>
       </section>
     </div>
+  );
+}
+
+/** Aperçu du rendu public — carte de ressource telle qu'elle apparaîtra dans le listing. */
+function RessourcePreview({ form }: { form: FormState }) {
+  return (
+    <article className="space-y-3">
+      <div className="flex items-center gap-2">
+        <Badge variant="outline">{form.type}</Badge>
+        <span className="text-muted-foreground text-xs">
+          {labelDomaine(form.domaine)}
+        </span>
+      </div>
+      <Heading as="h1" size="lg">
+        {form.titre || "Sans titre"}
+      </Heading>
+      <Paragraph tone="muted">
+        {form.description || "Aucune description pour le moment."}
+      </Paragraph>
+      <p className="text-muted-foreground text-sm">{form.organisme}</p>
+    </article>
   );
 }

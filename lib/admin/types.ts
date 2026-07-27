@@ -3,7 +3,6 @@ import type {
   ContentBlock,
   GlossaireTerme,
   QuestionItem,
-  ReferenceJuridique,
   Ressource,
   VeilleItem,
 } from "@/types";
@@ -40,12 +39,35 @@ export interface Revision {
  * `fiche.status` et `fiche.question` soient tout aussi directement
  * accessibles l'un que l'autre dans les tableaux et formulaires.
  */
+/** Image de couverture d'un contenu — voir `components/admin/content/cover-image-field.tsx`. */
+export interface Couverture {
+  url: string;
+  alt: string;
+  legende?: string;
+}
+
+/**
+ * Surcouches SEO optionnelles, saisies depuis l'éditeur (voir
+ * `components/admin/content/seo-panel.tsx`). Volontairement séparées des
+ * champs publics (`question`, `titre`…) : un titre ou une description SEO
+ * n'a de sens que comme *dérogation* à ce que `buildMetadata` calculerait
+ * par défaut, jamais comme source de vérité du contenu lui-même.
+ */
+export interface SeoMeta {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogImageUrl?: string;
+}
+
 export interface AdminMeta {
   id: string;
   status: AdminStatus;
   updatedAt: string;
   updatedBy: string;
   versions: Revision[];
+  couverture?: Couverture;
+  seo?: SeoMeta;
 }
 
 export interface FicheAdmin extends QuestionItem, AdminMeta {}
@@ -76,19 +98,15 @@ export interface ActivityLogEntry {
 }
 
 /**
- * Bloc de contenu de l'éditeur admin. Réutilise directement `ContentBlock`
- * (paragraphe, titre, encadré, liste, citation) — le contenu public et le
- * contenu en édition partagent donc la même forme sérialisable — et
- * l'étend avec les types de blocs propres à l'éditeur riche : tableau,
- * code, image, référence juridique et lien.
+ * Bloc de contenu de l'éditeur admin — simple alias de `ContentBlock`
+ * (voir `types/index.ts`). Les deux ont fusionné : chaque bloc que
+ * l'éditeur riche sait créer (titre, sous-titre, paragraphe, citation,
+ * liste, tableau, encadrés, référence juridique, image, séparateur,
+ * bouton) est désormais un bloc que le site public sait aussi afficher
+ * (voir `ContentBlocks`) — brouillon et contenu publié partagent donc
+ * toujours exactement la même forme sérialisable.
  */
-export type AdminBlock =
-  | ContentBlock
-  | { type: "table"; headers: string[]; rows: string[][] }
-  | { type: "code"; language: string; code: string }
-  | { type: "image"; url: string; alt: string; caption?: string }
-  | { type: "legal-reference"; reference: ReferenceJuridique }
-  | { type: "link"; label: string; href: string };
+export type AdminBlock = ContentBlock;
 
 export type MediaType = "image" | "logo" | "pdf" | "document" | "illustration";
 

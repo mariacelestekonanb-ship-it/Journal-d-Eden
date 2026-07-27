@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookOpen, Newspaper, ArrowRight } from "lucide-react";
 
 import { Paragraph } from "@/components/ui/paragraph";
+import { ContentBlocks } from "@/components/shared/content-blocks";
 import { getContenusAssociesResolus } from "@/lib/content";
 import { slugifyTerme } from "@/lib/format";
 import type { GlossaireTerme } from "@/types";
@@ -25,6 +26,10 @@ export function DefinitionPreview({ terme }: DefinitionPreviewProps) {
       <Paragraph tone="muted" size="sm">
         {terme.definition}
       </Paragraph>
+
+      {terme.explication && terme.explication.length > 0 ? (
+        <ContentBlocks blocks={terme.explication} />
+      ) : null}
 
       {terme.voirAussi && terme.voirAussi.length > 0 ? (
         <div>

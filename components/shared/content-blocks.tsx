@@ -1,8 +1,11 @@
-import { Info, AlertTriangle, Quote } from "lucide-react";
+import { Info, AlertTriangle, Quote, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
+import { Button } from "@/components/ui/button";
+import { Divider } from "@/components/ui/divider";
+import { LegalReference } from "@/components/shared/legal-reference";
 import type { ContentBlock } from "@/types";
 
 export interface ContentBlocksProps {
@@ -10,12 +13,15 @@ export interface ContentBlocksProps {
 }
 
 /**
- * Rendu d'un corps de texte long par blocs typés : paragraphes, sous-titres,
- * encadrés, listes et citations. Modèle volontairement simple — chaque bloc
- * est une donnée, pas du HTML brut — pour rester compatible avec un futur
- * CMS headless sans jamais interpréter de markup non maîtrisé. Réutilisé par
- * « Notre explication » (fiche pédagogique) et « Notre analyse » (analyse de
- * veille juridique).
+ * Rendu d'un corps de texte long par blocs typés : titres, paragraphes,
+ * encadrés, listes, citations, tableaux, références juridiques, images,
+ * séparateurs et boutons. Modèle volontairement simple — chaque bloc est
+ * une donnée, pas du HTML brut — pour rester compatible avec un futur CMS
+ * headless sans jamais interpréter de markup non maîtrisé. Réutilisé par
+ * « Notre explication » (fiche pédagogique), « Notre analyse » (analyse de
+ * veille) et « Explication » (glossaire) : le même bloc s'affiche partout
+ * à l'identique, qu'il ait été rédigé depuis l'éditeur admin ou saisi en
+ * dur dans `data/*.ts`.
  */
 export function ContentBlocks({ blocks }: ContentBlocksProps) {
   return (
@@ -24,6 +30,19 @@ export function ContentBlocks({ blocks }: ContentBlocksProps) {
         if (block.type === "heading") {
           return (
             <Heading key={index} as="h3" size="sm" className="pt-2">
+              {block.text}
+            </Heading>
+          );
+        }
+
+        if (block.type === "subheading") {
+          return (
+            <Heading
+              key={index}
+              as="h4"
+              size="xs"
+              className="text-muted-foreground pt-1"
+            >
               {block.text}
             </Heading>
           );
@@ -85,6 +104,82 @@ export function ContentBlocks({ blocks }: ContentBlocksProps) {
               <Paragraph size="sm" className="text-foreground">
                 {block.text}
               </Paragraph>
+            </div>
+          );
+        }
+
+        if (block.type === "legal-reference") {
+          return <LegalReference key={index} reference={block.reference} />;
+        }
+
+        if (block.type === "image") {
+          return (
+            <figure key={index} className="space-y-2">
+              {/* eslint-disable-next-line @next/next/no-img-element -- URLs de médiathèque factices, non gérées par l'optimiseur d'images Next.js. */}
+              <img
+                src={block.url}
+                alt={block.alt}
+                className="border-border w-full rounded-xl border object-cover"
+              />
+              {block.caption ? (
+                <figcaption className="text-muted-foreground text-center text-xs">
+                  {block.caption}
+                </figcaption>
+              ) : null}
+            </figure>
+          );
+        }
+
+        if (block.type === "separator") {
+          return <Divider key={index} className="my-2" />;
+        }
+
+        if (block.type === "button") {
+          return (
+            <Button key={index} asChild variant="accent">
+              <a href={block.href} target="_blank" rel="noreferrer">
+                {block.label}
+                <ArrowRight className="size-4" aria-hidden />
+              </a>
+            </Button>
+          );
+        }
+
+        if (block.type === "table") {
+          return (
+            <div
+              key={index}
+              className="border-border overflow-x-auto rounded-xl border"
+            >
+              <table className="w-full min-w-[28rem] text-left text-sm">
+                <thead className="border-border bg-muted/40 border-b">
+                  <tr>
+                    {block.headers.map((header, headerIndex) => (
+                      <th
+                        key={headerIndex}
+                        scope="col"
+                        className="text-foreground px-4 py-3 font-medium"
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-border divide-y">
+                  {block.rows.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {row.map((cell, cellIndex) => (
+                        <td
+                          key={cellIndex}
+                          className="text-muted-foreground px-4 py-3"
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           );
         }

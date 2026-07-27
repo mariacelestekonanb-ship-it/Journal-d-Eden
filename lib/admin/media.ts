@@ -1,4 +1,35 @@
-import type { MediaAsset } from "@/lib/admin/types";
+import {
+  Image as ImageIcon,
+  Shapes,
+  FileText,
+  File,
+  Palette,
+  type LucideIcon,
+} from "lucide-react";
+
+import type { MediaAsset, MediaType } from "@/lib/admin/types";
+
+export const MEDIA_TYPE_LABELS: Record<MediaType, string> = {
+  image: "Images",
+  logo: "Logos",
+  pdf: "PDF",
+  document: "Documents",
+  illustration: "Illustrations",
+};
+
+export const MEDIA_TYPE_ICONS: Record<MediaType, LucideIcon> = {
+  image: ImageIcon,
+  logo: Shapes,
+  pdf: FileText,
+  document: File,
+  illustration: Palette,
+};
+
+/** Formate une taille en Ko en une chaîne lisible (Ko ou Mo selon l'ordre de grandeur) — partagé par la médiathèque et le sélecteur de média de l'éditeur. */
+export function formatTailleMedia(ko: number): string {
+  if (ko < 1024) return `${ko} Ko`;
+  return `${(ko / 1024).toFixed(1)} Mo`;
+}
 
 /**
  * Médiathèque de démonstration. Aucun stockage réel n'est connecté : les
