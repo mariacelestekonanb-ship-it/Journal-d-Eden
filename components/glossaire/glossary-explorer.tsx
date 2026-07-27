@@ -19,7 +19,7 @@ import { glossaireTermes } from "@/data/glossaire";
 import { themes } from "@/data/themes";
 import { slugifyTerme } from "@/lib/format";
 
-const PAGE_SIZE = 9;
+export const PAGE_SIZE = 9;
 const SIMULATED_LATENCY_MS = 320;
 
 export interface GlossaryExplorerProps {
@@ -139,7 +139,7 @@ export function GlossaryExplorer({ initialTheme }: GlossaryExplorerProps) {
         </Paragraph>
       </div>
 
-      <div className="border-border bg-card flex flex-col gap-5 rounded-2xl border p-5">
+      <div className="border-border bg-card flex flex-col gap-5 rounded-xl border p-5">
         <CategoryFilter value={themeFiltre} onChange={updateTheme} />
         <Divider />
         <div className="flex flex-col gap-2">

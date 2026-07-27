@@ -19,7 +19,7 @@ export function RecentContentList({ items }: RecentContentListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Récemment modifié</CardTitle>
+        <CardTitle as="h2">Récemment modifié</CardTitle>
       </CardHeader>
       <CardContent>
         {items.length === 0 ? (

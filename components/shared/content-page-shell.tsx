@@ -44,6 +44,7 @@ export function ContentPageShell({
         />
         <EmptyState
           icon={icon}
+          headingAs="h2"
           title={emptyTitle}
           description={emptyDescription}
           className="mt-12"

@@ -207,7 +207,7 @@ export function BlockEditor({
           {value.map((block, index) => {
             const meta = blockMeta(block);
             return (
-              <li key={index} className="border-border rounded-2xl border p-4">
+              <li key={index} className="border-border rounded-xl border p-4">
                 <div className="mb-3 flex items-center justify-between gap-2">
                   <span className="text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-wide uppercase">
                     <meta.icon className="size-3.5" aria-hidden />

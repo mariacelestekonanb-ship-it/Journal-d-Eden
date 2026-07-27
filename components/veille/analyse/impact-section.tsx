@@ -48,7 +48,7 @@ export function ImpactSection({ id, impact }: ImpactSectionProps) {
           return (
             <div
               key={group.key}
-              className="border-border bg-card rounded-2xl border p-6"
+              className="border-border bg-card rounded-xl border p-6"
             >
               <div className="flex items-center gap-2.5">
                 <Icon aria-hidden className="text-accent size-5" />

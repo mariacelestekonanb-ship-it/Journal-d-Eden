@@ -10,14 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { labelDomaine } from "@/lib/format";
+import { labelDomaine, niveauBadgeVariant } from "@/lib/format";
 import type { QuestionItem } from "@/types";
-
-const niveauStyles: Record<QuestionItem["niveau"], string> = {
-  Débutant: "border-transparent bg-accent/15 text-gold-600",
-  Intermédiaire: "border-border text-foreground",
-  Avancé: "border-transparent bg-navy-900 text-white",
-};
 
 /**
  * Carte « question populaire » : catégorie, difficulté, résumé et temps de
@@ -32,11 +26,7 @@ export function QuestionSummaryCard({ item }: { item: QuestionItem }) {
           <Badge variant={item.domaine === "droit-spatial" ? "navy" : "accent"}>
             {labelDomaine(item.domaine)}
           </Badge>
-          <span
-            className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${niveauStyles[item.niveau]}`}
-          >
-            {item.niveau}
-          </span>
+          <Badge variant={niveauBadgeVariant(item.niveau)}>{item.niveau}</Badge>
         </div>
         <CardTitle>{item.question}</CardTitle>
         <CardDescription className="line-clamp-2">

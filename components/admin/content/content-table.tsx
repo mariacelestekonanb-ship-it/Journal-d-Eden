@@ -44,7 +44,7 @@ export function ContentTable<T>({
   }
 
   return (
-    <div className="border-border overflow-x-auto rounded-2xl border">
+    <div className="border-border overflow-x-auto rounded-xl border">
       <table className="w-full min-w-[40rem] text-left text-sm">
         <thead className="border-border bg-muted/40 border-b">
           <tr>

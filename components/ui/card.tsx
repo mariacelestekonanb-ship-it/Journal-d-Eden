@@ -13,7 +13,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card"
       className={cn(
-        "border-border bg-card text-card-foreground flex flex-col rounded-2xl border shadow-sm",
+        "border-border bg-card text-card-foreground flex flex-col rounded-xl border shadow-sm",
         className,
       )}
       {...props}
@@ -31,9 +31,14 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
+interface CardTitleProps extends React.ComponentProps<"h3"> {
+  /** Balise HTML rendue — h3 par défaut ; passer h2 quand la carte suit directement un h1 sans titre de section intermédiaire. */
+  as?: "h2" | "h3" | "h4";
+}
+
+function CardTitle({ as: Tag = "h3", className, ...props }: CardTitleProps) {
   return (
-    <h3
+    <Tag
       data-slot="card-title"
       className={cn("text-lg leading-snug font-semibold", className)}
       {...props}

@@ -165,7 +165,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
 
             <Dialog.Content asChild forceMount>
               <motion.div
-                className="border-border bg-card fixed top-24 left-1/2 z-50 flex max-h-[min(32rem,70vh)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-2xl border shadow-xl sm:top-28"
+                className="border-border bg-card fixed top-24 left-1/2 z-50 flex max-h-[min(32rem,70vh)] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 flex-col overflow-hidden rounded-xl border shadow-xl sm:top-28"
                 initial={{ opacity: 0, scale: 0.96, y: -8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97, y: -4 }}

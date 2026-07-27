@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookOpen, Newspaper, ArrowRight } from "lucide-react";
 
 import { Paragraph } from "@/components/ui/paragraph";
+import { Tag } from "@/components/ui/tag";
 import { ContentBlocks } from "@/components/shared/content-blocks";
 import { getContenusAssociesResolus } from "@/lib/content";
 import { slugifyTerme } from "@/lib/format";
@@ -38,13 +39,9 @@ export function DefinitionPreview({ terme }: DefinitionPreviewProps) {
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {terme.voirAussi.map((autreTerme) => (
-              <a
-                key={autreTerme}
-                href={`#${slugifyTerme(autreTerme)}`}
-                className="bg-secondary hover:bg-navy-900 focus-visible:ring-ring rounded-full px-3 py-1 text-xs font-medium transition-colors hover:text-white focus-visible:ring-2 focus-visible:outline-none"
-              >
-                {autreTerme}
-              </a>
+              <Tag key={autreTerme} asChild>
+                <a href={`#${slugifyTerme(autreTerme)}`}>{autreTerme}</a>
+              </Tag>
             ))}
           </div>
         </div>

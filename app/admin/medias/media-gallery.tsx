@@ -99,7 +99,7 @@ export function MediaGallery({ items }: MediaGalleryProps) {
                 href={item.url}
                 target="_blank"
                 rel="noreferrer"
-                className="border-border bg-card hover:border-ring group relative flex flex-col overflow-hidden rounded-2xl border transition-colors"
+                className="border-border bg-card hover:border-ring group relative flex flex-col overflow-hidden rounded-xl border transition-colors"
               >
                 <div className="bg-muted/50 text-muted-foreground group-hover:text-foreground relative flex aspect-square items-center justify-center transition-colors">
                   <Icon className="size-8" aria-hidden />

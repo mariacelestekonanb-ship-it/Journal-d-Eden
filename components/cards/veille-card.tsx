@@ -8,7 +8,10 @@ import type { VeilleItem } from "@/types";
 
 export function VeilleCard({ item }: { item: VeilleItem }) {
   return (
-    <Link href={`/veille-juridique/${item.slug}`}>
+    <Link
+      href={`/veille-juridique/${item.slug}`}
+      className="focus-visible:ring-ring focus-visible:ring-offset-background rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+    >
       <Card className="hover:border-accent/50 h-full justify-between p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
         <div className="flex items-center justify-between gap-3">
           <Badge variant={item.domaine === "droit-spatial" ? "navy" : "accent"}>

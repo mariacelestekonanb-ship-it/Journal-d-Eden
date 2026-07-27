@@ -3,7 +3,10 @@ import type { Metadata } from "next";
 import { GlossaireHero } from "@/components/glossaire/hero";
 import { SearchExperience } from "@/components/shared/search-experience";
 import { Section } from "@/components/ui/section";
-import { GlossaryExplorer } from "@/components/glossaire/glossary-explorer";
+import {
+  GlossaryExplorer,
+  PAGE_SIZE,
+} from "@/components/glossaire/glossary-explorer";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/seo/json-ld";
 import { glossaireTermes } from "@/data/glossaire";
@@ -44,7 +47,10 @@ export default async function GlossairePage({
     <>
       <JsonLd
         data={buildDefinedTermSetJsonLd(
-          glossaireTermes.map((terme) => ({
+          // Bornée au premier écran affiché par `GlossaryExplorer` avant
+          // tout chargement supplémentaire — le balisage ne doit pas
+          // dépasser ce qui est réellement visible sans interaction.
+          glossaireTermes.slice(0, PAGE_SIZE).map((terme) => ({
             name: terme.terme,
             description: terme.definition,
             themeLabel: getThemeBySlug(terme.theme)?.titre ?? terme.theme,

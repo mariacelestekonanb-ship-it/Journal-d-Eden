@@ -15,7 +15,7 @@ export interface DisclaimerBoxProps {
  */
 export function DisclaimerBox({ title, items }: DisclaimerBoxProps) {
   return (
-    <div className="border-gold-300/60 bg-gold-100/60 flex gap-4 rounded-2xl border p-6 sm:p-8">
+    <div className="border-gold-300/60 bg-gold-100/60 flex gap-4 rounded-xl border p-6 sm:p-8">
       <ShieldAlert
         aria-hidden
         className="text-gold-600 mt-0.5 size-6 shrink-0"

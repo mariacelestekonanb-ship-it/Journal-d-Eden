@@ -47,7 +47,7 @@ export function OfficialReferencesField({
       {values.map((reference, index) => (
         <div
           key={index}
-          className="border-border space-y-2 rounded-2xl border p-4"
+          className="border-border space-y-2 rounded-xl border p-4"
         >
           <div className="flex items-start justify-between gap-2">
             <div className="grid flex-1 gap-2 sm:grid-cols-2">
@@ -58,6 +58,7 @@ export function OfficialReferencesField({
                     type: e.target.value as TypeReferenceOfficielle,
                   })
                 }
+                aria-label="Type de référence"
               >
                 {TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -69,6 +70,7 @@ export function OfficialReferencesField({
                 value={reference.organisme}
                 onChange={(e) => update(index, { organisme: e.target.value })}
                 placeholder="Organisme"
+                aria-label="Organisme"
               />
             </div>
             <Button
@@ -85,11 +87,13 @@ export function OfficialReferencesField({
             value={reference.titre}
             onChange={(e) => update(index, { titre: e.target.value })}
             placeholder="Titre"
+            aria-label="Titre de la référence"
           />
           <Input
             value={reference.url}
             onChange={(e) => update(index, { url: e.target.value })}
             placeholder="URL"
+            aria-label="URL de la référence"
           />
         </div>
       ))}

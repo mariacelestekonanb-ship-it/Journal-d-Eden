@@ -309,8 +309,11 @@ function TermeContentFields({ form, set }: TermeContentFieldsProps) {
         </div>
 
         <div className="max-w-xs space-y-2">
-          <label className="text-sm font-medium">Thème</label>
+          <label className="text-sm font-medium" htmlFor="theme">
+            Thème
+          </label>
           <Select
+            id="theme"
             value={form.theme}
             onChange={(e) => set("theme", e.target.value)}
           >

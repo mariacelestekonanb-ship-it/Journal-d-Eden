@@ -23,7 +23,7 @@ import {
 } from "@/lib/content";
 import { labelDomaine } from "@/lib/format";
 import { siteConfig } from "@/lib/site-config";
-import { buildAnalyseMetadata } from "@/lib/metadata";
+import { buildAnalyseMetadata, buildMetadata } from "@/lib/metadata";
 import { buildArticleJsonLd } from "@/lib/json-ld";
 import { getLiensConnexes } from "@/lib/internal-links";
 
@@ -59,7 +59,12 @@ export async function generateMetadata({
   const item = getVeilleBySlug(slug);
 
   if (!item) {
-    return { title: "Analyse introuvable" };
+    return buildMetadata({
+      title: "Analyse introuvable",
+      description: "Cette analyse de veille juridique n'existe pas ou plus.",
+      path: `/veille-juridique/${slug}`,
+      noIndex: true,
+    });
   }
 
   return buildAnalyseMetadata(item);

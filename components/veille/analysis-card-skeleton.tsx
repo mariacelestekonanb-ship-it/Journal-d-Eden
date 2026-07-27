@@ -3,7 +3,7 @@ export function AnalysisCardSkeleton() {
   return (
     <div
       aria-hidden
-      className="border-border bg-card animate-pulse rounded-2xl border p-6"
+      className="border-border bg-card animate-pulse rounded-xl border p-6"
     >
       <div className="flex items-center justify-between">
         <div className="bg-secondary h-4 w-20 rounded-full" />

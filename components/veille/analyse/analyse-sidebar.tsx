@@ -75,11 +75,11 @@ function SidebarContent({
 export function AnalyseSidebar(props: AnalyseSidebarProps) {
   return (
     <>
-      <aside className="border-border bg-card sticky top-28 hidden max-h-[calc(100vh-8rem)] overflow-y-auto rounded-2xl border p-6 lg:block">
+      <aside className="border-border bg-card sticky top-28 hidden max-h-[calc(100vh-8rem)] overflow-y-auto rounded-xl border p-6 lg:block">
         <SidebarContent {...props} />
       </aside>
 
-      <details className="border-border bg-card group rounded-2xl border p-5 lg:hidden">
+      <details className="border-border bg-card group rounded-xl border p-5 lg:hidden">
         <summary className="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between rounded-md text-sm font-medium focus-visible:ring-2 focus-visible:outline-none">
           Sommaire et progression
           <ChevronDown

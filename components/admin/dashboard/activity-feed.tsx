@@ -34,7 +34,7 @@ export function ActivityFeed({ entries }: ActivityFeedProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Activité récente</CardTitle>
+        <CardTitle as="h2">Activité récente</CardTitle>
       </CardHeader>
       <CardContent>
         {entries.length === 0 ? (

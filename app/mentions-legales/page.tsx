@@ -43,6 +43,7 @@ export default function MentionsLegalesPage() {
       <Section>
         <EmptyState
           icon={FileText}
+          headingAs="h2"
           title="Cette page arrive bientôt"
           description="Les mentions légales complètes seront publiées ici."
         />

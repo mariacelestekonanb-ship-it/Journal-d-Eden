@@ -66,7 +66,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <Section tone="navy" spacing="none" className="py-6">
-          <div className="flex flex-col items-center justify-between gap-4 text-xs text-gray-500 sm:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 text-xs text-gray-400 sm:flex-row">
             <p>
               © {new Date().getFullYear()} {siteConfig.name}. Tous droits
               réservés.

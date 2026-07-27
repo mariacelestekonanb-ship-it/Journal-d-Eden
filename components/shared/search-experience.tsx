@@ -98,7 +98,7 @@ export function SearchExperience({
         {panel.isOpen && (
           <div
             id={panelId}
-            className="border-border bg-card absolute z-20 mt-3 w-full rounded-2xl border p-2 shadow-lg"
+            className="border-border bg-card absolute z-20 mt-3 w-full rounded-xl border p-2 shadow-lg"
           >
             {!hasQuery ? (
               recentSearches.length > 0 && (

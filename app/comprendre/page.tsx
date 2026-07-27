@@ -3,7 +3,10 @@ import type { Metadata } from "next";
 import { ComprendreHero } from "@/components/comprendre/hero";
 import { SearchExperience } from "@/components/shared/search-experience";
 import { CategoriesSection } from "@/components/comprendre/categories-section";
-import { PopularQuestionsSection } from "@/components/comprendre/popular-questions-section";
+import {
+  PopularQuestionsSection,
+  MAX_QUESTIONS,
+} from "@/components/comprendre/popular-questions-section";
 import { AllFichesExplorer } from "@/components/comprendre/all-fiches-explorer";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -46,7 +49,10 @@ export default async function ComprendrePage({
             path: "/comprendre",
           }),
           buildFaqPageJsonLd(
-            questions.map((question) => ({
+            // Bornée aux questions effectivement visibles sans interaction
+            // (voir `PopularQuestionsSection`) : le balisage FAQPage ne doit
+            // porter que sur du contenu déjà présent à l'écran.
+            questions.slice(0, MAX_QUESTIONS).map((question) => ({
               question: question.question,
               reponse: question.reponseCourte,
             })),

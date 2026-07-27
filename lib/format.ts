@@ -1,4 +1,5 @@
-import type { Domaine } from "@/types";
+import type { BadgeProps } from "@/components/ui/badge";
+import type { Domaine, QuestionItem } from "@/types";
 
 const domaineLabels: Record<Domaine, string> = {
   "droit-spatial": "Droit spatial",
@@ -7,6 +8,22 @@ const domaineLabels: Record<Domaine, string> = {
 
 export function labelDomaine(domaine: Domaine): string {
   return domaineLabels[domaine];
+}
+
+const niveauBadgeVariants: Record<
+  QuestionItem["niveau"],
+  NonNullable<BadgeProps["variant"]>
+> = {
+  Débutant: "accent",
+  Intermédiaire: "outline",
+  Avancé: "navy",
+};
+
+/** Variante de `Badge` associée à un niveau de difficulté — une seule échelle de couleurs pour toutes les cartes de fiche. */
+export function niveauBadgeVariant(
+  niveau: QuestionItem["niveau"],
+): NonNullable<BadgeProps["variant"]> {
+  return niveauBadgeVariants[niveau];
 }
 
 export function formatDate(iso: string): string {

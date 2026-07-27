@@ -49,7 +49,7 @@ export function RevisionHistory({ versions }: RevisionHistoryProps) {
 
   return (
     <div className="space-y-4">
-      <ol className="border-border divide-border divide-y overflow-hidden rounded-2xl border">
+      <ol className="border-border divide-border divide-y overflow-hidden rounded-xl border">
         {versions.map((version, index) => (
           <li key={version.id} className="flex items-center gap-3 px-4 py-3">
             <input

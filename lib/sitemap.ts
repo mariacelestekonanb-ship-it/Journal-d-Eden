@@ -19,7 +19,10 @@ export function toAbsoluteUrl(path: string): string {
 /**
  * Pages institutionnelles : racine du site et pages simples sans contenu
  * daté (pas de `lastModified` réel disponible, la date du jour sert de
- * valeur par défaut raisonnable).
+ * valeur par défaut raisonnable). Les pages `noIndex` (mentions légales,
+ * confidentialité) sont volontairement exclues : les lister ici entrerait
+ * en contradiction avec leur balise `robots` et Search Console le signale
+ * comme telle.
  */
 export function institutionnelEntries(): SitemapEntry[] {
   const today = new Date();
@@ -37,18 +40,6 @@ export function institutionnelEntries(): SitemapEntry[] {
       lastModified: today,
       changeFrequency: "yearly",
       priority: 0.4,
-    },
-    {
-      path: "/mentions-legales",
-      lastModified: today,
-      changeFrequency: "yearly",
-      priority: 0.1,
-    },
-    {
-      path: "/confidentialite",
-      lastModified: today,
-      changeFrequency: "yearly",
-      priority: 0.1,
     },
   ];
 }

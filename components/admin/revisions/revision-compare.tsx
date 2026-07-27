@@ -25,7 +25,7 @@ export function RevisionCompare({ a, b }: RevisionCompareProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
+        <CardTitle as="h2" className="flex items-center gap-2 text-base">
           Comparaison
         </CardTitle>
       </CardHeader>

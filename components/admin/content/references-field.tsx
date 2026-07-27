@@ -55,7 +55,7 @@ export function ReferencesField({ values, onChange }: ReferencesFieldProps) {
       {values.map((reference, index) => (
         <div
           key={index}
-          className="border-border space-y-2 rounded-2xl border p-4"
+          className="border-border space-y-2 rounded-xl border p-4"
         >
           <div className="flex items-start justify-between gap-2">
             <div className="grid flex-1 gap-2 sm:grid-cols-2">
@@ -64,6 +64,7 @@ export function ReferencesField({ values, onChange }: ReferencesFieldProps) {
                 onChange={(e) =>
                   update(index, { type: e.target.value as TypeReference })
                 }
+                aria-label="Type de référence"
               >
                 {TYPES_REFERENCE.map((type) => (
                   <option key={type} value={type}>
@@ -75,6 +76,7 @@ export function ReferencesField({ values, onChange }: ReferencesFieldProps) {
                 value={reference.organisme}
                 onChange={(e) => update(index, { organisme: e.target.value })}
                 placeholder="Organisme"
+                aria-label="Organisme"
               />
             </div>
             <Button
@@ -91,16 +93,19 @@ export function ReferencesField({ values, onChange }: ReferencesFieldProps) {
             value={reference.titre}
             onChange={(e) => update(index, { titre: e.target.value })}
             placeholder="Titre du texte"
+            aria-label="Titre du texte"
           />
           <Input
             value={reference.citation}
             onChange={(e) => update(index, { citation: e.target.value })}
             placeholder="Citation précise (article, numéro, année…)"
+            aria-label="Citation précise"
           />
           <Input
             value={reference.url ?? ""}
             onChange={(e) => update(index, { url: e.target.value })}
             placeholder="URL (optionnel)"
+            aria-label="URL de la référence"
           />
         </div>
       ))}

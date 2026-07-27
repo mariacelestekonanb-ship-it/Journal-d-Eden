@@ -23,7 +23,7 @@ import {
 } from "@/lib/content";
 import { labelDomaine } from "@/lib/format";
 import { siteConfig } from "@/lib/site-config";
-import { buildFicheMetadata } from "@/lib/metadata";
+import { buildFicheMetadata, buildMetadata } from "@/lib/metadata";
 import { buildLearningResourceJsonLd } from "@/lib/json-ld";
 import { getLiensConnexes } from "@/lib/internal-links";
 
@@ -59,7 +59,12 @@ export async function generateMetadata({
   const question = getQuestionBySlug(slug);
 
   if (!question) {
-    return { title: "Fiche introuvable" };
+    return buildMetadata({
+      title: "Fiche introuvable",
+      description: "Cette fiche pédagogique n'existe pas ou plus.",
+      path: `/comprendre/${slug}`,
+      noIndex: true,
+    });
   }
 
   return buildFicheMetadata(question);

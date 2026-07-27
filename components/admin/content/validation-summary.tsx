@@ -23,7 +23,10 @@ export function ValidationSummary({ checks }: ValidationSummaryProps) {
 
   if (missing.length === 0) {
     return (
-      <div className="border-success/30 bg-success/10 flex items-center gap-3 rounded-xl border p-4">
+      <div
+        role="status"
+        className="border-success/30 bg-success/10 flex items-center gap-3 rounded-xl border p-4"
+      >
         <CheckCircle2 aria-hidden className="text-success size-4.5 shrink-0" />
         <Paragraph size="sm" className="text-foreground">
           Tous les champs obligatoires sont renseignés.
@@ -33,7 +36,10 @@ export function ValidationSummary({ checks }: ValidationSummaryProps) {
   }
 
   return (
-    <div className="border-gold-300/60 bg-gold-100/60 flex gap-3 rounded-xl border p-4">
+    <div
+      role="status"
+      className="border-gold-300/60 bg-gold-100/60 flex gap-3 rounded-xl border p-4"
+    >
       <AlertTriangle
         aria-hidden
         className="text-gold-600 mt-0.5 size-4.5 shrink-0"

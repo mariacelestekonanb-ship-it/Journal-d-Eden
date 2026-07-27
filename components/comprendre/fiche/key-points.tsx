@@ -20,7 +20,7 @@ export function KeyPoints({ id, points }: KeyPointsProps) {
     <section
       id={id}
       aria-labelledby={headingId}
-      className="border-border bg-card scroll-mt-28 rounded-2xl border p-6 sm:p-8"
+      className="border-border bg-card scroll-mt-28 rounded-xl border p-6 sm:p-8"
     >
       <Heading id={headingId} as="h2" size="md">
         À retenir

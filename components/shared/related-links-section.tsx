@@ -34,7 +34,7 @@ export function RelatedLinksSection({ id, items }: RelatedLinksSectionProps) {
         {items.map((item, index) => {
           const Icon = ICONS[item.type];
           const content = (
-            <Card className="hover:border-accent/40 h-full p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            <Card className="hover:border-accent/40 h-full p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
               <div className="flex items-start gap-3">
                 <span
                   aria-hidden
@@ -61,18 +61,21 @@ export function RelatedLinksSection({ id, items }: RelatedLinksSectionProps) {
             </Card>
           );
 
+          const focusClassName =
+            "focus-visible:ring-ring block h-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
           return item.external ? (
             <a
               key={index}
               href={item.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="block h-full"
+              className={focusClassName}
             >
               {content}
             </a>
           ) : (
-            <Link key={index} href={item.href} className="block h-full">
+            <Link key={index} href={item.href} className={focusClassName}>
               {content}
             </Link>
           );

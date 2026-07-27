@@ -23,14 +23,14 @@ export function FicheDetailSkeleton() {
             <div className="bg-secondary h-10 w-3/4 rounded-lg" />
             <div className="bg-secondary h-4 w-full rounded-full" />
             <div className="bg-secondary h-4 w-2/3 rounded-full" />
-            <div className="bg-secondary mt-6 h-32 w-full rounded-2xl" />
+            <div className="bg-secondary mt-6 h-32 w-full rounded-xl" />
             <div className="space-y-3 pt-4">
               <div className="bg-secondary h-4 w-full rounded-full" />
               <div className="bg-secondary h-4 w-full rounded-full" />
               <div className="bg-secondary h-4 w-5/6 rounded-full" />
             </div>
           </div>
-          <div className="bg-secondary hidden h-72 rounded-2xl lg:block" />
+          <div className="bg-secondary hidden h-72 rounded-xl lg:block" />
         </div>
       </Container>
     </div>

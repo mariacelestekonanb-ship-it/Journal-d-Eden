@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tag } from "@/components/ui/tag";
 import { ADMIN_STATUSES, type AdminStatus } from "@/lib/admin/types";
 
-const STATUS_LABELS: Record<AdminStatus, string> = {
+export const STATUS_LABELS: Record<AdminStatus, string> = {
   brouillon: "Brouillon",
   "en-relecture": "En relecture",
   "a-corriger": "À corriger",

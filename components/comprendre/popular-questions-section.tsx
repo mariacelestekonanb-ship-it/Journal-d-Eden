@@ -4,7 +4,7 @@ import { Paragraph } from "@/components/ui/paragraph";
 import { QuestionSummaryCard } from "@/components/comprendre/question-summary-card";
 import { questions } from "@/data/questions";
 
-const MAX_QUESTIONS = 9;
+export const MAX_QUESTIONS = 9;
 
 /** Section « Questions populaires » : un aperçu borné (9 au maximum), pas l'intégralité de la bibliothèque. */
 export function PopularQuestionsSection() {

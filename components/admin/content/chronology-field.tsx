@@ -34,7 +34,7 @@ export function ChronologyField({ values, onChange }: ChronologyFieldProps) {
       {values.map((event, index) => (
         <div
           key={index}
-          className="border-border space-y-2 rounded-2xl border p-4"
+          className="border-border space-y-2 rounded-xl border p-4"
         >
           <div className="flex items-start gap-2">
             <div className="grid flex-1 gap-2 sm:grid-cols-[10rem_1fr]">
@@ -42,11 +42,13 @@ export function ChronologyField({ values, onChange }: ChronologyFieldProps) {
                 type="date"
                 value={event.date}
                 onChange={(e) => update(index, { date: e.target.value })}
+                aria-label="Date de l'événement"
               />
               <Input
                 value={event.titre}
                 onChange={(e) => update(index, { titre: e.target.value })}
                 placeholder="Titre de l'événement"
+                aria-label="Titre de l'événement"
               />
             </div>
             <Button
@@ -63,6 +65,7 @@ export function ChronologyField({ values, onChange }: ChronologyFieldProps) {
             value={event.description ?? ""}
             onChange={(e) => update(index, { description: e.target.value })}
             placeholder="Description (optionnel)"
+            aria-label="Description de l'événement"
           />
         </div>
       ))}

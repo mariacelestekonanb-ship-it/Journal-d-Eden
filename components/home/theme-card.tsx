@@ -24,7 +24,10 @@ export function ThemeCard({
   href,
 }: ThemeCardProps) {
   return (
-    <Link href={href} className="group block h-full">
+    <Link
+      href={href}
+      className="focus-visible:ring-ring group focus-visible:ring-offset-background block h-full rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+    >
       <Card className="hover:border-accent/40 h-full justify-between p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
         <div className="bg-navy-900 group-hover:bg-accent group-hover:text-accent-foreground flex size-12 items-center justify-center rounded-xl text-white transition-colors">
           <Icon className="size-6" aria-hidden />

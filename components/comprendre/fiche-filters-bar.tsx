@@ -66,7 +66,7 @@ export function FicheFiltersBar({
   onSortChange,
 }: FicheFiltersBarProps) {
   return (
-    <div className="border-border bg-card flex flex-col gap-5 rounded-2xl border p-5">
+    <div className="border-border bg-card flex flex-col gap-5 rounded-xl border p-5">
       <div className="flex flex-col gap-2">
         <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           Thème

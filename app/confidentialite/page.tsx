@@ -43,6 +43,7 @@ export default function ConfidentialitePage() {
       <Section>
         <EmptyState
           icon={ShieldCheck}
+          headingAs="h2"
           title="Cette page arrive bientôt"
           description="La politique de confidentialité complète sera publiée ici."
         />

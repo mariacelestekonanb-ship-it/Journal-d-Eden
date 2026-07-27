@@ -21,6 +21,7 @@ export function GooglePreview({
   return (
     <div className="border-border bg-card rounded-xl border p-4 font-sans">
       <p className="text-muted-foreground truncate text-sm">{url}</p>
+      {/* Couleur de lien Google réelle, volontairement hors design system : simule un résultat de recherche, pas un composant LexWatch. */}
       <p className="mt-1 truncate text-xl text-[#1a0dab] dark:text-[#8ab4f8]">
         {title || "Titre de la page"}
       </p>

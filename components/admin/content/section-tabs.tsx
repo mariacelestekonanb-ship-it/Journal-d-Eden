@@ -23,7 +23,7 @@ export function SectionTabs<T extends string>({
     <div
       role="tablist"
       aria-label="Sections du contenu"
-      className="border-border flex gap-1 border-b"
+      className="border-border flex gap-1 overflow-x-auto border-b"
     >
       {tabs.map((tab) => (
         <button
@@ -33,7 +33,7 @@ export function SectionTabs<T extends string>({
           aria-selected={active === tab.id}
           onClick={() => onChange(tab.id)}
           className={cn(
-            "-mb-px border-b-2 px-4 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none",
+            "focus-visible:ring-ring focus-visible:ring-offset-background -mb-px shrink-0 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
             active === tab.id
               ? "border-navy-900 text-foreground"
               : "text-muted-foreground hover:text-foreground border-transparent",

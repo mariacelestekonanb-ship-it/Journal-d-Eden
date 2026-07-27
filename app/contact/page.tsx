@@ -131,7 +131,7 @@ export default function ContactPage() {
                   name="message"
                   rows={6}
                   placeholder="Décrivez votre demande…"
-                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/40 w-full rounded-2xl border px-5 py-4 text-sm shadow-xs outline-none focus-visible:ring-2"
+                  className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/40 w-full rounded-xl border px-5 py-4 text-sm shadow-xs outline-none focus-visible:ring-2"
                 />
               </div>
 

@@ -13,7 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-export const iconMap: Record<string, LucideIcon> = {
+const iconMap: Record<string, LucideIcon> = {
   Globe2,
   Orbit,
   OrbitIcon: Orbit,

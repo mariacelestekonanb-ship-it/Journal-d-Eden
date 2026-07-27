@@ -9,6 +9,7 @@ import { Paragraph } from "@/components/ui/paragraph";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/ui/search-input";
+import { Tag } from "@/components/ui/tag";
 import {
   ContentTable,
   type ContentTableColumn,
@@ -16,6 +17,7 @@ import {
 import { StatusBadge } from "@/components/admin/content/status-badge";
 import { RowActionsMenu } from "@/components/admin/content/row-actions-menu";
 import { MergeDialog } from "@/components/admin/content/merge-dialog";
+import { STATUS_LABELS } from "@/components/admin/content/page-toolbar";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { CategoryDialog } from "@/components/admin/categories/category-dialog";
 import {
@@ -25,6 +27,7 @@ import {
   type CategorieFormInput,
 } from "@/lib/admin/categories-actions";
 import { formatDate, labelDomaine } from "@/lib/format";
+import { ADMIN_STATUSES, type AdminStatus } from "@/lib/admin/types";
 import type { CategorieAdmin } from "@/lib/admin/types";
 
 export interface CategoriesListProps {
@@ -48,14 +51,21 @@ const CATEGORIE_VIDE: CategorieFormInput = {
 export function CategoriesList({ items }: CategoriesListProps) {
   const router = useRouter();
   const [search, setSearch] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState<AdminStatus | "tous">(
+    "tous",
+  );
   const [isPending, startTransition] = React.useTransition();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [renaming, setRenaming] = React.useState<CategorieAdmin | null>(null);
   const [mergingId, setMergingId] = React.useState<string | null>(null);
 
-  const filtered = items.filter((item) =>
-    item.titre.toLowerCase().includes(search.trim().toLowerCase()),
-  );
+  const filtered = items.filter((item) => {
+    const matchStatus = statusFilter === "tous" || item.status === statusFilter;
+    const matchSearch = item.titre
+      .toLowerCase()
+      .includes(search.trim().toLowerCase());
+    return matchStatus && matchSearch;
+  });
 
   function handleCreate(value: CategorieFormInput) {
     startTransition(async () => {
@@ -201,12 +211,37 @@ export function CategoriesList({ items }: CategoriesListProps) {
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <SearchInput
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une catégorie…"
-          containerClassName="sm:max-w-xs"
-        />
+        <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Rechercher une catégorie…"
+            containerClassName="sm:max-w-xs"
+          />
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="Filtrer par statut"
+          >
+            <Tag
+              asButton
+              active={statusFilter === "tous"}
+              onClick={() => setStatusFilter("tous")}
+            >
+              Tous
+            </Tag>
+            {ADMIN_STATUSES.map((status) => (
+              <Tag
+                key={status}
+                asButton
+                active={statusFilter === status}
+                onClick={() => setStatusFilter(status)}
+              >
+                {STATUS_LABELS[status]}
+              </Tag>
+            ))}
+          </div>
+        </div>
         <Button
           variant="accent"
           className="shrink-0"

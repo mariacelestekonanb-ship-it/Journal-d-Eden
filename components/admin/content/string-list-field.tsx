@@ -47,6 +47,7 @@ export function StringListField({
             value={value}
             onChange={(e) => update(index, e.target.value)}
             placeholder={placeholder}
+            aria-label={placeholder ?? `Entrée ${index + 1}`}
           />
           <Button
             variant="ghost"

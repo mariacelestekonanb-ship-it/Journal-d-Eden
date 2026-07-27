@@ -323,8 +323,11 @@ function RessourceContentFields({ form, set }: RessourceContentFieldsProps) {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Type</label>
+            <label className="text-sm font-medium" htmlFor="type-ressource">
+              Type
+            </label>
             <Select
+              id="type-ressource"
               value={form.type}
               onChange={(e) =>
                 set("type", e.target.value as RessourceAdmin["type"])
@@ -339,8 +342,11 @@ function RessourceContentFields({ form, set }: RessourceContentFieldsProps) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Domaine</label>
+            <label className="text-sm font-medium" htmlFor="domaine">
+              Domaine
+            </label>
             <Select
+              id="domaine"
               value={form.domaine}
               onChange={(e) => set("domaine", e.target.value as Domaine)}
             >

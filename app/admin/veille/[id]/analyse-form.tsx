@@ -449,8 +449,11 @@ function AnalyseContentFields({
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Domaine</label>
+            <label className="text-sm font-medium" htmlFor="domaine">
+              Domaine
+            </label>
             <Select
+              id="domaine"
               value={form.domaine}
               onChange={(e) => {
                 const domaine = e.target.value as Domaine;
@@ -470,8 +473,11 @@ function AnalyseContentFields({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Catégorie</label>
+            <label className="text-sm font-medium" htmlFor="categorie">
+              Catégorie
+            </label>
             <Select
+              id="categorie"
               value={form.categorie}
               onChange={(e) => set("categorie", e.target.value)}
             >
@@ -484,8 +490,11 @@ function AnalyseContentFields({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Type</label>
+            <label className="text-sm font-medium" htmlFor="type-veille">
+              Type
+            </label>
             <Select
+              id="type-veille"
               value={form.type}
               onChange={(e) => set("type", e.target.value as TypeVeille)}
             >

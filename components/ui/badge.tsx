@@ -10,7 +10,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "border-transparent bg-secondary text-secondary-foreground",
-        accent: "border-transparent bg-accent/15 text-gold-600",
+        accent: "border-transparent bg-accent/15 text-gold-700",
         outline: "border-border text-foreground bg-transparent",
         navy: "border-transparent bg-navy-900 text-white",
         success: "border-transparent bg-success/15 text-success",
@@ -45,4 +45,4 @@ function Badge({ className, variant, asChild = false, ...props }: BadgeProps) {
   );
 }
 
-export { Badge, badgeVariants };
+export { Badge };

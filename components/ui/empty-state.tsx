@@ -11,6 +11,8 @@ export interface EmptyStateProps extends React.ComponentProps<"div"> {
   description?: string;
   /** Zone d'action optionnelle (bouton, lien…) affichée sous le texte. */
   action?: React.ReactNode;
+  /** Balise du titre — h3 par défaut ; passer h2 quand l'état vide suit directement un h1 sans titre de section intermédiaire. */
+  headingAs?: "h2" | "h3";
 }
 
 /**
@@ -24,6 +26,7 @@ export function EmptyState({
   title,
   description,
   action,
+  headingAs = "h3",
   className,
   ...props
 }: EmptyStateProps) {
@@ -31,7 +34,7 @@ export function EmptyState({
     <div
       data-slot="empty-state"
       className={cn(
-        "border-border bg-muted/40 flex flex-col items-center gap-3 rounded-2xl border border-dashed px-8 py-16 text-center",
+        "border-border bg-muted/40 flex flex-col items-center gap-3 rounded-xl border border-dashed px-8 py-16 text-center",
         className,
       )}
       {...props}
@@ -41,7 +44,7 @@ export function EmptyState({
           <Icon className="size-5" />
         </span>
       ) : null}
-      <Heading as="h3" size="sm">
+      <Heading as={headingAs} size="sm">
         {title}
       </Heading>
       {description ? (

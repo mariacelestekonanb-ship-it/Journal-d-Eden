@@ -20,7 +20,7 @@ export function QuickAnswer({ id, text }: QuickAnswerProps) {
     <section
       id={id}
       aria-labelledby={headingId}
-      className="bg-accent/10 border-accent/20 flex scroll-mt-28 gap-4 rounded-2xl border p-6 sm:p-8"
+      className="bg-accent/10 border-accent/20 flex scroll-mt-28 gap-4 rounded-xl border p-6 sm:p-8"
     >
       <span
         aria-hidden

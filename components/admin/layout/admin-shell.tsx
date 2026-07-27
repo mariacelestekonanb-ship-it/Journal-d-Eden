@@ -33,6 +33,12 @@ export function AdminShell({ user, children }: AdminShellProps) {
 
   return (
     <div className="bg-muted/30 flex min-h-screen">
+      <a
+        href="#admin-main-content"
+        className="focus:bg-navy-900 sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-white"
+      >
+        Aller au contenu principal
+      </a>
       <AdminSidebar className="hidden w-64 shrink-0 lg:flex" />
 
       <div className="flex min-w-0 flex-1 flex-col">

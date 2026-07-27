@@ -24,6 +24,7 @@
   --gray-600: #4c5566;
 
   /* Accent doré */
+  --gold-700: #7a5a17;
   --gold-600: #a3781f;
   --gold-500: #c9a227;
   --gold-400: #d9b94a;
@@ -131,6 +132,7 @@
   --color-gray-500: var(--gray-500);
   --color-gray-600: var(--gray-600);
 
+  --color-gold-700: var(--gold-700);
   --color-gold-600: var(--gold-600);
   --color-gold-500: var(--gold-500);
   --color-gold-400: var(--gold-400);

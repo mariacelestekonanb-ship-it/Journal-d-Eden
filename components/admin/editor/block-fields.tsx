@@ -234,6 +234,7 @@ function ImageFields({
           value={block.url}
           onChange={(e) => onChange({ ...block, url: e.target.value })}
           placeholder="URL de l'image"
+          aria-label="URL de l'image"
         />
         <Button
           type="button"
@@ -250,11 +251,13 @@ function ImageFields({
         value={block.alt}
         onChange={(e) => onChange({ ...block, alt: e.target.value })}
         placeholder="Texte alternatif"
+        aria-label="Texte alternatif de l'image"
       />
       <Input
         value={block.caption ?? ""}
         onChange={(e) => onChange({ ...block, caption: e.target.value })}
         placeholder="Légende (optionnel)"
+        aria-label="Légende de l'image (optionnel)"
       />
 
       <MediaPickerDialog

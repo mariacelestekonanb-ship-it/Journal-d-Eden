@@ -20,7 +20,7 @@ export function AnalysisSummary({ id, points }: AnalysisSummaryProps) {
     <section
       id={id}
       aria-labelledby={headingId}
-      className="bg-navy-950 scroll-mt-28 rounded-2xl p-6 text-white sm:p-8"
+      className="bg-navy-950 scroll-mt-28 rounded-xl p-6 text-white sm:p-8"
     >
       <div className="flex items-center gap-3">
         <span
