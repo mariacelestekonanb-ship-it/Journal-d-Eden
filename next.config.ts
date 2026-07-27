@@ -13,21 +13,31 @@ import type { NextConfig } from "next";
  * de `lib/analytics-config.ts` ; aucune image ni police externe n'est
  * chargée par le site (tous les médias sont servis depuis `/media`, les
  * polices sont auto-hébergées via `next/font`).
+ *
+ * `'unsafe-eval'` n'est ajouté qu'en développement (`next dev`) : le
+ * runtime webpack du Fast Refresh l'utilise pour recharger les modules à
+ * chaud, et sans lui React ne s'hydrate plus du tout (page visuellement
+ * vide malgré un HTML serveur correct). Le build de production n'en a pas
+ * besoin — la CSP y reste donc strictement plus sévère qu'en dev.
  */
-const CONTENT_SECURITY_POLICY = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://plausible.io",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-  "font-src 'self' data:",
-  "connect-src 'self' https://www.google-analytics.com https://www.clarity.ms https://plausible.io",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-].join("; ");
+function buildContentSecurityPolicy(): string {
+  const isDev = process.env.NODE_ENV !== "production";
+
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval' " : ""}https://www.googletagmanager.com https://www.clarity.ms https://plausible.io`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://www.google-analytics.com https://www.clarity.ms https://plausible.io",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; ");
+}
 
 const SECURITY_HEADERS = [
-  { key: "Content-Security-Policy", value: CONTENT_SECURITY_POLICY },
+  { key: "Content-Security-Policy", value: buildContentSecurityPolicy() },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

@@ -17,8 +17,8 @@ export interface AdminUser {
 export async function getCurrentAdminUser(): Promise<AdminUser> {
   return {
     id: "user-demo",
-    nom: "Camille Dupuis",
+    nom: "Bénédicte Konan",
     role: "Éditeur",
-    initiales: "CD",
+    initiales: "BK",
   };
 }
