@@ -1,11 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Inter } from "next/font/google";
 
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { AnalyticsScripts } from "@/components/analytics/analytics-scripts";
-import { JsonLd } from "@/components/seo/json-ld";
-import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/json-ld";
 import { siteConfig, searchConsoleVerification } from "@/lib/site-config";
 import "@/styles/globals.css";
 
@@ -81,19 +78,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground flex min-h-full flex-col font-sans">
-        {/* Données structurées globales : présentes sur chaque page, elles décrivent la plateforme elle-même (WebSite + SearchAction) et son éditeur (Organization), indépendamment du contenu de la page visitée. */}
-        <JsonLd data={[buildWebSiteJsonLd(), buildOrganizationJsonLd()]} />
-        <a
-          href="#main-content"
-          className="focus:bg-navy-900 sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-white"
-        >
-          Aller au contenu principal
-        </a>
-        <Header />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
         <AnalyticsScripts />
       </body>
     </html>

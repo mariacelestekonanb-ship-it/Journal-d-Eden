@@ -52,6 +52,7 @@
   --accent-foreground: var(--navy-950);
 
   --destructive: #b3261e;
+  --success: #1a7a4c;
 
   --border: var(--gray-200);
   --input: var(--gray-200);
@@ -81,6 +82,7 @@
   --accent-foreground: var(--navy-950);
 
   --destructive: #ff6b61;
+  --success: #4ade80;
 
   --border: var(--navy-700);
   --input: var(--navy-700);
@@ -108,6 +110,7 @@
   --color-accent-foreground: var(--accent-foreground);
 
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
 
   --color-border: var(--border);
   --color-input: var(--input);
