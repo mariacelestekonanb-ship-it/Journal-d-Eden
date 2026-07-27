@@ -187,7 +187,7 @@ export interface WebPageJsonLdInput {
   path: string;
 }
 
-/** `WebPage` générique — pages institutionnelles simples (À propos, Contact, mentions légales…). */
+/** `WebPage` générique — pages institutionnelles simples (Contact, mentions légales…). */
 export function buildWebPageJsonLd(input: WebPageJsonLdInput) {
   return {
     "@context": "https://schema.org",
@@ -196,6 +196,25 @@ export function buildWebPageJsonLd(input: WebPageJsonLdInput) {
     description: input.description,
     url: `${siteConfig.url}${input.path}`,
     isPartOf: websiteRef(),
+  };
+}
+
+export interface AboutPageJsonLdInput {
+  name: string;
+  description: string;
+  path: string;
+}
+
+/** `AboutPage` — spécialisation de `WebPage` pour `/a-propos`, avec l'organisation éditrice comme `about`. */
+export function buildAboutPageJsonLd(input: AboutPageJsonLdInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: input.name,
+    description: input.description,
+    url: `${siteConfig.url}${input.path}`,
+    isPartOf: websiteRef(),
+    about: organizationRef(),
   };
 }
 

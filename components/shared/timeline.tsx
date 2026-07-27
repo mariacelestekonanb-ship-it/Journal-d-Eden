@@ -1,4 +1,4 @@
-import { TimelineItem } from "@/components/veille/analyse/timeline-item";
+import { TimelineItem } from "@/components/shared/timeline-item";
 import type { EvenementChronologie } from "@/types";
 
 export interface TimelineProps {

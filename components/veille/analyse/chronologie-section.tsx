@@ -1,5 +1,5 @@
 import { Heading } from "@/components/ui/heading";
-import { Timeline } from "@/components/veille/analyse/timeline";
+import { Timeline } from "@/components/shared/timeline";
 import type { EvenementChronologie } from "@/types";
 
 export interface ChronologieSectionProps {

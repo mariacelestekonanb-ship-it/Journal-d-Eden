@@ -198,3 +198,17 @@ export interface Ressource {
   url: string;
   organisme: string;
 }
+
+/**
+ * Institution de référence citée en source des contenus — page « À propos »
+ * (composant `SourceCard`). Simple carte de présentation, sans lien avec le
+ * modèle de `ReferenceJuridique` (qui cite un texte précis, pas
+ * l'organisme qui l'a produit).
+ */
+export interface Institution {
+  nom: string;
+  /** Sigle affiché en évidence sur la carte (ex. « ONU », « CNIL »). */
+  sigle: string;
+  description: string;
+  url: string;
+}
