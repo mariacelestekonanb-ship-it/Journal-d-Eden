@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Search } from "lucide-react";
@@ -18,7 +19,10 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Logo } from "@/components/shared/logo";
-import { SearchDialog } from "@/components/shared/search-dialog";
+import {
+  GlobalSearch,
+  preloadSearchDialog,
+} from "@/components/search/global-search";
 
 /**
  * En-tête global de la plateforme : navigation desktop, recherche globale et
@@ -30,6 +34,11 @@ export function Header() {
   const isScrolled = useScrolled();
   const mobileNav = useDisclosure();
   const search = useDisclosure();
+  const [isMac, setIsMac] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMac(/mac|iphone|ipad|ipod/i.test(window.navigator.userAgent));
+  }, []);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -69,12 +78,19 @@ export function Header() {
 
         <div className="hidden items-center gap-2 lg:flex">
           <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Rechercher"
+            variant="outline"
+            size="sm"
+            aria-label="Rechercher (Ctrl K)"
             onClick={search.open}
+            onMouseEnter={preloadSearchDialog}
+            onFocus={preloadSearchDialog}
+            className="text-muted-foreground gap-2"
           >
-            <Search className="size-4.5" />
+            <Search className="size-4" aria-hidden />
+            Rechercher
+            <kbd className="bg-secondary text-muted-foreground hidden rounded-md px-1.5 py-0.5 text-[10px] font-medium xl:inline-block">
+              {isMac ? "⌘K" : "Ctrl K"}
+            </kbd>
           </Button>
           <Button asChild variant="accent" size="sm">
             <Link href="/veille-juridique">Voir la veille</Link>
@@ -87,6 +103,8 @@ export function Header() {
             size="icon"
             aria-label="Rechercher"
             onClick={search.open}
+            onMouseEnter={preloadSearchDialog}
+            onFocus={preloadSearchDialog}
           >
             <Search className="size-4.5" />
           </Button>
@@ -132,7 +150,7 @@ export function Header() {
         </div>
       </div>
 
-      <SearchDialog open={search.isOpen} onOpenChange={search.setIsOpen} />
+      <GlobalSearch open={search.isOpen} onOpenChange={search.setIsOpen} />
     </header>
   );
 }
