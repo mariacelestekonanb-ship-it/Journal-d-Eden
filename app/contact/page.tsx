@@ -8,13 +8,21 @@ import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/lib/site-config";
+import { buildMetadata } from "@/lib/metadata";
+import { buildWebPageJsonLd } from "@/lib/json-ld";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Contactez l'équipe LexWatch pour une question, une demande de veille personnalisée ou une proposition de collaboration.",
-};
+const TITLE = "Contact";
+const DESCRIPTION =
+  "Contactez l'équipe LexWatch pour une question, une demande de veille personnalisée ou une proposition de collaboration.";
+
+export const metadata: Metadata = buildMetadata({
+  title: TITLE,
+  description: DESCRIPTION,
+  path: "/contact",
+});
 
 const infos = [
   { icon: Mail, titre: "E-mail", valeur: siteConfig.email },
@@ -29,6 +37,17 @@ const infos = [
 export default function ContactPage() {
   return (
     <>
+      <JsonLd
+        data={buildWebPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/contact",
+        })}
+      />
+      <Breadcrumb
+        visuallyHidden
+        items={[{ label: "Accueil", href: "/" }, { label: "Contact" }]}
+      />
       <PageHeader
         eyebrow="Contact"
         title="Une question, un projet de veille ?"

@@ -5,14 +5,22 @@ import { SearchExperience } from "@/components/shared/search-experience";
 import { Section } from "@/components/ui/section";
 import { RecentAnalysesExplorer } from "@/components/veille/recent-analyses-explorer";
 import { FeaturedAnalysesSection } from "@/components/veille/featured-analyses-section";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { veilleItems } from "@/data/veille";
 import { getVeilleALaUne } from "@/lib/content";
+import { buildMetadata } from "@/lib/metadata";
+import { buildCollectionPageJsonLd } from "@/lib/json-ld";
 
-export const metadata: Metadata = {
-  title: "Veille juridique",
-  description:
-    "Suivez les évolutions du droit spatial et du droit du numérique grâce à des analyses pédagogiques et rigoureuses.",
-};
+const TITLE = "Veille juridique";
+const DESCRIPTION =
+  "Suivez les évolutions du droit spatial et du droit du numérique grâce à des analyses pédagogiques et rigoureuses.";
+
+export const metadata: Metadata = buildMetadata({
+  title: TITLE,
+  description: DESCRIPTION,
+  path: "/veille-juridique",
+});
 
 interface VeilleJuridiquePageProps {
   searchParams: Promise<{ domaine?: string; q?: string }>;
@@ -31,6 +39,17 @@ export default async function VeilleJuridiquePage({
 
   return (
     <>
+      <JsonLd
+        data={buildCollectionPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/veille-juridique",
+        })}
+      />
+      <Breadcrumb
+        visuallyHidden
+        items={[{ label: "Accueil", href: "/" }, { label: "Veille juridique" }]}
+      />
       <VeilleHero />
 
       <SearchExperience

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Section } from "@/components/ui/section";
 import { Divider } from "@/components/ui/divider";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { AnalyseHeader } from "@/components/veille/analyse/analyse-header";
 import { AnalysisSummary } from "@/components/veille/analyse/analysis-summary";
 import { ChronologieSection } from "@/components/veille/analyse/chronologie-section";
@@ -12,6 +13,7 @@ import { AnalyseSection } from "@/components/veille/analyse/analyse-section";
 import { ImpactSection } from "@/components/veille/analyse/impact-section";
 import { OfficialReferencesSection } from "@/components/veille/analyse/official-references-section";
 import { RelatedAnalysesSection } from "@/components/veille/analyse/related-analyses-section";
+import { RelatedLinksSection } from "@/components/shared/related-links-section";
 import { AnalyseSidebar } from "@/components/veille/analyse/analyse-sidebar";
 import { veilleItems } from "@/data/veille";
 import {
@@ -21,6 +23,9 @@ import {
 } from "@/lib/content";
 import { labelDomaine } from "@/lib/format";
 import { siteConfig } from "@/lib/site-config";
+import { buildAnalyseMetadata } from "@/lib/metadata";
+import { buildArticleJsonLd } from "@/lib/json-ld";
+import { getLiensConnexes } from "@/lib/internal-links";
 
 interface AnalysePageProps {
   params: Promise<{ slug: string }>;
@@ -34,6 +39,7 @@ const SECTION_IDS = {
   impact: "pourquoi-important",
   references: "references-officielles",
   similaires: "analyses-similaires",
+  plusLoin: "pour-aller-plus-loin",
 } as const;
 
 export function generateStaticParams() {
@@ -56,28 +62,7 @@ export async function generateMetadata({
     return { title: "Analyse introuvable" };
   }
 
-  const url = `${siteConfig.url}/veille-juridique/${slug}`;
-
-  return {
-    title: item.titre,
-    description: item.resume,
-    alternates: { canonical: `/veille-juridique/${slug}` },
-    openGraph: {
-      type: "article",
-      title: item.titre,
-      description: item.resume,
-      url,
-      publishedTime: item.date,
-      modifiedTime: item.dateMiseAJour,
-      authors: [siteConfig.name],
-      section: labelDomaine(item.domaine),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: item.titre,
-      description: item.resume,
-    },
-  };
+  return buildAnalyseMetadata(item);
 }
 
 export default async function AnalysePage({ params }: AnalysePageProps) {
@@ -90,6 +75,10 @@ export default async function AnalysePage({ params }: AnalysePageProps) {
 
   const theme = getThemeForCategorie(item.categorie);
   const related = getRelatedVeille(item, 4);
+  const liensConnexes = getLiensConnexes({
+    categorie: item.categorie,
+    domaine: item.domaine,
+  });
   const url = `${siteConfig.url}/veille-juridique/${slug}`;
   const aUnImpact = Object.values(item.impact).some(
     (group) => (group?.length ?? 0) > 0,
@@ -113,42 +102,23 @@ export default async function AnalysePage({ params }: AnalysePageProps) {
     ...(related.length > 0
       ? [{ id: SECTION_IDS.similaires, label: "Analyses similaires" }]
       : []),
+    ...(liensConnexes.length > 0
+      ? [{ id: SECTION_IDS.plusLoin, label: "Pour aller plus loin" }]
+      : []),
   ];
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
+  const jsonLd = buildArticleJsonLd({
     headline: item.titre,
     description: item.resume,
+    path: `/veille-juridique/${slug}`,
     datePublished: item.date,
     dateModified: item.dateMiseAJour,
-    inLanguage: "fr",
-    articleSection: theme?.titre ?? labelDomaine(item.domaine),
-    author: {
-      "@type": "Organization",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-    isPartOf: {
-      "@type": "WebSite",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-    url,
-  };
+    section: theme?.titre ?? labelDomaine(item.domaine),
+  });
 
   return (
     <>
-      {/* JSON-LD généré côté serveur à partir de données internes, non de contenu utilisateur. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <div id="top" />
 
       <Section spacing="sm" className="border-border border-b">
@@ -198,6 +168,10 @@ export default async function AnalysePage({ params }: AnalysePageProps) {
               <RelatedAnalysesSection
                 id={SECTION_IDS.similaires}
                 items={related}
+              />
+              <RelatedLinksSection
+                id={SECTION_IDS.plusLoin}
+                items={liensConnexes}
               />
             </div>
           </div>

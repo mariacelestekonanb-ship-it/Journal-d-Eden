@@ -4,17 +4,36 @@ import { ShieldCheck } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Section } from "@/components/ui/section";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/lib/site-config";
+import { buildMetadata } from "@/lib/metadata";
+import { buildWebPageJsonLd } from "@/lib/json-ld";
 
-export const metadata: Metadata = {
-  title: "Confidentialité",
-  description: `Politique de confidentialité de ${siteConfig.name}.`,
-  robots: { index: false, follow: true },
-};
+const TITLE = "Confidentialité";
+const DESCRIPTION = `Politique de confidentialité de ${siteConfig.name}.`;
+
+export const metadata: Metadata = buildMetadata({
+  title: TITLE,
+  description: DESCRIPTION,
+  path: "/confidentialite",
+  noIndex: true,
+});
 
 export default function ConfidentialitePage() {
   return (
     <>
+      <JsonLd
+        data={buildWebPageJsonLd({
+          name: TITLE,
+          description: DESCRIPTION,
+          path: "/confidentialite",
+        })}
+      />
+      <Breadcrumb
+        visuallyHidden
+        items={[{ label: "Accueil", href: "/" }, { label: "Confidentialité" }]}
+      />
       <PageHeader
         eyebrow="Informations légales"
         title="Politique de confidentialité"

@@ -1,38 +1,20 @@
 import type { MetadataRoute } from "next";
 
-import { siteConfig } from "@/lib/site-config";
+import { allEntries, toAbsoluteUrl } from "@/lib/sitemap";
 
-const routes = [
-  { path: "/", priority: 1, changeFrequency: "weekly" as const },
-  { path: "/comprendre", priority: 0.8, changeFrequency: "weekly" as const },
-  {
-    path: "/veille-juridique",
-    priority: 0.9,
-    changeFrequency: "daily" as const,
-  },
-  { path: "/glossaire", priority: 0.7, changeFrequency: "monthly" as const },
-  { path: "/ressources", priority: 0.7, changeFrequency: "monthly" as const },
-  { path: "/a-propos", priority: 0.4, changeFrequency: "yearly" as const },
-  { path: "/contact", priority: 0.4, changeFrequency: "yearly" as const },
-  {
-    path: "/mentions-legales",
-    priority: 0.1,
-    changeFrequency: "yearly" as const,
-  },
-  {
-    path: "/confidentialite",
-    priority: 0.1,
-    changeFrequency: "yearly" as const,
-  },
-];
-
+/**
+ * Plan de site plat, à jour de tout le contenu (pages institutionnelles,
+ * fiches, analyses, index Glossaire et Ressources) — le document de
+ * référence tant que le corpus reste de cette taille. Voir aussi
+ * `/sitemap-index.xml` et `/sitemap/*.xml`, l'architecture par type prête
+ * à prendre le relais si le corpus grossit significativement (voir le
+ * livrable de fin de phase).
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-
-  return routes.map((route) => ({
-    url: `${siteConfig.url}${route.path}`,
-    lastModified,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
+  return allEntries().map((entry) => ({
+    url: toAbsoluteUrl(entry.path),
+    lastModified: entry.lastModified,
+    changeFrequency: entry.changeFrequency,
+    priority: entry.priority,
   }));
 }

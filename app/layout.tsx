@@ -3,7 +3,10 @@ import { Manrope, Inter } from "next/font/google";
 
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { siteConfig } from "@/lib/site-config";
+import { AnalyticsScripts } from "@/components/analytics/analytics-scripts";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from "@/lib/json-ld";
+import { siteConfig, searchConsoleVerification } from "@/lib/site-config";
 import "@/styles/globals.css";
 
 const manrope = Manrope({
@@ -25,21 +28,15 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  keywords: [
-    "droit spatial",
-    "droit du numérique",
-    "veille juridique",
-    "espace",
-    "réglementation spatiale",
-    "cybersécurité juridique",
-    "space law",
-  ],
-  authors: [{ name: siteConfig.name }],
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
   creator: siteConfig.name,
+  publisher: siteConfig.name,
   manifest: "/manifest.webmanifest",
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    locale: "fr_FR",
+    locale: siteConfig.locale,
     url: siteConfig.url,
     title: siteConfig.name,
     description: siteConfig.description,
@@ -49,11 +46,22 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
+    creator: siteConfig.twitterHandle,
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
+  // Vide tant que les variables d'environnement correspondantes ne sont pas
+  // définies : aucune balise de vérification n'est émise avant que de vraies
+  // valeurs existent (voir `lib/site-config.ts`).
+  verification: searchConsoleVerification,
 };
 
 export const viewport: Viewport = {
@@ -73,6 +81,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground flex min-h-full flex-col font-sans">
+        {/* Données structurées globales : présentes sur chaque page, elles décrivent la plateforme elle-même (WebSite + SearchAction) et son éditeur (Organization), indépendamment du contenu de la page visitée. */}
+        <JsonLd data={[buildWebSiteJsonLd(), buildOrganizationJsonLd()]} />
         <a
           href="#main-content"
           className="focus:bg-navy-900 sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:px-5 focus:py-2.5 focus:text-sm focus:font-medium focus:text-white"
@@ -84,6 +94,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <AnalyticsScripts />
       </body>
     </html>
   );

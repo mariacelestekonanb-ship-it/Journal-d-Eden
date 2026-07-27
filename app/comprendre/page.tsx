@@ -5,13 +5,21 @@ import { SearchExperience } from "@/components/shared/search-experience";
 import { CategoriesSection } from "@/components/comprendre/categories-section";
 import { PopularQuestionsSection } from "@/components/comprendre/popular-questions-section";
 import { AllFichesExplorer } from "@/components/comprendre/all-fiches-explorer";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { questions } from "@/data/questions";
+import { buildMetadata } from "@/lib/metadata";
+import { buildCollectionPageJsonLd, buildFaqPageJsonLd } from "@/lib/json-ld";
 
-export const metadata: Metadata = {
-  title: "Comprendre",
-  description:
-    "Des fiches pédagogiques pour expliquer les notions essentielles du droit spatial et du droit du numérique.",
-};
+const TITLE = "Comprendre";
+const DESCRIPTION =
+  "Des fiches pédagogiques pour expliquer les notions essentielles du droit spatial et du droit du numérique.";
+
+export const metadata: Metadata = buildMetadata({
+  title: TITLE,
+  description: DESCRIPTION,
+  path: "/comprendre",
+});
 
 interface ComprendrePageProps {
   searchParams: Promise<{ theme?: string; q?: string }>;
@@ -30,6 +38,25 @@ export default async function ComprendrePage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          buildCollectionPageJsonLd({
+            name: TITLE,
+            description: DESCRIPTION,
+            path: "/comprendre",
+          }),
+          buildFaqPageJsonLd(
+            questions.map((question) => ({
+              question: question.question,
+              reponse: question.reponseCourte,
+            })),
+          ),
+        ]}
+      />
+      <Breadcrumb
+        visuallyHidden
+        items={[{ label: "Accueil", href: "/" }, { label: "Comprendre" }]}
+      />
       <ComprendreHero />
       <SearchExperience
         items={questions.map((item) => ({

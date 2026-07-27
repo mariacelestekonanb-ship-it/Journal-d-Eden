@@ -7,6 +7,33 @@ export const siteConfig = {
     "LexWatch décrypte le droit spatial et le droit du numérique pour les professionnels, chercheurs et curieux : veille juridique, glossaire, ressources et analyses claires.",
   url: "https://lexwatch.example.com",
   email: "contact@lexwatch.io",
+  /** Compte X/Twitter de la plateforme — placeholder à remplacer avant mise en production. */
+  twitterHandle: "@lexwatch",
+  locale: "fr_FR",
+  /** Mots-clés par défaut, hérités par toute page qui n'en fournit pas de plus spécifiques (voir `buildMetadata`). */
+  keywords: [
+    "droit spatial",
+    "droit du numérique",
+    "veille juridique",
+    "espace",
+    "réglementation spatiale",
+    "cybersécurité juridique",
+    "space law",
+  ],
+};
+
+/**
+ * Jetons de vérification des outils webmaster (Google Search Console,
+ * Bing…). Lus depuis des variables d'environnement plutôt que codés en dur :
+ * tant qu'elles ne sont pas définies, Next.js n'émet simplement aucune
+ * balise `<meta name="…-site-verification">` (voir `RootLayout`). À
+ * renseigner avant la mise en production réelle.
+ */
+export const searchConsoleVerification = {
+  google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+    ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
+    : undefined,
 };
 
 export const mainNav: NavItem[] = [

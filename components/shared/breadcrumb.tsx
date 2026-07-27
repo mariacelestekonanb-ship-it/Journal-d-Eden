@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildBreadcrumbJsonLd } from "@/lib/json-ld";
+
 export interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -8,16 +12,30 @@ export interface BreadcrumbItem {
 
 export interface BreadcrumbProps {
   items: BreadcrumbItem[];
+  /**
+   * Rend le fil d'Ariane accessible (lecteurs d'écran) et présent dans le
+   * JSON-LD sans l'afficher visuellement — pour les pages d'index dont la
+   * composition (hero pleine largeur) ne prévoit pas cet emplacement, sans
+   * pour autant priver ces pages de `BreadcrumbList`.
+   */
+  visuallyHidden?: boolean;
 }
 
 /**
  * Fil d'Ariane générique (Accueil > Comprendre > Catégorie > Titre, ou
  * Accueil > Veille juridique > Catégorie > Titre). Le dernier élément est
  * toujours rendu comme texte courant (`aria-current`), jamais comme lien.
+ * Émet aussi les données structurées `BreadcrumbList` correspondantes : un
+ * seul appel à `<Breadcrumb>` couvre à la fois l'affichage et le SEO, sans
+ * jamais risquer que les deux divergent.
  */
-export function Breadcrumb({ items }: BreadcrumbProps) {
+export function Breadcrumb({ items, visuallyHidden = false }: BreadcrumbProps) {
   return (
-    <nav aria-label="Fil d'Ariane" className="text-sm">
+    <nav
+      aria-label="Fil d'Ariane"
+      className={cn("text-sm", visuallyHidden && "sr-only")}
+    >
+      <JsonLd data={buildBreadcrumbJsonLd(items)} />
       <ol className="flex flex-wrap items-center gap-1.5">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;

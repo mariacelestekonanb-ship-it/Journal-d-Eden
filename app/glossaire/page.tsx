@@ -4,14 +4,23 @@ import { GlossaireHero } from "@/components/glossaire/hero";
 import { SearchExperience } from "@/components/shared/search-experience";
 import { Section } from "@/components/ui/section";
 import { GlossaryExplorer } from "@/components/glossaire/glossary-explorer";
+import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { glossaireTermes } from "@/data/glossaire";
 import { slugifyTerme } from "@/lib/format";
+import { getThemeBySlug } from "@/lib/content";
+import { buildMetadata } from "@/lib/metadata";
+import { buildDefinedTermSetJsonLd } from "@/lib/json-ld";
 
-export const metadata: Metadata = {
-  title: "Glossaire",
-  description:
-    "Le glossaire LexWatch : toutes les notions clés du droit spatial et du droit du numérique, classées par ordre alphabétique.",
-};
+const TITLE = "Glossaire";
+const DESCRIPTION =
+  "Le glossaire LexWatch : toutes les notions clés du droit spatial et du droit du numérique, classées par ordre alphabétique.";
+
+export const metadata: Metadata = buildMetadata({
+  title: TITLE,
+  description: DESCRIPTION,
+  path: "/glossaire",
+});
 
 interface GlossairePageProps {
   searchParams: Promise<{ theme?: string; q?: string }>;
@@ -33,6 +42,19 @@ export default async function GlossairePage({
 
   return (
     <>
+      <JsonLd
+        data={buildDefinedTermSetJsonLd(
+          glossaireTermes.map((terme) => ({
+            name: terme.terme,
+            description: terme.definition,
+            themeLabel: getThemeBySlug(terme.theme)?.titre ?? terme.theme,
+          })),
+        )}
+      />
+      <Breadcrumb
+        visuallyHidden
+        items={[{ label: "Accueil", href: "/" }, { label: "Glossaire" }]}
+      />
       <GlossaireHero />
 
       <SearchExperience

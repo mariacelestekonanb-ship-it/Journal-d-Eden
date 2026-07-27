@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Section } from "@/components/ui/section";
 import { Divider } from "@/components/ui/divider";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { JsonLd } from "@/components/seo/json-ld";
 import { FicheHeader } from "@/components/comprendre/fiche/fiche-header";
 import { QuickAnswer } from "@/components/comprendre/fiche/quick-answer";
 import { ContextSection } from "@/components/comprendre/fiche/context-section";
@@ -12,6 +13,7 @@ import { ExplicationSection } from "@/components/comprendre/fiche/explication-se
 import { KeyPoints } from "@/components/comprendre/fiche/key-points";
 import { ReferencesSection } from "@/components/comprendre/fiche/references-section";
 import { RelatedQuestionsSection } from "@/components/comprendre/fiche/related-questions-section";
+import { RelatedLinksSection } from "@/components/shared/related-links-section";
 import { FicheSidebar } from "@/components/comprendre/fiche/fiche-sidebar";
 import { questions } from "@/data/questions";
 import {
@@ -21,6 +23,9 @@ import {
 } from "@/lib/content";
 import { labelDomaine } from "@/lib/format";
 import { siteConfig } from "@/lib/site-config";
+import { buildFicheMetadata } from "@/lib/metadata";
+import { buildLearningResourceJsonLd } from "@/lib/json-ld";
+import { getLiensConnexes } from "@/lib/internal-links";
 
 interface FichePageProps {
   params: Promise<{ slug: string }>;
@@ -34,6 +39,7 @@ const SECTION_IDS = {
   aRetenir: "a-retenir",
   references: "references",
   associees: "questions-associees",
+  plusLoin: "pour-aller-plus-loin",
 } as const;
 
 export function generateStaticParams() {
@@ -56,27 +62,7 @@ export async function generateMetadata({
     return { title: "Fiche introuvable" };
   }
 
-  const url = `${siteConfig.url}/comprendre/${slug}`;
-
-  return {
-    title: question.question,
-    description: question.reponseCourte,
-    alternates: { canonical: `/comprendre/${slug}` },
-    openGraph: {
-      type: "article",
-      title: question.question,
-      description: question.reponseCourte,
-      url,
-      modifiedTime: question.dateMiseAJour,
-      authors: [siteConfig.name],
-      section: labelDomaine(question.domaine),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: question.question,
-      description: question.reponseCourte,
-    },
-  };
+  return buildFicheMetadata(question);
 }
 
 export default async function FichePage({ params }: FichePageProps) {
@@ -89,6 +75,10 @@ export default async function FichePage({ params }: FichePageProps) {
 
   const theme = getThemeForCategorie(question.categorie);
   const related = getRelatedQuestions(question, 4);
+  const liensConnexes = getLiensConnexes({
+    categorie: question.categorie,
+    domaine: question.domaine,
+  });
   const url = `${siteConfig.url}/comprendre/${slug}`;
 
   const tocItems = [
@@ -101,39 +91,23 @@ export default async function FichePage({ params }: FichePageProps) {
     ...(related.length > 0
       ? [{ id: SECTION_IDS.associees, label: "Questions associées" }]
       : []),
+    ...(liensConnexes.length > 0
+      ? [{ id: SECTION_IDS.plusLoin, label: "Pour aller plus loin" }]
+      : []),
   ];
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LearningResource",
-    headline: question.question,
+  const jsonLd = buildLearningResourceJsonLd({
     name: question.question,
     description: question.reponseCourte,
-    learningResourceType: "Fiche pédagogique",
+    path: `/comprendre/${slug}`,
     educationalLevel: question.niveau,
     dateModified: question.dateMiseAJour,
-    inLanguage: "fr",
     about: labelDomaine(question.domaine),
-    isPartOf: {
-      "@type": "WebSite",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: siteConfig.name,
-      url: siteConfig.url,
-    },
-    url,
-  };
+  });
 
   return (
     <>
-      {/* JSON-LD généré côté serveur à partir de données internes, non de contenu utilisateur. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
       <div id="top" />
 
       <Section spacing="sm" className="border-border border-b">
@@ -189,6 +163,10 @@ export default async function FichePage({ params }: FichePageProps) {
               <RelatedQuestionsSection
                 id={SECTION_IDS.associees}
                 items={related}
+              />
+              <RelatedLinksSection
+                id={SECTION_IDS.plusLoin}
+                items={liensConnexes}
               />
             </div>
           </div>
