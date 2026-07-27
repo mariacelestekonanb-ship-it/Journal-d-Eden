@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Section } from "@/components/ui/section";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { OrbitalIllustration } from "@/components/home/orbital-illustration";
+import { ComprendreIllustration } from "@/components/comprendre/comprendre-illustration";
 import { usePrefersReducedMotion } from "@/hooks/use-media-query";
 
 const fadeUp = {
@@ -15,8 +15,9 @@ const fadeUp = {
 
 /**
  * Hero de la page Comprendre : promesse pédagogique à gauche, illustration
- * orbitale à droite. Réutilise `OrbitalIllustration` de l'accueil pour une
- * direction artistique cohérente entre les deux Hero du site.
+ * abstraite à droite (`ComprendreIllustration`) — même langage visuel que
+ * les autres Hero du site, composition distincte pour ne pas dupliquer
+ * celle de l'accueil.
  */
 export function ComprendreHero() {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -55,8 +56,8 @@ export function ComprendreHero() {
               size="lg"
               className="mt-6 max-w-xl text-gray-300"
             >
-              Des fiches pédagogiques pour expliquer les notions essentielles du
-              droit spatial et du droit du numérique.
+              Des fiches pédagogiques pour explorer le droit spatial et le droit
+              du numérique de manière claire, progressive et accessible.
             </Paragraph>
           </motion.div>
         </div>
@@ -69,7 +70,7 @@ export function ComprendreHero() {
           transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.2 }}
           className="mx-auto hidden w-full max-w-sm md:block lg:max-w-md"
         >
-          <OrbitalIllustration />
+          <ComprendreIllustration />
         </motion.div>
       </div>
     </Section>

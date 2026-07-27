@@ -4,7 +4,9 @@ import { Paragraph } from "@/components/ui/paragraph";
 import { QuestionSummaryCard } from "@/components/comprendre/question-summary-card";
 import { questions } from "@/data/questions";
 
-/** Section « Questions populaires » : l'intégralité des questions de démonstration. */
+const MAX_QUESTIONS = 9;
+
+/** Section « Questions populaires » : un aperçu borné (9 au maximum), pas l'intégralité de la bibliothèque. */
 export function PopularQuestionsSection() {
   return (
     <Section>
@@ -19,7 +21,7 @@ export function PopularQuestionsSection() {
       </div>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {questions.map((item) => (
+        {questions.slice(0, MAX_QUESTIONS).map((item) => (
           <QuestionSummaryCard key={item.slug} item={item} />
         ))}
       </div>
