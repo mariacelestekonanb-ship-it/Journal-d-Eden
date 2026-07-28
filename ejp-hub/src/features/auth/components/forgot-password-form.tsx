@@ -11,9 +11,9 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordInput,
 } from "@/features/auth/validation/forgot-password.schema";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
 
 export function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);

@@ -9,9 +9,9 @@ import { toast } from "sonner";
 
 import { signInWithPassword } from "@/features/auth/services/auth.service";
 import { loginSchema, type LoginInput } from "@/features/auth/validation/login.schema";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
 
 export function LoginForm() {
   const router = useRouter();

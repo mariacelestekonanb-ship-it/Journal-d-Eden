@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/shared/lib/supabase/client";
 
 export async function signInWithPassword(email: string, password: string) {
   const supabase = createClient();

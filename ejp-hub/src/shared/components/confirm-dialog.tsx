@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/shared/components/ui/dialog";
+} from "@/shared/ui/dialog";
 
 interface ConfirmDialogProps {
   open: boolean;

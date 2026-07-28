@@ -4,7 +4,9 @@ import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
 
 import { signOutAction } from "@/features/auth/actions/sign-out.action";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import { ROUTES } from "@/shared/constants/app";
+import type { CurrentProfile } from "@/shared/lib/auth/get-current-profile";
+import { AppAvatar } from "@/shared/components/app-avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,26 +14,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
-import type { CurrentProfile } from "@/lib/auth/get-current-profile";
-
-function getInitials(fullName: string): string {
-  return fullName
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
+} from "@/shared/ui/dropdown-menu";
 
 export function UserMenu({ profile }: { profile: CurrentProfile }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <Avatar>
-          <AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name} />
-          <AvatarFallback>{getInitials(profile.full_name)}</AvatarFallback>
-        </Avatar>
+        <AppAvatar name={profile.full_name} src={profile.avatar_url} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="flex flex-col">
@@ -40,7 +29,7 @@ export function UserMenu({ profile }: { profile: CurrentProfile }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/mon-profil">
+          <Link href={ROUTES.profile}>
             <UserRound className="size-4" />
             Mon profil
           </Link>

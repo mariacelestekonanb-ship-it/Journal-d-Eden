@@ -1,16 +1,14 @@
 "use client";
 
-import { HandHeart, Menu } from "lucide-react";
+import { HandHeart } from "lucide-react";
 import * as React from "react";
 
-import type { CurrentProfile } from "@/lib/auth/get-current-profile";
-import { Button } from "@/shared/components/ui/button";
-import { Sheet, SheetContent, SheetTitle } from "@/shared/components/ui/sheet";
+import { APP_NAME } from "@/shared/constants/app";
+import type { CurrentProfile } from "@/shared/lib/auth/get-current-profile";
+import { Sheet, SheetContent, SheetTitle } from "@/shared/ui/sheet";
 
-import { NotificationsBell } from "./notifications-bell";
-import { SidebarNav } from "./sidebar-nav";
-import { ThemeToggle } from "./theme-toggle";
-import { UserMenu } from "./user-menu";
+import { Header } from "./header";
+import { Sidebar } from "./sidebar";
 
 function Brand() {
   return (
@@ -18,7 +16,7 @@ function Brand() {
       <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <HandHeart className="size-4" />
       </div>
-      <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">EJP Hub</span>
+      <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">{APP_NAME}</span>
     </div>
   );
 }
@@ -31,7 +29,7 @@ export function AppShell({ profile, children }: { profile: CurrentProfile; child
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <Brand />
         <div className="flex flex-1 flex-col py-4">
-          <SidebarNav role={profile.role} />
+          <Sidebar role={profile.role} />
         </div>
       </aside>
 
@@ -40,29 +38,13 @@ export function AppShell({ profile, children }: { profile: CurrentProfile; child
           <SheetTitle className="sr-only">Menu de navigation</SheetTitle>
           <Brand />
           <div className="flex flex-1 flex-col py-4">
-            <SidebarNav role={profile.role} onNavigate={() => setMobileNavOpen(false)} />
+            <Sidebar role={profile.role} onNavigate={() => setMobileNavOpen(false)} />
           </div>
         </SheetContent>
       </Sheet>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="no-print flex h-14 shrink-0 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            aria-label="Ouvrir le menu"
-            onClick={() => setMobileNavOpen(true)}
-          >
-            <Menu className="size-5" />
-          </Button>
-          <div className="hidden md:block" />
-          <div className="flex items-center gap-1">
-            <ThemeToggle />
-            <NotificationsBell />
-            <UserMenu profile={profile} />
-          </div>
-        </header>
+        <Header profile={profile} onOpenMobileNav={() => setMobileNavOpen(true)} />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="mx-auto w-full max-w-6xl space-y-6">{children}</div>
         </main>

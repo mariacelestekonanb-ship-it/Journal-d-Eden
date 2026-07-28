@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
+import { APP_NAME } from "@/shared/constants/app";
 import { AppProviders } from "@/shared/providers/app-providers";
 
 import "@/styles/globals.css";
@@ -13,8 +14,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "EJP Hub",
-    template: "%s · EJP Hub",
+    default: APP_NAME,
+    template: `%s · ${APP_NAME}`,
   },
   description: "Centralisez l'organisation des conducteurs de prière de l'EJP.",
 };
