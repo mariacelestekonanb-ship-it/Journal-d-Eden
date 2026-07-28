@@ -65,19 +65,31 @@ Index : `status`, `priority`, `created_by`.
 
 ### `planning`
 
-Créneaux de prière assignés à un conducteur.
+Créneaux de prière assignés à un conducteur. Étendue par
+`20260729090001_planning_details.sql` (module Planning) pour porter le modèle métier complet.
 
 | Colonne | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` PK | |
+| `title` | `text` | |
+| `description` | `text` | nullable |
 | `slot_date` | `date` | |
 | `start_time` / `end_time` | `time` | `end_time > start_time` |
 | `prayer_leader_id` | `uuid` → `profiles.id` | nullable (créneau non encore assigné) |
+| `secondary_leader_id` | `uuid` → `profiles.id` | nullable, second conducteur |
 | `prayer_topic_id` | `uuid` → `prayer_topics.id` | nullable |
 | `location` | `text` | nullable |
+| `theme` | `text` | nullable |
+| `status` | `planning_status` | `DRAFT` \| `CONFIRMED` \| `COMPLETED` \| `CANCELLED`, défaut `DRAFT` |
 | `notes` | `text` | nullable |
 
-Index : `slot_date`, `prayer_leader_id`, `prayer_topic_id`.
+Index : `slot_date`, `prayer_leader_id`, `secondary_leader_id`, `prayer_topic_id`, `status`.
+
+> `planning` a deux clés étrangères vers `profiles` (`prayer_leader_id` et
+> `secondary_leader_id`) : toute requête PostgREST qui charge les deux relations en même temps doit
+> lever l'ambiguïté avec des indices explicites, ex. `profiles!planning_prayer_leader_id_fkey(...)`
+> et `profiles!planning_secondary_leader_id_fkey(...)` — voir
+> `src/features/planning/queries/planning.queries.ts`.
 
 ### `reports`
 

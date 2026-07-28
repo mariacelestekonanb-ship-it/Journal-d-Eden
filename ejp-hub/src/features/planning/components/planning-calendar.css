@@ -1,0 +1,88 @@
+/*
+ * Thème FullCalendar aligné sur les tokens EJP Hub (src/styles/globals.css).
+ * Aucune couleur codée en dur : tout référence les variables CSS déjà
+ * utilisées par le reste de l'application, pour un rendu cohérent en mode
+ * clair comme en mode sombre.
+ */
+
+.planning-calendar .fc {
+  --fc-border-color: var(--border);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: var(--muted);
+  --fc-list-event-hover-bg-color: var(--muted);
+  --fc-today-bg-color: color-mix(in oklch, var(--primary) 8%, transparent);
+  font-family: inherit;
+}
+
+.planning-calendar .fc .fc-toolbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-transform: capitalize;
+}
+
+.planning-calendar .fc .fc-col-header-cell-cushion,
+.planning-calendar .fc .fc-daygrid-day-number {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.planning-calendar .fc .fc-button {
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  box-shadow: none;
+  text-transform: capitalize;
+}
+
+.planning-calendar .fc .fc-button:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.planning-calendar .fc .fc-button:disabled {
+  opacity: 0.5;
+}
+
+.planning-calendar .fc .fc-button-primary:not(:disabled).fc-button-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.planning-calendar .fc-event {
+  border-radius: 0.375rem;
+  border-width: 1px;
+  cursor: pointer;
+}
+
+.planning-calendar .fc-event.planning-event--draft {
+  background: var(--muted);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.planning-calendar .fc-event.planning-event--confirmed {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--success-foreground);
+}
+
+.planning-calendar .fc-event.planning-event--completed {
+  background: var(--secondary);
+  border-color: var(--border);
+  color: var(--secondary-foreground);
+  opacity: 0.85;
+}
+
+.planning-calendar .fc-event.planning-event--cancelled {
+  background: transparent;
+  border: 1px dashed var(--destructive);
+  color: var(--destructive);
+}
+
+.planning-calendar .fc-event.planning-event--cancelled .fc-event-title,
+.planning-calendar .fc-event.planning-event--cancelled div {
+  text-decoration: line-through;
+}

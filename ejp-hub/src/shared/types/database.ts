@@ -8,6 +8,7 @@ export type UserRole = "ADMIN" | "PRAYER_LEADER";
 export type TopicPriority = "LOW" | "MEDIUM" | "HIGH";
 export type TopicStatus = "ACTIVE" | "ARCHIVED";
 export type NotificationType = "UPCOMING_SLOT" | "PENDING_REPORT" | "NEW_TOPIC";
+export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
 export interface Database {
   public: {
@@ -89,39 +90,61 @@ export interface Database {
       planning: {
         Row: {
           id: string;
+          title: string;
+          description: string | null;
           slot_date: string;
           start_time: string;
           end_time: string;
-          prayer_leader_id: string | null;
-          prayer_topic_id: string | null;
           location: string | null;
+          prayer_leader_id: string | null;
+          secondary_leader_id: string | null;
+          status: PlanningStatus;
+          theme: string | null;
+          prayer_topic_id: string | null;
           notes: string | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
+          title: string;
+          description?: string | null;
           slot_date: string;
           start_time: string;
           end_time: string;
-          prayer_leader_id?: string | null;
-          prayer_topic_id?: string | null;
           location?: string | null;
+          prayer_leader_id?: string | null;
+          secondary_leader_id?: string | null;
+          status?: PlanningStatus;
+          theme?: string | null;
+          prayer_topic_id?: string | null;
           notes?: string | null;
         };
         Update: Partial<{
+          title: string;
+          description: string | null;
           slot_date: string;
           start_time: string;
           end_time: string;
-          prayer_leader_id: string | null;
-          prayer_topic_id: string | null;
           location: string | null;
+          prayer_leader_id: string | null;
+          secondary_leader_id: string | null;
+          status: PlanningStatus;
+          theme: string | null;
+          prayer_topic_id: string | null;
           notes: string | null;
         }>;
         Relationships: [
           {
             foreignKeyName: "planning_prayer_leader_id_fkey";
             columns: ["prayer_leader_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "planning_secondary_leader_id_fkey";
+            columns: ["secondary_leader_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
