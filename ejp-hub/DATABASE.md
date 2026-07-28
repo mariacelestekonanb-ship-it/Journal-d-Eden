@@ -51,17 +51,23 @@ Index : `role`, `is_active`.
 
 ### `prayer_topics`
 
+Étendue par `20260730090001_prayer_topics_details.sql` (module Sujets de prière) : les enums
+`topic_priority`/`topic_status` d'origine ont été **remplacés** (pas étendus) par
+`prayer_topic_priority`/`prayer_topic_status`, et une colonne `category` a été ajoutée.
+
 | Colonne | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` PK | |
 | `title` | `text` | |
 | `description` | `text` | nullable |
-| `priority` | `topic_priority` | `LOW` \| `MEDIUM` \| `HIGH` |
+| `category` | `prayer_topic_category` | `CHURCH` \| `FAMILY` \| `YOUTH` \| `EVANGELISM` \| `HEALING` \| `NATIONS` \| `PERSONAL`, défaut `CHURCH` |
+| `priority` | `prayer_topic_priority` | `LOW` \| `NORMAL` \| `HIGH` \| `URGENT`, défaut `NORMAL` (remplace l'ancien `topic_priority` LOW/MEDIUM/HIGH — `MEDIUM` a été migré vers `NORMAL`) |
 | `start_date` / `end_date` | `date` | `end_date` nullable, `end_date >= start_date` |
-| `status` | `topic_status` | `ACTIVE` \| `ARCHIVED` |
+| `status` | `prayer_topic_status` | `DRAFT` \| `ACTIVE` \| `COMPLETED` \| `ARCHIVED`, défaut `DRAFT` (remplace l'ancien `topic_status` ACTIVE/ARCHIVED) |
+| `archived_at` | `timestamptz` | nullable, renseignée à l'archivage |
 | `created_by` | `uuid` → `profiles.id` | |
 
-Index : `status`, `priority`, `created_by`.
+Index : `status`, `priority`, `created_by`, `category`, `archived_at`.
 
 ### `planning`
 

@@ -9,9 +9,10 @@ import { formatDate } from "@/shared/utils/format";
 import type { RecentPrayerTopicSummary } from "../types/dashboard.types";
 
 const PRIORITY_CONFIG: Record<TopicPriority, { label: string; variant: AppBadgeProps["variant"] }> = {
-  LOW: { label: "Faible", variant: "secondary" },
-  MEDIUM: { label: "Normale", variant: "warning" },
-  HIGH: { label: "Importante", variant: "destructive" },
+  LOW: { label: "Faible", variant: "outline" },
+  NORMAL: { label: "Normale", variant: "secondary" },
+  HIGH: { label: "Importante", variant: "warning" },
+  URGENT: { label: "Urgente", variant: "destructive" },
 };
 
 export interface PrayerTopicCardProps {

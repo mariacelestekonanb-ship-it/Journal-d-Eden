@@ -3,8 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
+import { MOCK_PROFILE } from "@/shared/constants/mock-profile";
 import type { Role } from "@/shared/constants/roles";
 import type { CurrentProfile } from "@/shared/lib/auth/get-current-profile";
+import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
 
 import { fetchProfileById } from "../services/auth.service";
 import { useAuthContext } from "./auth-provider";
@@ -35,12 +37,16 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
 
   const userId = user?.id;
 
-  const { data: profile, isLoading: isProfileLoading } = useQuery({
+  const { data: fetchedProfile, isLoading: isProfileLoading } = useQuery({
     queryKey: ["auth-profile", userId],
     queryFn: () => fetchProfileById(userId ?? ""),
     enabled: !!userId,
   });
 
+  // Tant que Supabase n'est pas configuré, le profil de démonstration tient
+  // lieu d'utilisateur connecté côté client — même logique que
+  // `resolveProfile()` côté serveur (voir shared/lib/auth/resolve-profile.ts).
+  const profile = isSupabaseConfigured() ? (fetchedProfile ?? null) : MOCK_PROFILE;
   const role = profile?.role ?? null;
 
   const value = React.useMemo<RoleContextValue>(() => {
@@ -48,7 +54,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     const hasAnyRole = (roles: Role[]) => !!role && roles.includes(role);
 
     return {
-      profile: profile ?? null,
+      profile,
       role,
       isLoading: isAuthLoading || (!!user && isProfileLoading),
       isAdmin: role === "ADMIN",

@@ -5,8 +5,9 @@
  */
 
 export type UserRole = "ADMIN" | "PRAYER_LEADER";
-export type TopicPriority = "LOW" | "MEDIUM" | "HIGH";
-export type TopicStatus = "ACTIVE" | "ARCHIVED";
+export type TopicPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
+export type TopicStatus = "DRAFT" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
+export type TopicCategory = "CHURCH" | "FAMILY" | "YOUTH" | "EVANGELISM" | "HEALING" | "NATIONS" | "PERSONAL";
 export type NotificationType = "UPCOMING_SLOT" | "PENDING_REPORT" | "NEW_TOPIC";
 export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
@@ -51,6 +52,7 @@ export interface Database {
           id: string;
           title: string;
           description: string | null;
+          category: TopicCategory;
           priority: TopicPriority;
           start_date: string;
           end_date: string | null;
@@ -58,24 +60,29 @@ export interface Database {
           created_by: string;
           created_at: string;
           updated_at: string;
+          archived_at: string | null;
         };
         Insert: {
           id?: string;
           title: string;
           description?: string | null;
+          category?: TopicCategory;
           priority?: TopicPriority;
           start_date?: string;
           end_date?: string | null;
           status?: TopicStatus;
           created_by: string;
+          archived_at?: string | null;
         };
         Update: Partial<{
           title: string;
           description: string | null;
+          category: TopicCategory;
           priority: TopicPriority;
           start_date: string;
           end_date: string | null;
           status: TopicStatus;
+          archived_at: string | null;
         }>;
         Relationships: [
           {

@@ -114,14 +114,14 @@ export const DashboardMocks = {
     {
       id: "mock-topic-3",
       title: "Guérison des malades",
-      priority: "MEDIUM",
+      priority: "NORMAL",
       date: new Date(Date.now() - 4 * 86_400_000).toISOString().slice(0, 10),
       authorName: "Sarah Nguyen",
     },
     {
       id: "mock-topic-4",
       title: "Persévérance des familles",
-      priority: "MEDIUM",
+      priority: "NORMAL",
       date: new Date(Date.now() - 5 * 86_400_000).toISOString().slice(0, 10),
       authorName: "Alice Administrateur",
     },
