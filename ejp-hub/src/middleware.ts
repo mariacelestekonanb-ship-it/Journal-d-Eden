@@ -1,17 +1,22 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const ADMIN_ONLY_PREFIXES = ["/administration"];
+import { getRequiredRoles } from "@/shared/constants/route-permissions";
+import type { Role } from "@/shared/constants/roles";
+
+const PUBLIC_PATHS = ["/connexion", "/mot-de-passe-oublie", "/reinitialiser-mot-de-passe", "/auth/callback"];
 
 /**
- * Rafraîchit la session Supabase sur chaque requête et protège les routes
- * réservées aux administrateurs lorsqu'un utilisateur est bien connecté.
+ * Première ligne de défense : redirige les visiteurs non authentifiés vers
+ * /connexion, et bloque l'accès aux routes réservées à un rôle (voir
+ * shared/constants/route-permissions.ts). La Row Level Security Postgres
+ * reste la dernière ligne de défense (voir supabase/migrations/), et les
+ * guards serveur (shared/lib/auth/guards.ts) une protection supplémentaire
+ * au niveau des Server Actions.
  *
- * Sprint 2 (TODO) : une fois l'authentification branchée sur de vraies
- * données, réactiver la redirection stricte vers /connexion pour tout
- * visiteur non authentifié sur les routes du groupe (app). Pour cette
- * base de fondations, le shell reste consultable sans session Supabase
- * configurée (voir shared/constants/placeholder-profile.ts).
+ * Si Supabase n'est pas configuré (variables d'environnement absentes), le
+ * middleware laisse passer toutes les requêtes : l'application tourne alors
+ * en mode démo (voir shared/constants/mock-profile.ts).
  */
 export async function middleware(request: NextRequest) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -42,27 +47,38 @@ export async function middleware(request: NextRequest) {
       },
     );
 
+    // Rafraîchit la session (access token) si nécessaire avant toute autre logique.
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     const { pathname } = request.nextUrl;
+    const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
+
+    if (!user && !isPublicPath) {
+      const redirectUrl = new URL("/connexion", request.url);
+      redirectUrl.searchParams.set("redirectedFrom", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
 
     if (user && pathname === "/connexion") {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    const isAdminOnlyPath = ADMIN_ONLY_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-    if (user && isAdminOnlyPath) {
+    const requiredRoles = getRequiredRoles(pathname);
+    if (user && requiredRoles) {
       const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
 
-      if (profile?.role !== "admin") {
+      if (!profile || !requiredRoles.includes(profile.role as Role)) {
         return NextResponse.redirect(new URL("/", request.url));
       }
     }
 
     return response;
   } catch {
+    // Supabase injoignable ou mal configuré : ne jamais bloquer l'application
+    // sur une erreur d'infrastructure — seule la RLS reste alors garante des
+    // données (le shell peut rester consultable, sans données réelles).
     return NextResponse.next();
   }
 }

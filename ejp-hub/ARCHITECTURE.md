@@ -53,6 +53,15 @@ encore vides, pour que le Sprint 2 sache où poser le code.
 Cette séparation permet de mettre à jour shadcn/ui sans risquer de casser les conventions
 propres à EJP Hub, et inversement.
 
+### Exception Feature First : `features/auth/`
+
+Le module `auth` exporte des providers, hooks et guards (`AuthProvider`, `RoleProvider`,
+`useAuth`, `useUser`, `useRole`, `<RoleGuard>`) consommés par `shared/` et par les autres
+features (ex. `shared/providers/app-providers.tsx` monte `AuthProvider`/`RoleProvider`).
+C'est la seule feature à qui ce statut « transverse » est accordé : l'authentification est un
+prérequis de toute l'application, pas un module métier comme les autres. Voir
+[`AUTHENTICATION.md`](./AUTHENTICATION.md) pour le détail.
+
 ## Design system
 
 | Composant | Rôle |
@@ -70,23 +79,23 @@ Aucune couleur n'est codée en dur : tout passe par les variables CSS définies 
 `src/styles/globals.css` (`--background`, `--primary`, `--border`, …), exposées à Tailwind
 via `@theme inline`. Le mode sombre est piloté par `next-themes` (classe `.dark` sur `<html>`).
 
-## Authentification (état actuel)
+## Authentification et rôles
 
-Le module `auth` est fonctionnel (connexion, mot de passe oublié, déconnexion, rafraîchissement
-de session dans `src/middleware.ts`), mais **le shell applicatif n'est pas encore strictement
-gaté** : `src/app/(app)/layout.tsx` retombe sur un profil de démonstration
-(`shared/constants/placeholder-profile.ts`) si aucune session Supabase n'est active, afin que
-la navigation, le responsive et le dark mode restent vérifiables sans configurer de projet
-Supabase. Ce repli est documenté en commentaire (`// Sprint 2 (TODO)`) directement dans le
-code concerné (`middleware.ts`, `(app)/layout.tsx`) et devra être retiré dès que
-l'authentification sera branchée sur de vraies données.
+Authentification complète (connexion, mot de passe oublié, réinitialisation, déconnexion,
+rafraîchissement automatique de session) et middleware de protection réelle des routes, avec
+deux rôles (`ADMIN`, `PRAYER_LEADER`). Détail complet dans [`AUTHENTICATION.md`](./AUTHENTICATION.md).
+
+Point notable : tant que Supabase n'est pas configuré, l'application tourne en **mode démo**
+(profil simulé, aucune redirection) pour rester consultable sans provisionner de projet — voir
+la section « Mode démo » du même document.
 
 ## Base de données
 
-Le schéma Postgres (tables, enums, triggers, Row Level Security, bucket Storage) est décrit
-dans `src/docs/database.sql`. Les types TypeScript correspondants sont maintenus à la main
-dans `src/shared/types/database.ts` (à régénérer avec `supabase gen types typescript` une
-fois un projet Supabase lié).
+Le schéma Postgres (tables, enums, triggers, Row Level Security, bucket Storage) vit dans
+`supabase/migrations/` (format Supabase CLI). Les types TypeScript correspondants sont
+maintenus à la main dans `src/shared/types/database.ts` (à régénérer avec
+`supabase gen types typescript` une fois un projet Supabase lié). Détail complet dans
+[`DATABASE.md`](./DATABASE.md).
 
 ## Pourquoi ces choix
 

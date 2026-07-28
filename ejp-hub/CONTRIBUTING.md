@@ -3,15 +3,16 @@
 ## Prérequis
 
 - Node.js ≥ 18.18
-- Un projet Supabase (optionnel pour travailler sur le shell/UI, requis pour l'authentification
-  et les futures features)
+- Un projet Supabase (optionnel pour travailler sur le shell/UI en mode démo, requis pour tester
+  l'authentification réelle et les futurs modules — voir `SUPABASE_SETUP.md`)
 
 ## Mise en route
 
 ```bash
 npm install
-cp .env.example .env.local
+cp .env.example .env.local   # renseigner les clés Supabase (voir SUPABASE_SETUP.md)
 npm run dev
+npm run db:seed              # optionnel : crée des comptes de démonstration
 ```
 
 ## Langue
@@ -52,8 +53,11 @@ npm run build      # vérifie que le build de production passe
 2. Ajouter la route dans `src/app/(app)/<route>/page.tsx`.
 3. Ajouter l'entrée de navigation dans
    `src/shared/components/layout/nav-items.ts` (avec les rôles autorisés).
-4. Si le module a besoin de nouvelles tables, les ajouter à
-   `src/docs/database.sql` puis régénérer `src/shared/types/database.ts`.
+4. Si le module a besoin de nouvelles tables, ajouter une migration dans
+   `supabase/migrations/` (voir `DATABASE.md`) puis régénérer `src/shared/types/database.ts`.
+5. Si une route doit être réservée à un rôle, l'ajouter à
+   `src/shared/constants/route-permissions.ts` (voir `AUTHENTICATION.md`) — la sidebar et le
+   middleware s'ajustent automatiquement.
 
 ## Git
 

@@ -1,0 +1,31 @@
+# Configuration Supabase CLI pour le développement local.
+#
+# Rédigé à la main (pas d'accès réseau à `supabase init` dans cet
+# environnement) : si des clés manquent ou diffèrent de votre version de la
+# CLI, régénérez ce fichier avec `supabase init` et reportez-y les sections
+# ci-dessous. Voir SUPABASE_SETUP.md pour le détail de la mise en route.
+
+project_id = "ejp-hub"
+
+[api]
+enabled = true
+port = 54321
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+
+# L'inscription publique est désactivée : les comptes sont créés par un
+# administrateur (module Administration, à venir) ou par `npm run db:seed`
+# en local. Voir AUTHENTICATION.md.
+[auth.email]
+enable_signup = false
+enable_confirmations = false

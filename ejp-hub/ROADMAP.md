@@ -1,6 +1,6 @@
 # Roadmap
 
-## Sprint 1 — Fondations ✅ (ce livrable)
+## Sprint 1 — Fondations ✅
 
 - Architecture Feature First (`app/`, `features/`, `shared/`, `styles/`, `docs/`).
 - Design system maison (`AppButton`, `AppCard`, `AppBadge`, `AppAvatar`, `AppEmptyState`,
@@ -10,41 +10,57 @@
 - Mode clair / sombre via `next-themes`, palette entièrement pilotée par variables CSS.
 - 7 pages vides (Tableau de bord, Planning, Sujets de prière, Comptes rendus, Témoignages,
   Mon profil, Administration), chacune avec titre, description et état vide élégant.
-- Authentification Supabase fonctionnelle (connexion, mot de passe oublié, déconnexion,
-  rafraîchissement de session) — non encore gatée strictement sur le shell (voir
-  `ARCHITECTURE.md`).
-- Schéma de base de données complet et RLS (`src/docs/database.sql`), prêt à être exécuté.
 - Qualité : TypeScript strict, ESLint, Prettier, alias `@/*`, build de production vérifié.
 
-## Sprint 2 — Authentification réelle + premier module de données
+## Sprint 2 — Authentification et sécurité ✅ (ce livrable)
 
-- [ ] Activer le gate d'authentification strict sur `(app)/layout.tsx` et `middleware.ts`
-      (retirer le repli sur `PLACEHOLDER_PROFILE`).
-- [ ] Provisionner un vrai projet Supabase (exécuter `src/docs/database.sql`, régénérer
-      `shared/types/database.ts`).
+- Middleware réel : redirection vers `/connexion` si non authentifié, blocage de
+  `/administration` pour les `PRAYER_LEADER` — voir `AUTHENTICATION.md`.
+- Rôles `ADMIN` / `PRAYER_LEADER`, architecture extensible (`ROLES`, `ROUTE_PERMISSIONS`)
+  pour ajouter un rôle ou une route protégée sans toucher au middleware.
+- `AuthProvider` / `RoleProvider` + hooks `useAuth()`, `useUser()`, `useRole()` +
+  `<RoleGuard>`.
+- Page de réinitialisation de mot de passe (`/reinitialiser-mot-de-passe`), flux complet
+  mot de passe oublié → e-mail → nouveau mot de passe.
+- Layout connecté affichant nom, avatar, rôle et bouton de déconnexion réels.
+- Migrations Supabase CLI complètes (`supabase/migrations/`) : `profiles`, `prayer_topics`,
+  `planning`, `reports`, `testimonies`, `notifications`, RLS, storage `avatars`.
+- Script de seed (`npm run db:seed`) : 1 administrateur + 2 conducteurs de prière.
+- `SUPABASE_SETUP.md`, `AUTHENTICATION.md`, `DATABASE.md`.
+- Mode démo conservé : le shell reste consultable sans configurer Supabase.
+
+## Sprint 3 — Premier module de données
+
+- [ ] Provisionner un vrai projet Supabase partagé par l'équipe, exécuter les migrations,
+      lancer le seed.
 - [ ] Développer le module **Sujets de prière** (CRUD, priorité, archivage automatique) —
       candidat naturel pour valider le pattern `hooks/services/validation/actions` de bout
       en bout avant de le répliquer sur les autres modules.
 - [ ] Brancher le Tableau de bord sur de vraies données une fois 1 à 2 modules disponibles.
+- [ ] Module **Administration** : lister/inviter des utilisateurs (l'inscription publique
+      étant désactivée, c'est le seul moyen de créer un compte hors seed).
 
-## Sprint 3 et suivants
+## Sprint 4 et suivants
 
 - [ ] Planning (vues semaine/mois, import Excel, export PDF/Excel, impression).
 - [ ] Comptes rendus (liés à un créneau, un conducteur ne remplit que le sien, export
       PDF/Word).
 - [ ] Témoignages (publication, suppression réservée admin).
-- [ ] Administration (gestion des comptes, rôles, activation/désactivation).
-- [ ] Notifications (prochain temps de prière, CR en attente, nouveaux sujets).
+- [ ] Notifications (prochain temps de prière, CR en attente, nouveaux sujets) — la
+      structure existe déjà (table `notifications`), reste la génération et l'UI.
 - [ ] Import / Export transverse.
 
-## Améliorations proposées avant le Sprint 2
+## Améliorations proposées avant le Sprint 3
 
 Voir le rapport de livraison pour le détail — résumé :
 
 1. Décider de l'organisation finale du dépôt (EJP Hub à côté de LexWatch, ou dépôt dédié).
-2. Provisionner un projet Supabase de développement partagé par l'équipe.
-3. Écrire quelques tests (Vitest + Testing Library) sur le design system avant qu'il ne
-   grossisse, pour éviter les régressions visuelles silencieuses.
-4. Ajouter un pipeline CI (lint + typecheck + build) sur chaque pull request.
-5. Choisir maintenant la bibliothèque d'icônes/emoji de statut pour les badges (priorité,
-   rôle) afin de garder une cohérence visuelle dès le premier module métier.
+2. Provisionner un projet Supabase de développement partagé par l'équipe (actuellement
+   personne n'a testé l'authentification contre un vrai projet).
+3. Activer la confirmation d'e-mail (`enable_confirmations`) avant tout déploiement public —
+   désactivée dans `supabase/config.toml` uniquement pour accélérer le développement local.
+4. Écrire quelques tests (Vitest + Testing Library) sur les guards de rôle et le design
+   system avant qu'ils ne soient utilisés par de nombreux modules.
+5. Ajouter un pipeline CI (lint + typecheck + build) sur chaque pull request.
+6. Définir la politique de complexité de mot de passe côté Supabase Auth (dashboard →
+   Authentication → Policies) — non configurée à ce stade.

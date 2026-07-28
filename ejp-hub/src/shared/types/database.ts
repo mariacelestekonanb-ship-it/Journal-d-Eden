@@ -1,12 +1,13 @@
 /**
- * Types générés à la main à partir de src/docs/database.sql.
- * À régénérer avec `supabase gen types typescript` une fois le projet lié.
+ * Types générés à la main à partir de supabase/migrations/*.sql.
+ * À régénérer avec `supabase gen types typescript --local` une fois le
+ * projet Supabase lié (voir SUPABASE_SETUP.md).
  */
 
-export type UserRole = "admin" | "conducteur";
-export type TopicPriority = "haute" | "moyenne" | "basse";
-export type TopicStatus = "actif" | "archive";
-export type NotificationType = "creneau_a_venir" | "cr_en_attente" | "nouveau_sujet";
+export type UserRole = "ADMIN" | "PRAYER_LEADER";
+export type TopicPriority = "LOW" | "MEDIUM" | "HIGH";
+export type TopicStatus = "ACTIVE" | "ARCHIVED";
+export type NotificationType = "UPCOMING_SLOT" | "PENDING_REPORT" | "NEW_TOPIC";
 
 export interface Database {
   public: {
@@ -14,29 +15,32 @@ export interface Database {
       profiles: {
         Row: {
           id: string;
-          full_name: string;
+          firstname: string;
+          lastname: string;
           email: string;
-          phone: string | null;
-          avatar_url: string | null;
           role: UserRole;
+          avatar_url: string | null;
+          phone: string | null;
           is_active: boolean;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id: string;
-          full_name: string;
+          firstname: string;
+          lastname: string;
           email: string;
-          phone?: string | null;
-          avatar_url?: string | null;
           role?: UserRole;
+          avatar_url?: string | null;
+          phone?: string | null;
           is_active?: boolean;
         };
         Update: Partial<{
-          full_name: string;
-          phone: string | null;
-          avatar_url: string | null;
+          firstname: string;
+          lastname: string;
           role: UserRole;
+          avatar_url: string | null;
+          phone: string | null;
           is_active: boolean;
         }>;
         Relationships: [];
@@ -82,13 +86,13 @@ export interface Database {
           },
         ];
       };
-      planning_slots: {
+      planning: {
         Row: {
           id: string;
           slot_date: string;
           start_time: string;
           end_time: string;
-          conducteur_id: string | null;
+          prayer_leader_id: string | null;
           prayer_topic_id: string | null;
           location: string | null;
           notes: string | null;
@@ -100,7 +104,7 @@ export interface Database {
           slot_date: string;
           start_time: string;
           end_time: string;
-          conducteur_id?: string | null;
+          prayer_leader_id?: string | null;
           prayer_topic_id?: string | null;
           location?: string | null;
           notes?: string | null;
@@ -109,21 +113,21 @@ export interface Database {
           slot_date: string;
           start_time: string;
           end_time: string;
-          conducteur_id: string | null;
+          prayer_leader_id: string | null;
           prayer_topic_id: string | null;
           location: string | null;
           notes: string | null;
         }>;
         Relationships: [
           {
-            foreignKeyName: "planning_slots_conducteur_id_fkey";
-            columns: ["conducteur_id"];
+            foreignKeyName: "planning_prayer_leader_id_fkey";
+            columns: ["prayer_leader_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "planning_slots_prayer_topic_id_fkey";
+            foreignKeyName: "planning_prayer_topic_id_fkey";
             columns: ["prayer_topic_id"];
             isOneToOne: false;
             referencedRelation: "prayer_topics";
@@ -134,8 +138,8 @@ export interface Database {
       reports: {
         Row: {
           id: string;
-          slot_id: string;
-          conducteur_id: string;
+          planning_id: string;
+          prayer_leader_id: string;
           attendees_count: number | null;
           topics_covered: string | null;
           content: string;
@@ -145,8 +149,8 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          slot_id: string;
-          conducteur_id: string;
+          planning_id: string;
+          prayer_leader_id: string;
           attendees_count?: number | null;
           topics_covered?: string | null;
           content: string;
@@ -160,15 +164,15 @@ export interface Database {
         }>;
         Relationships: [
           {
-            foreignKeyName: "reports_slot_id_fkey";
-            columns: ["slot_id"];
+            foreignKeyName: "reports_planning_id_fkey";
+            columns: ["planning_id"];
             isOneToOne: true;
-            referencedRelation: "planning_slots";
+            referencedRelation: "planning";
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "reports_conducteur_id_fkey";
-            columns: ["conducteur_id"];
+            foreignKeyName: "reports_prayer_leader_id_fkey";
+            columns: ["prayer_leader_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];

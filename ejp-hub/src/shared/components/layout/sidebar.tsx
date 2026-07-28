@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import type { Role } from "@/shared/constants/roles";
 import { cn } from "@/shared/lib/utils";
 import { Separator } from "@/shared/ui/separator";
-import type { UserRole } from "@/shared/types/database";
 
 import { NAV_ITEMS } from "./nav-items";
 
-export function Sidebar({ role, onNavigate }: { role: UserRole; onNavigate?: () => void }) {
+export function Sidebar({ role, onNavigate }: { role: Role; onNavigate?: () => void }) {
   const pathname = usePathname();
   const items = NAV_ITEMS.filter((item) => item.roles.includes(role));
 

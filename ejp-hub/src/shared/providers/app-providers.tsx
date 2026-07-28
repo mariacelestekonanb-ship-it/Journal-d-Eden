@@ -2,19 +2,25 @@
 
 import * as React from "react";
 
+import { AuthProvider } from "@/features/auth/providers/auth-provider";
+import { RoleProvider } from "@/features/auth/providers/role-provider";
 import { ThemeProvider } from "@/shared/components/theme-provider";
+import { QueryProvider } from "@/shared/providers/query-provider";
 import { Toaster } from "@/shared/ui/sonner";
 import { TooltipProvider } from "@/shared/ui/tooltip";
-import { QueryProvider } from "@/shared/providers/query-provider";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <QueryProvider>
-        <TooltipProvider delayDuration={200}>
-          {children}
-          <Toaster position="top-right" richColors closeButton />
-        </TooltipProvider>
+        <AuthProvider>
+          <RoleProvider>
+            <TooltipProvider delayDuration={200}>
+              {children}
+              <Toaster position="top-right" richColors closeButton />
+            </TooltipProvider>
+          </RoleProvider>
+        </AuthProvider>
       </QueryProvider>
     </ThemeProvider>
   );

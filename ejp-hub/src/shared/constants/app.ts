@@ -10,4 +10,5 @@ export const ROUTES = {
   admin: "/administration",
   login: "/connexion",
   forgotPassword: "/mot-de-passe-oublie",
+  resetPassword: "/reinitialiser-mot-de-passe",
 } as const;

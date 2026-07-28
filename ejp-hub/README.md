@@ -2,10 +2,10 @@
 
 Application SaaS de centralisation de l'organisation des conducteurs de prière de l'EJP.
 
-> **Statut : fondations.** Cette base ne contient volontairement aucune fonctionnalité
-> métier (planning, sujets de prière, comptes rendus, témoignages, administration) —
-> uniquement une architecture, un design system et des pages vides prêts à les accueillir.
-> Voir [ROADMAP.md](./ROADMAP.md) pour la suite.
+> **Statut : fondations + authentification.** L'architecture, le design system et
+> l'authentification Supabase (connexion, mot de passe oublié, rôles, protection des routes)
+> sont en place. Aucune fonctionnalité métier (planning, sujets de prière, comptes rendus,
+> témoignages) n'est encore développée — voir [ROADMAP.md](./ROADMAP.md) pour la suite.
 >
 > Ce projet vit dans `ejp-hub/`, à côté de LexWatch (à la racine du dépôt), en attendant que
 > l'organisation définitive du dépôt soit décidée. Les deux projets sont totalement
@@ -31,13 +31,17 @@ Application SaaS de centralisation de l'organisation des conducteurs de prière 
 ```bash
 cd ejp-hub
 npm install
-cp .env.example .env.local   # renseigner les clés Supabase (optionnel pour consulter le shell)
+cp .env.example .env.local   # renseigner les clés Supabase — voir SUPABASE_SETUP.md
 npm run dev
 ```
 
-Le shell de l'application (sidebar, header, pages) est consultable **sans** configurer
-Supabase : un profil de démonstration est utilisé tant qu'aucune session réelle n'existe
-(voir `src/shared/constants/placeholder-profile.ts` et `ARCHITECTURE.md`).
+Sans configuration Supabase, l'application tourne en **mode démo** (shell consultable, pas
+d'authentification réelle). Voir [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) pour provisionner un
+vrai projet et [`AUTHENTICATION.md`](./AUTHENTICATION.md#mode-démo) pour le détail de ce mode.
+
+```bash
+npm run db:seed   # crée 1 admin + 2 conducteurs de prière de démonstration
+```
 
 ## Scripts
 
@@ -49,22 +53,20 @@ Supabase : un profil de démonstration est utilisé tant qu'aucune session réel
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier (écriture) |
 | `npm run validate` | `typecheck` + `lint` |
-
-## Base de données
-
-Le schéma complet (tables, triggers, RLS, storage) est dans `src/docs/database.sql`. Exécutez-le
-dans l'éditeur SQL de votre projet Supabase avant de brancher l'authentification et les futurs
-modules. Une fois le projet lié, régénérez `src/shared/types/database.ts` avec
-`supabase gen types typescript`.
+| `npm run db:seed` | Crée les comptes de démonstration (voir `DATABASE.md`) |
 
 ## Documentation
 
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md) — organisation du code et choix techniques.
+- [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) — provisionner et configurer Supabase.
+- [`AUTHENTICATION.md`](./AUTHENTICATION.md) — flux d'authentification, rôles, middleware.
+- [`DATABASE.md`](./DATABASE.md) — schéma, migrations, RLS, seed.
 - [`CONTRIBUTING.md`](./CONTRIBUTING.md) — conventions de contribution.
 - [`ROADMAP.md`](./ROADMAP.md) — ce qui est fait, ce qui reste.
 
 ## Rôles
 
-Deux rôles : `admin` (accès complet) et `conducteur` (accès limité — sera précisé module
-par module au fil des sprints). Le menu **Administration** est déjà filtré par rôle dans la
-sidebar (`src/shared/components/layout/nav-items.ts`).
+Deux rôles : `ADMIN` (accès complet) et `PRAYER_LEADER` / conducteur de prière (accès limité —
+sera précisé module par module au fil des sprints). Le menu **Administration** est déjà filtré
+par rôle dans la sidebar et bloqué par le middleware pour les non-administrateurs — voir
+`AUTHENTICATION.md`.

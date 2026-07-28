@@ -8,8 +8,7 @@ export type CurrentProfile = Database["public"]["Tables"]["profiles"]["Row"];
 /**
  * À utiliser depuis les Server Components / Server Actions uniquement.
  * Retourne `null` si personne n'est connecté, ou si Supabase n'est pas
- * encore configuré (variables d'environnement absentes) — utile pour
- * consulter le shell de l'application avant tout branchement réel.
+ * encore configuré (variables d'environnement absentes).
  */
 export async function getCurrentProfile(): Promise<CurrentProfile | null> {
   try {
@@ -29,20 +28,4 @@ export async function getCurrentProfile(): Promise<CurrentProfile | null> {
   } catch {
     return null;
   }
-}
-
-export async function requireProfile(): Promise<CurrentProfile> {
-  const profile = await getCurrentProfile();
-  if (!profile) {
-    throw new Error("Utilisateur non authentifié.");
-  }
-  return profile;
-}
-
-export async function requireAdminProfile(): Promise<CurrentProfile> {
-  const profile = await requireProfile();
-  if (profile.role !== "admin") {
-    throw new Error("Action réservée aux administrateurs.");
-  }
-  return profile;
 }
