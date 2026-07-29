@@ -45,7 +45,14 @@ alter table public.notifications
 drop type if exists public.notification_type;
 alter type public.notification_type_v2 rename to notification_type;
 
-alter table public.notifications rename column link to action_url;
+do $$ begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'notifications' and column_name = 'link'
+  ) then
+    alter table public.notifications rename column link to action_url;
+  end if;
+end $$;
 
 create index if not exists notifications_type_idx on public.notifications (type);
 create index if not exists notifications_priority_idx on public.notifications (priority);
