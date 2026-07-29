@@ -1,11 +1,11 @@
 "use client";
 
-import { Bell, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 
+import { NotificationBell } from "@/features/notifications";
 import type { CurrentProfile } from "@/shared/lib/auth/get-current-profile";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
@@ -41,14 +41,7 @@ export function Header({
       </div>
 
       <div className="flex flex-1 items-center justify-end gap-1">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Notifications">
-              <Bell className="size-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Notifications (bientôt disponible)</TooltipContent>
-        </Tooltip>
+        <NotificationBell />
         <ThemeToggle />
         <UserMenu profile={profile} />
       </div>

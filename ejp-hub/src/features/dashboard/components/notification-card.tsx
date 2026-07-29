@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Bell, CalendarClock, FileClock, HeartHandshake, type LucideIcon } from "lucide-react";
+import { CalendarClock, FileClock, HeartHandshake, Settings2, Users, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/shared/lib/utils";
 import { formatRelative } from "@/shared/utils/format";
@@ -9,10 +9,13 @@ import type { NotificationType } from "@/shared/types/database";
 
 import type { DashboardNotification } from "../types/dashboard.types";
 
+/** Mêmes icônes que le module Notifications (`utils/notification-type.ts`) — dupliquées ici pour ne pas dépendre de ses internes, voir NOTIFICATIONS.md. */
 const TYPE_ICON: Record<NotificationType, LucideIcon> = {
-  UPCOMING_SLOT: CalendarClock,
-  PENDING_REPORT: FileClock,
-  NEW_TOPIC: HeartHandshake,
+  PLANNING: CalendarClock,
+  REPORT: FileClock,
+  MEMBER: Users,
+  PRAYER_TOPIC: HeartHandshake,
+  SYSTEM: Settings2,
 };
 
 export interface NotificationCardProps {
@@ -22,7 +25,7 @@ export interface NotificationCardProps {
 
 /** Une notification du panneau Dashboard — cliquable pour la marquer comme lue. */
 export function NotificationCard({ notification, onMarkAsRead }: NotificationCardProps) {
-  const Icon = TYPE_ICON[notification.type] ?? Bell;
+  const Icon = TYPE_ICON[notification.type];
   const isUnread = !notification.readAt;
 
   return (

@@ -1,0 +1,192 @@
+import type { Notification } from "../types/notification.types";
+
+/**
+ * Fixtures de démonstration du module Notifications. Utilisées par
+ * `MockNotificationRepository` tant que Supabase n'est pas configuré (voir
+ * `repositories/mock-notification-repository.ts`).
+ *
+ * `mock-user` correspond à `MOCK_PROFILE` (voir
+ * `shared/constants/mock-profile.ts`) — la plupart des notifications lui
+ * sont attribuées pour que le centre de notifications reste utilisable en
+ * mode démo. Quelques entrées appartiennent à un autre utilisateur pour
+ * démontrer l'isolation stricte (jamais d'accès aux notifications d'autrui,
+ * y compris pour un admin — voir NOTIFICATIONS.md).
+ */
+function hoursAgo(hours: number): string {
+  return new Date(Date.now() - hours * 3_600_000).toISOString();
+}
+
+function daysAgo(days: number): string {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
+}
+
+export const INITIAL_MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: "notif-1",
+    userId: "mock-user",
+    title: "Créneau demain",
+    message: "Vous conduisez le temps de prière demain à 18h00 — Salle de prière.",
+    type: "PLANNING",
+    priority: "HIGH",
+    isRead: false,
+    actionUrl: "/planning",
+    createdAt: hoursAgo(2),
+    readAt: null,
+  },
+  {
+    id: "notif-2",
+    userId: "mock-user",
+    title: "Compte rendu en attente",
+    message: "Le compte rendu du créneau de mardi n'a pas encore été rempli.",
+    type: "REPORT",
+    priority: "NORMAL",
+    isRead: false,
+    actionUrl: "/comptes-rendus",
+    createdAt: hoursAgo(26),
+    readAt: null,
+  },
+  {
+    id: "notif-3",
+    userId: "mock-user",
+    title: "Nouvelle demande d'adhésion",
+    message: "Claire Rousseau a demandé à rejoindre les conducteurs de prière.",
+    type: "MEMBER",
+    priority: "HIGH",
+    isRead: false,
+    actionUrl: "/administration/demandes",
+    createdAt: hoursAgo(30),
+    readAt: null,
+  },
+  {
+    id: "notif-4",
+    userId: "mock-user",
+    title: "Compte rendu validé",
+    message: "Votre compte rendu « Prière du mercredi soir » a été validé.",
+    type: "REPORT",
+    priority: "LOW",
+    isRead: true,
+    actionUrl: "/comptes-rendus/report-1",
+    createdAt: daysAgo(1),
+    readAt: hoursAgo(20),
+  },
+  {
+    id: "notif-5",
+    userId: "mock-user",
+    title: "Nouveau sujet de prière",
+    message: "« Unité de l'Église » vient d'être publié par Alice Administrateur.",
+    type: "PRAYER_TOPIC",
+    priority: "NORMAL",
+    isRead: true,
+    actionUrl: "/sujets-de-priere",
+    createdAt: daysAgo(1),
+    readAt: daysAgo(1),
+  },
+  {
+    id: "notif-6",
+    userId: "mock-user",
+    title: "Sujet de prière modifié",
+    message: "« Réveil spirituel de la jeunesse » a été mis à jour par Marc Dupont.",
+    type: "PRAYER_TOPIC",
+    priority: "LOW",
+    isRead: true,
+    actionUrl: "/sujets-de-priere",
+    createdAt: daysAgo(2),
+    readAt: daysAgo(2),
+  },
+  {
+    id: "notif-7",
+    userId: "mock-user",
+    title: "Compte rendu rejeté",
+    message: "Le compte rendu « Prière d'intercession » a été rejeté — un commentaire vous attend.",
+    type: "REPORT",
+    priority: "HIGH",
+    isRead: false,
+    actionUrl: "/comptes-rendus/report-4",
+    createdAt: daysAgo(3),
+    readAt: null,
+  },
+  {
+    id: "notif-8",
+    userId: "mock-user",
+    title: "Membre suspendu",
+    message: "Le compte de Marie Petit a été suspendu.",
+    type: "MEMBER",
+    priority: "NORMAL",
+    isRead: true,
+    actionUrl: "/administration/member-marie",
+    createdAt: daysAgo(4),
+    readAt: daysAgo(4),
+  },
+  {
+    id: "notif-9",
+    userId: "mock-user",
+    title: "Créneau modifié",
+    message: "Le créneau « Prière du dimanche » a changé d'horaire : 09h00–10h15.",
+    type: "PLANNING",
+    priority: "NORMAL",
+    isRead: true,
+    actionUrl: "/planning",
+    createdAt: daysAgo(5),
+    readAt: daysAgo(5),
+  },
+  {
+    id: "notif-10",
+    userId: "mock-user",
+    title: "Maintenance programmée",
+    message: "Une maintenance de la plateforme est prévue ce week-end entre 2h00 et 4h00.",
+    type: "SYSTEM",
+    priority: "URGENT",
+    isRead: false,
+    actionUrl: null,
+    createdAt: daysAgo(6),
+    readAt: null,
+  },
+  {
+    id: "notif-11",
+    userId: "mock-user",
+    title: "Changement de rôle",
+    message: "Le rôle de Jean Martin a été confirmé Conducteur de prière.",
+    type: "MEMBER",
+    priority: "LOW",
+    isRead: true,
+    actionUrl: "/administration/member-jean",
+    createdAt: daysAgo(10),
+    readAt: daysAgo(9),
+  },
+  {
+    id: "notif-12",
+    userId: "mock-user",
+    title: "Mise à jour importante",
+    message: "EJP Hub a été mis à jour : le module Comptes rendus reproduit désormais le déroulé complet d'une chaîne de prière.",
+    type: "SYSTEM",
+    priority: "NORMAL",
+    isRead: true,
+    actionUrl: null,
+    createdAt: daysAgo(12),
+    readAt: daysAgo(11),
+  },
+  {
+    id: "notif-13",
+    userId: "member-marc",
+    title: "Créneau demain",
+    message: "Vous conduisez le temps de prière demain à 18h00.",
+    type: "PLANNING",
+    priority: "HIGH",
+    isRead: false,
+    actionUrl: "/planning",
+    createdAt: hoursAgo(5),
+    readAt: null,
+  },
+  {
+    id: "notif-14",
+    userId: "member-marc",
+    title: "Compte rendu validé",
+    message: "Votre compte rendu a été validé.",
+    type: "REPORT",
+    priority: "LOW",
+    isRead: false,
+    actionUrl: "/comptes-rendus",
+    createdAt: daysAgo(2),
+    readAt: null,
+  },
+];

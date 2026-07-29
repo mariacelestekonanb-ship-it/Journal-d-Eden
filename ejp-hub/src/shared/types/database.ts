@@ -8,7 +8,8 @@ export type UserRole = "ADMIN" | "PRAYER_LEADER";
 export type TopicPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
 export type TopicStatus = "DRAFT" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
 export type TopicCategory = "CHURCH" | "FAMILY" | "YOUTH" | "EVANGELISM" | "HEALING" | "NATIONS" | "PERSONAL";
-export type NotificationType = "UPCOMING_SLOT" | "PENDING_REPORT" | "NEW_TOPIC";
+export type NotificationType = "PLANNING" | "REPORT" | "MEMBER" | "PRAYER_TOPIC" | "SYSTEM";
+export type NotificationPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
 export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 export type ReportStatus = "DRAFT" | "SUBMITTED" | "VALIDATED" | "REJECTED";
 export type MemberStatus = "PENDING" | "ACTIVE" | "REFUSED" | "SUSPENDED";
@@ -346,9 +347,10 @@ export interface Database {
           id: string;
           user_id: string;
           type: NotificationType;
+          priority: NotificationPriority;
           title: string;
           message: string;
-          link: string | null;
+          action_url: string | null;
           read_at: string | null;
           created_at: string;
         };
@@ -356,9 +358,10 @@ export interface Database {
           id?: string;
           user_id: string;
           type: NotificationType;
+          priority?: NotificationPriority;
           title: string;
           message: string;
-          link?: string | null;
+          action_url?: string | null;
         };
         Update: Partial<{
           read_at: string | null;

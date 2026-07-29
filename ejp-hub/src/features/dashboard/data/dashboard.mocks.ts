@@ -23,7 +23,7 @@ function zipStatsWithValues(config: typeof ADMIN_STATS_CONFIG, values: number[])
 let mockNotifications: DashboardNotification[] = [
   {
     id: "mock-notification-1",
-    type: "UPCOMING_SLOT",
+    type: "PLANNING",
     title: "Créneau demain",
     message: "Vous conduisez le temps de prière demain à 18h00.",
     createdAt: new Date(Date.now() - 2 * 3_600_000).toISOString(),
@@ -31,7 +31,7 @@ let mockNotifications: DashboardNotification[] = [
   },
   {
     id: "mock-notification-2",
-    type: "PENDING_REPORT",
+    type: "REPORT",
     title: "Compte rendu en attente",
     message: "Le compte rendu du créneau de mardi n'a pas encore été rempli.",
     createdAt: new Date(Date.now() - 26 * 3_600_000).toISOString(),
@@ -39,7 +39,7 @@ let mockNotifications: DashboardNotification[] = [
   },
   {
     id: "mock-notification-3",
-    type: "NEW_TOPIC",
+    type: "PRAYER_TOPIC",
     title: "Nouveau sujet de prière",
     message: "« Unité de l'Église » vient d'être publié par Alice Administrateur.",
     createdAt: new Date(Date.now() - 30 * 3_600_000).toISOString(),
@@ -47,7 +47,7 @@ let mockNotifications: DashboardNotification[] = [
   },
   {
     id: "mock-notification-4",
-    type: "NEW_TOPIC",
+    type: "PRAYER_TOPIC",
     title: "Nouveau sujet de prière",
     message: "« Réveil spirituel de la jeunesse » vient d'être publié par Marc Dupont.",
     createdAt: new Date(Date.now() - 48 * 3_600_000).toISOString(),

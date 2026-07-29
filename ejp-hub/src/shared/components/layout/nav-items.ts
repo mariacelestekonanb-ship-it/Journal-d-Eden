@@ -1,4 +1,4 @@
-import { CalendarDays, FileText, HeartHandshake, Home, Settings2, Sparkles, UserRound } from "lucide-react";
+import { Bell, CalendarDays, FileText, HeartHandshake, Home, Settings2, Sparkles, UserRound } from "lucide-react";
 
 import type { Role } from "@/shared/constants/roles";
 import { ROUTE_PERMISSIONS } from "@/shared/constants/route-permissions";
@@ -30,6 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   { label: "Comptes rendus", href: "/comptes-rendus", icon: FileText, roles: rolesFor("/comptes-rendus") },
   { label: "Témoignages", href: "/temoignages", icon: Sparkles, roles: rolesFor("/temoignages") },
+  { label: "Notifications", href: "/notifications", icon: Bell, roles: rolesFor("/notifications") },
   { label: "Mon profil", href: "/mon-profil", icon: UserRound, roles: rolesFor("/mon-profil") },
   {
     label: "Administration",

@@ -172,20 +172,28 @@ Index : `author_id`, `created_at desc` (flux chronologique).
 
 ### `notifications`
 
+Table métier du module **Notifications** (voir [`NOTIFICATIONS.md`](./NOTIFICATIONS.md)).
+Posée par `20260728100007_notifications.sql` puis étendue par
+`20260802090001_notifications_details.sql`.
+
 | Colonne | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` PK | |
-| `user_id` | `uuid` → `profiles.id`, `on delete cascade` | |
-| `type` | `notification_type` | `UPCOMING_SLOT` \| `PENDING_REPORT` \| `NEW_TOPIC` |
+| `user_id` | `uuid` → `profiles.id`, `on delete cascade` | destinataire — une notification n'appartient jamais qu'à un seul utilisateur |
+| `type` | `notification_type` | `PLANNING` \| `REPORT` \| `MEMBER` \| `PRAYER_TOPIC` \| `SYSTEM` — un préfixe par module producteur, pas un enum par événement exact (voir `title`/`message`) |
+| `priority` | `notification_priority` | `LOW` \| `NORMAL` \| `HIGH` \| `URGENT`, défaut `NORMAL` |
 | `title` / `message` | `text` | |
-| `link` | `text` | nullable |
-| `read_at` | `timestamptz` | nullable = non lue |
+| `action_url` | `text` | nullable — lien vers l'élément concerné, ouvert par l'action « Consulter » (anciennement `link`) |
+| `read_at` | `timestamptz` | nullable = non lue ; pas de colonne `is_read` séparée — le modèle TypeScript expose `isRead` comme un dérivé de `read_at`, une seule source de vérité |
 
-Index composite : `(user_id, read_at)`.
+Index : `(user_id, read_at)`, `type`, `priority`.
 
-> La **génération** des notifications (déclenchée par la création d'un sujet, l'approche d'un
-> créneau, etc.) sera implémentée avec chaque module concerné — cette migration ne pose que la
-> structure.
+> La **génération automatique** des notifications (déclenchée par la soumission d'un CR, une
+> nouvelle affectation Planning, une demande d'adhésion, etc.) reste à implémenter avec chaque
+> module producteur — `NotificationService.notify(...)` (module Notifications) expose déjà l'API
+> à appeler ; voir [`NOTIFICATIONS.md`](./NOTIFICATIONS.md#évolutions-futures) pour le choix entre
+> appel direct (même acteur/destinataire) et trigger Postgres `security definer` (destinataire
+> différent de l'acteur, ex. conducteur → admin).
 
 ## Row Level Security
 
@@ -198,8 +206,11 @@ général :
   `notifications` — chacun ne voit que les siennes).
 - **Écriture** : réservée à `ADMIN` pour les données de référence (`prayer_topics`, `planning`),
   ouverte à l'auteur pour son propre contenu (`testimonies`, `reports` liés à ses créneaux).
-- **Suppression** : réservée à `ADMIN`, sauf `notifications` (pas de suppression, seulement marquage
-  lu/non lu).
+- **Suppression** : réservée à `ADMIN`, sauf `notifications` (chacun supprime les siennes).
+
+`notifications` déroge aussi à la règle d'écriture ci-dessus : l'insertion est ouverte à
+`auth.uid() = user_id` (notification pour soi-même) ou à un `ADMIN` (pour n'importe qui) — voir
+`20260802090001_notifications_details.sql` et [`NOTIFICATIONS.md`](./NOTIFICATIONS.md).
 
 La fonction `public.is_admin()` (definer, `stable`) centralise la vérification de rôle utilisée par
 toutes les policies — elle est la seule chose à auditer pour comprendre « qui est admin » côté base
