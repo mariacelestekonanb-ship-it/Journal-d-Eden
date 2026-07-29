@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import { AppAvatar } from "@/shared/components/app-avatar";
 import { AppButton } from "@/shared/components/app-button";
 import { AppCard, AppCardContent, AppCardHeader, AppCardTitle } from "@/shared/components/app-card";

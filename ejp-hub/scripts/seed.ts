@@ -75,7 +75,16 @@ async function main() {
       user_metadata: {
         firstname: seedUser.firstname,
         lastname: seedUser.lastname,
+      },
+      // `role` (et `status`/`is_active`, par défaut ACTIVE pour ces comptes de
+      // démonstration) doivent passer par `app_metadata` — seule l'API Admin
+      // peut l'écrire, contrairement à `user_metadata` qu'un appel public
+      // `auth.signUp` laisserait n'importe qui définir. Voir la migration
+      // `20260804090001_fix_privilege_escalation_signup.sql`.
+      app_metadata: {
         role: seedUser.role,
+        status: "ACTIVE",
+        is_active: true,
       },
     });
 

@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight, Columns3 } from "lucide-react";
 import * as React from "react";
 
 import { AppButton } from "@/shared/components/app-button";
+import { AppCard } from "@/shared/components/app-card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -88,7 +89,7 @@ export function PlanningTable({ slots, permissions, callbacks }: PlanningTablePr
         </DropdownMenu>
       </div>
 
-      <div className="rounded-xl border border-border bg-card">
+      <AppCard>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -123,7 +124,7 @@ export function PlanningTable({ slots, permissions, callbacks }: PlanningTablePr
             ))}
           </TableBody>
         </Table>
-      </div>
+      </AppCard>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <p>

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 
 import type { ReportListContext } from "../repositories/report-repository";
 import { ReportService } from "../services/report.service";

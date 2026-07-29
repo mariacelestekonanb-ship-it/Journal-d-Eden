@@ -1,6 +1,10 @@
+import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
+
 import type { AdminCategory, AuditLogEntry, PlatformSettings } from "../types/admin.types";
 import type { AdminCategoryFormValues } from "../validation/admin-category.schema";
 import type { PlatformSettingsFormValues } from "../validation/platform-settings.schema";
+import { MockAdminRepository } from "./mock-admin-repository";
+import { SupabaseAdminRepository } from "./supabase-admin-repository";
 
 export interface RecordAuditLogEntryInput {
   actorId: string;
@@ -27,4 +31,13 @@ export interface AdminRepository {
   removeCategory(id: string): Promise<void>;
   listAuditLog(): Promise<AuditLogEntry[]>;
   recordAuditLogEntry(input: RecordAuditLogEntryInput): Promise<AuditLogEntry>;
+}
+
+/**
+ * Sélection de l'implémentation — définie une seule fois ici et importée par
+ * `AdminService`, `AdminSettingsService` et `AdminAuditService` (les trois
+ * points d'entrée qui accèdent aux données propres à ce module).
+ */
+export function getAdminRepository(): AdminRepository {
+  return isSupabaseConfigured() ? SupabaseAdminRepository : MockAdminRepository;
 }

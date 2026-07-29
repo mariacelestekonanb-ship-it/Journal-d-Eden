@@ -3,11 +3,8 @@ import { NotificationService } from "@/features/notifications";
 import { PlanningService } from "@/features/planning";
 import { PrayerTopicService } from "@/features/prayer-topics";
 import { ReportService } from "@/features/reports";
-import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
 
-import { MockAdminRepository } from "../repositories/mock-admin-repository";
-import { SupabaseAdminRepository } from "../repositories/supabase-admin-repository";
-import type { AdminRepository } from "../repositories/admin-repository";
+import { getAdminRepository } from "../repositories/admin-repository";
 import type { AdminCategory, AdminDashboardStats, AdminSearchResult } from "../types/admin.types";
 import type { AdminCategoryFormValues } from "../validation/admin-category.schema";
 
@@ -21,10 +18,6 @@ import type { AdminCategoryFormValues } from "../validation/admin-category.schem
  * n'importe quel autre composant client — aucune donnée dupliquée, aucun
  * accès Supabase supplémentaire à maintenir.
  */
-function getRepository(): AdminRepository {
-  return isSupabaseConfigured() ? SupabaseAdminRepository : MockAdminRepository;
-}
-
 function todayIsoDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -115,18 +108,18 @@ export const AdminService = {
   },
 
   async listCategories(): Promise<AdminCategory[]> {
-    return getRepository().listCategories();
+    return getAdminRepository().listCategories();
   },
 
   async createCategory(values: AdminCategoryFormValues): Promise<AdminCategory> {
-    return getRepository().createCategory(values);
+    return getAdminRepository().createCategory(values);
   },
 
   async updateCategory(id: string, values: AdminCategoryFormValues): Promise<AdminCategory> {
-    return getRepository().updateCategory(id, values);
+    return getAdminRepository().updateCategory(id, values);
   },
 
   async removeCategory(id: string): Promise<void> {
-    return getRepository().removeCategory(id);
+    return getAdminRepository().removeCategory(id);
   },
 };

@@ -42,8 +42,8 @@ notifications (user_id → profiles)
 | `role` | `user_role` | `ADMIN` \| `PRAYER_LEADER`, défaut `PRAYER_LEADER` |
 | `avatar_url` | `text` | nullable |
 | `phone` | `text` | nullable |
-| `is_active` | `boolean` | défaut `true` — tenu en cohérence avec `status` (`ACTIVE` ⇔ `true`) par `MemberService`, jamais par une contrainte SQL |
-| `status` | `member_status` | `PENDING` \| `ACTIVE` \| `REFUSED` \| `SUSPENDED`, défaut `ACTIVE` (un compte créé hors demande d'adhésion — seed, invitation admin — est actif immédiatement) |
+| `is_active` | `boolean` | défaut `false` — tenu en cohérence avec `status` (`ACTIVE` ⇔ `true`) par `MemberService`, jamais par une contrainte SQL |
+| `status` | `member_status` | `PENDING` \| `ACTIVE` \| `REFUSED` \| `SUSPENDED`, défaut `PENDING` (voir sécurité de `handle_new_user` ci-dessous) |
 | `validated_at` | `timestamptz` | nullable — renseignée au passage `PENDING` → `ACTIVE`/`REFUSED` |
 | `validated_by` | `uuid` → `profiles.id` | nullable — administrateur ayant traité la demande |
 | `created_at` / `updated_at` | `timestamptz` | `updated_at` maintenu par `set_updated_at()` ; `created_at` sert de « date d'inscription » |
@@ -53,11 +53,18 @@ modifier `role`, `is_active`, `status` ou `email` — y compris les siens. Seul 
 `service_role`, donc `scripts/seed.ts` et les Server Actions du module Membres) peut changer ces
 colonnes.
 
-`handle_new_user` lit `firstname`/`lastname`/`role` **et désormais** `phone`/`status`/`is_active`
-depuis les métadonnées de `auth.users` (`raw_user_meta_data`) : une demande d'adhésion publique
-(`features/members`, via `supabase.auth.admin.createUser(...)`) passe `status: 'PENDING'` et
-`is_active: false`, tandis que le seed et les futures invitations admin, qui ne passent pas ces
-métadonnées, obtiennent `ACTIVE`/actif par défaut — comportement inchangé pour eux.
+`handle_new_user` lit `firstname`/`lastname`/`phone` depuis `raw_user_meta_data`
+(`user_metadata`), mais **`role`/`status`/`is_active` depuis `raw_app_meta_data`
+(`app_metadata`)** — voir `20260804090001_fix_privilege_escalation_signup.sql`. Ce n'est pas
+un détail : `user_metadata` est un champ que l'API publique `auth.signUp` laisse n'importe quel
+appelant renseigner librement (y compris un visiteur anonyme appelant directement l'API GoTrue
+avec la clé anonyme, indépendamment de ce que le frontend appelle), alors que `app_metadata`
+n'est écrivible que par l'API Admin (clé de service). Lire `role`/`status`/`is_active` depuis
+`user_metadata` aurait permis à quiconque de s'auto-créer un compte `ADMIN` déjà `ACTIVE`. Les
+deux seuls appelants légitimes (`scripts/seed.ts`, `adminCreateMembershipRequestQuery`) utilisent
+tous deux l'API Admin et passent donc déjà ces trois champs via `app_metadata` ; le repli par
+défaut en leur absence est désormais `PENDING`/`false` (la position la moins privilégiée), plutôt
+que l'ancien `ACTIVE`/`true`.
 
 Index : `role`, `is_active`, `status`.
 

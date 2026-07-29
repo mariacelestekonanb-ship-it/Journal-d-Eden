@@ -2,10 +2,9 @@
 
 import * as React from "react";
 
-import { useUser } from "@/features/auth/hooks/use-user";
-import type { MemberStatus } from "@/features/members";
+import { useUser } from "@/features/auth";
+import { MemberStatusBadge } from "@/features/members";
 import { AppAvatar } from "@/shared/components/app-avatar";
-import { AppBadge } from "@/shared/components/app-badge";
 import { AppCard } from "@/shared/components/app-card";
 import { ROLES, ROLE_LABELS, type Role } from "@/shared/constants/roles";
 import { Input } from "@/shared/ui/input";
@@ -15,14 +14,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 import { useAdminRoleMembers, useChangeAdminMemberRole } from "../hooks/use-admin-roles";
 import { AdminEmptyState } from "./admin-empty-state";
-
-/** Reprise minimale des libellés de statut Membres (non exportés publiquement) — voir `member-history-labels.ts` pour le même compromis. */
-const MEMBER_STATUS_LABELS_FOR_ROLES: Record<MemberStatus, string> = {
-  PENDING: "En attente",
-  ACTIVE: "Actif",
-  REFUSED: "Refusé",
-  SUSPENDED: "Suspendu",
-};
 
 /**
  * Gestion des rôles — consulte et modifie le rôle de chaque membre.
@@ -89,9 +80,7 @@ export function AdminRoles() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <AppBadge variant={member.status === "ACTIVE" ? "default" : "outline"}>
-                        {MEMBER_STATUS_LABELS_FOR_ROLES[member.status]}
-                      </AppBadge>
+                      <MemberStatusBadge status={member.status} />
                     </TableCell>
                     <TableCell>
                       {isOwnAccount ? (

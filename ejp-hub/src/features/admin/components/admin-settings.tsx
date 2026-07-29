@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import { AppButton } from "@/shared/components/app-button";
 import { AppCard, AppCardContent, AppCardHeader, AppCardTitle } from "@/shared/components/app-card";
 import { Input } from "@/shared/ui/input";

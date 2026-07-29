@@ -2,9 +2,12 @@
 
 ## Vue d'ensemble
 
-EJP Hub utilise **Supabase Auth** (email + mot de passe). L'inscription publique est désactivée :
-les comptes sont créés par un administrateur (module Administration, à venir) ou par
-`npm run db:seed` en développement — voir [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md).
+EJP Hub utilise **Supabase Auth** (email + mot de passe). L'inscription publique par l'API
+`supabase.auth.signUp` reste désactivée : un compte se crée soit via le formulaire public
+« Rejoindre » (`/rejoindre`, module Membres — crée une demande `PENDING` via l'API Admin,
+validée ensuite par un administrateur dans `/administration/membres/demandes`), soit par
+`npm run db:seed` en développement — voir [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) et
+[`MEMBERS.md`](./MEMBERS.md).
 
 Flux couverts :
 
@@ -24,10 +27,10 @@ Aucune de ces couches ne remplace les autres — chacune protège contre une cla
 | **Guards serveur** | `src/shared/lib/auth/guards.ts` | Une Server Action appelée directement sans passer par l'UI |
 | **Row Level Security** | `supabase/migrations/*_row_level_security.sql` | Une requête Postgres qui contournerait l'application elle-même |
 
-Les hooks/composants client (`useAuth`, `useRole`, `<RoleGuard>`) ne sont **jamais** une frontière de
-sécurité : ils servent uniquement à adapter l'interface (masquer un bouton, afficher un nom). Un
-utilisateur malveillant peut toujours modifier le JavaScript côté client — c'est pour ça que le
-middleware et la RLS existent.
+Les hooks client (`useAuth`, `useRole`, `useUser`, et les `get*Permissions()` de chaque module) ne
+sont **jamais** une frontière de sécurité : ils servent uniquement à adapter l'interface (masquer
+un bouton, afficher un nom). Un utilisateur malveillant peut toujours modifier le JavaScript côté
+client — c'est pour ça que le middleware et la RLS existent.
 
 ## Clients Supabase
 
@@ -83,8 +86,8 @@ export type Role = (typeof ROLES)[number];
 2. Ajouter la valeur à `ROLES` dans `shared/constants/roles.ts` et son libellé dans `ROLE_LABELS`.
 3. Ajuster `ROUTE_PERMISSIONS` si le nouveau rôle a des routes dédiées.
 
-Rien d'autre à modifier : guards, middleware, `RoleGuard`, `useRole()` et la sidebar sont tous
-génériques (ils itèrent sur `Role[]`, jamais sur des rôles codés en dur un par un).
+Rien d'autre à modifier : guards, middleware, `useRole()` et la sidebar sont tous génériques
+(ils itèrent sur `Role[]`, jamais sur des rôles codés en dur un par un).
 
 ## Providers et hooks
 
@@ -95,7 +98,6 @@ génériques (ils itèrent sur `Role[]`, jamais sur des rôles codés en dur un 
 | `useAuth()` | `features/auth/hooks/use-auth.ts` | `{ user, session, isLoading, signOut }` |
 | `useUser()` | `features/auth/hooks/use-user.ts` | `{ profile, isLoading }` — la ligne `profiles` (nom, avatar, téléphone, rôle) |
 | `useRole()` | `features/auth/hooks/use-role.ts` | `{ role, isAdmin, isPrayerLeader, hasRole, hasAnyRole }` |
-| `<RoleGuard allow={[...]}>` | `features/auth/components/role-guard.tsx` | Masque son contenu si le rôle courant n'est pas autorisé |
 
 Les deux providers sont montés une seule fois, dans `shared/providers/app-providers.tsx`
 (`QueryProvider > AuthProvider > RoleProvider`), donc disponibles partout dans l'arbre React.

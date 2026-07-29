@@ -3,7 +3,7 @@
 import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
 
-import { signOutAction } from "@/features/auth/actions/sign-out.action";
+import { signOutAction } from "@/features/auth";
 import { AppAvatar } from "@/shared/components/app-avatar";
 import { AppBadge } from "@/shared/components/app-badge";
 import { ROUTES } from "@/shared/constants/app";

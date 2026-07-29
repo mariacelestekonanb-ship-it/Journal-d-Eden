@@ -37,11 +37,18 @@ export interface MembershipRequestInput {
 
 /**
  * Crée le compte Supabase Auth d'une demande d'adhésion — `status: PENDING`
- * et `is_active: false` passés en métadonnées sont lus par le trigger
- * `handle_new_user` (voir `20260801090001_members_details.sql`), qui crée le
- * profil déjà dans cet état : le compte existe (mot de passe haché par
- * Supabase Auth) mais reste bloqué par le middleware tant qu'un admin ne l'a
- * pas validé (voir `middleware.ts` et `/compte-en-attente`).
+ * et `is_active: false` passés en `app_metadata` sont lus par le trigger
+ * `handle_new_user` (voir `20260804090001_fix_privilege_escalation_signup.sql`),
+ * qui crée le profil déjà dans cet état : le compte existe (mot de passe
+ * haché par Supabase Auth) mais reste bloqué par le middleware tant qu'un
+ * admin ne l'a pas validé (voir `middleware.ts` et `/compte-en-attente`).
+ *
+ * `role`/`status`/`is_active` passent volontairement par `app_metadata`
+ * plutôt que `user_metadata` : seule l'API Admin (utilisée ici, clé de
+ * service) peut écrire dans `app_metadata` — l'API publique `auth.signUp`
+ * ne le peut jamais, contrairement à `user_metadata` qu'un appelant
+ * quelconque peut renseigner librement. Voir le commentaire de la migration
+ * pour le détail de la faille que ce choix ferme.
  */
 export async function adminCreateMembershipRequestQuery(input: MembershipRequestInput): Promise<RawMemberRow> {
   const supabase = createAdminClient();
@@ -54,6 +61,8 @@ export async function adminCreateMembershipRequestQuery(input: MembershipRequest
       firstname: input.firstName,
       lastname: input.lastName,
       phone: input.phone,
+    },
+    app_metadata: {
       role: "PRAYER_LEADER",
       status: "PENDING",
       is_active: false,

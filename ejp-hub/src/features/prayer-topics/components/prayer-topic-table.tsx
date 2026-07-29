@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight, Columns3 } from "lucide-react";
 import * as React from "react";
 
 import { AppButton } from "@/shared/components/app-button";
+import { AppCard } from "@/shared/components/app-card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -105,7 +106,7 @@ export function PrayerTopicTable({
         </DropdownMenu>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <AppCard className="overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -144,7 +145,7 @@ export function PrayerTopicTable({
             ))}
           </TableBody>
         </Table>
-      </div>
+      </AppCard>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <p>

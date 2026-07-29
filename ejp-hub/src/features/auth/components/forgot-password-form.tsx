@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -11,7 +11,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordInput,
 } from "@/features/auth/validation/forgot-password.schema";
-import { Button } from "@/shared/ui/button";
+import { AppButton } from "@/shared/components/app-button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
@@ -67,10 +67,9 @@ export function ForgotPasswordForm() {
         {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+      <AppButton type="submit" className="w-full" isLoading={isSubmitting}>
         Envoyer le lien de réinitialisation
-      </Button>
+      </AppButton>
     </form>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Lock, Mail } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 import { signInWithPassword } from "@/features/auth/services/auth.service";
 import { loginSchema, type LoginInput } from "@/features/auth/validation/login.schema";
-import { Button } from "@/shared/ui/button";
+import { AppButton } from "@/shared/components/app-button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
@@ -77,10 +77,9 @@ export function LoginForm() {
         {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+      <AppButton type="submit" className="w-full" isLoading={isSubmitting}>
         Se connecter
-      </Button>
+      </AppButton>
     </form>
   );
 }

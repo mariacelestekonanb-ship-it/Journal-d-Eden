@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import { AppButton } from "@/shared/components/app-button";
 import { Textarea } from "@/shared/ui/textarea";
 import { formatDateTime } from "@/shared/utils/format";

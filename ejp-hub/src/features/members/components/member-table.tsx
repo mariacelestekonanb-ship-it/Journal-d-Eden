@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight, Columns3 } from "lucide-react";
 import * as React from "react";
 
 import { AppButton } from "@/shared/components/app-button";
+import { AppCard } from "@/shared/components/app-card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -99,7 +100,7 @@ export function MemberTable({ members, permissions, callbacks, rowSelection, onR
         </DropdownMenu>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <AppCard className="overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -138,7 +139,7 @@ export function MemberTable({ members, permissions, callbacks, rowSelection, onR
             ))}
           </TableBody>
         </Table>
-      </div>
+      </AppCard>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <p>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { LoginForm } from "@/features/auth/components/login-form";
+import { LoginForm } from "@/features/auth";
 
 export const metadata: Metadata = {
   title: "Connexion",

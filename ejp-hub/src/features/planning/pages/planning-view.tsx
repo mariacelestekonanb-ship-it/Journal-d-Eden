@@ -64,28 +64,42 @@ export function PlanningView({ role }: PlanningViewProps) {
 
   const filteredSlots = React.useMemo(() => applyPlanningFilters(slots ?? [], filters), [slots, filters]);
 
-  function handleView(slot: PrayerSlot) {
+  const handleView = React.useCallback((slot: PrayerSlot) => {
     setDialogState({ mode: "view", slot });
-  }
+  }, []);
 
-  function handleEdit(slot: PrayerSlot) {
+  const handleEdit = React.useCallback((slot: PrayerSlot) => {
     setDialogState({ mode: "edit", slot });
-  }
+  }, []);
 
-  function handleDuplicate(slot: PrayerSlot) {
-    duplicateMutation.mutate(slot.id);
-    setDialogState(null);
-  }
+  const handleDuplicate = React.useCallback(
+    (slot: PrayerSlot) => {
+      duplicateMutation.mutate(slot.id);
+      setDialogState(null);
+    },
+    [duplicateMutation],
+  );
 
-  function handleCancel(slot: PrayerSlot) {
+  const handleCancel = React.useCallback((slot: PrayerSlot) => {
     setConfirmState({ type: "cancel", slot });
     setDialogState(null);
-  }
+  }, []);
 
-  function handleDelete(slot: PrayerSlot) {
+  const handleDelete = React.useCallback((slot: PrayerSlot) => {
     setConfirmState({ type: "delete", slot });
     setDialogState(null);
-  }
+  }, []);
+
+  const tableCallbacks = React.useMemo(
+    () => ({
+      onView: handleView,
+      onEdit: handleEdit,
+      onDuplicate: handleDuplicate,
+      onCancel: handleCancel,
+      onDelete: handleDelete,
+    }),
+    [handleView, handleEdit, handleDuplicate, handleCancel, handleDelete],
+  );
 
   return (
     <div className="space-y-6">
@@ -132,17 +146,7 @@ export function PlanningView({ role }: PlanningViewProps) {
       {!isLoading && !isError && filteredSlots.length > 0 && (
         <>
           {view === "list" ? (
-            <PlanningTable
-              slots={filteredSlots}
-              permissions={permissions}
-              callbacks={{
-                onView: handleView,
-                onEdit: handleEdit,
-                onDuplicate: handleDuplicate,
-                onCancel: handleCancel,
-                onDelete: handleDelete,
-              }}
-            />
+            <PlanningTable slots={filteredSlots} permissions={permissions} callbacks={tableCallbacks} />
           ) : (
             <PlanningCalendar
               slots={filteredSlots}

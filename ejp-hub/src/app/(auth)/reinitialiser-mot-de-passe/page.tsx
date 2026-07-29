@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ResetPasswordView } from "@/features/auth/components/reset-password-view";
+import { ResetPasswordView } from "@/features/auth";
 
 export const metadata: Metadata = {
   title: "Réinitialiser le mot de passe",

@@ -1,12 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { Button } from "@/shared/ui/button";
+import { AppButton } from "@/shared/components/app-button";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 
@@ -65,10 +64,9 @@ export function ResetPasswordForm() {
         {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+      <AppButton type="submit" className="w-full" isLoading={isSubmitting}>
         Mettre à jour le mot de passe
-      </Button>
+      </AppButton>
     </form>
   );
 }

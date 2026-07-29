@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import type { RowSelectionState } from "@tanstack/react-table";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import { AppButton } from "@/shared/components/app-button";
 import { ConfirmDialog } from "@/shared/components/confirm-dialog";
 import type { Role } from "@/shared/constants/roles";

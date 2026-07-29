@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import {
   Dialog,
   DialogContent,

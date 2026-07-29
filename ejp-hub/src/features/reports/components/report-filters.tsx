@@ -3,6 +3,7 @@
 import { Search, X } from "lucide-react";
 
 import { AppButton } from "@/shared/components/app-button";
+import { AppCard } from "@/shared/components/app-card";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
@@ -30,7 +31,7 @@ export function ReportFilters({
   authorOptions,
 }: ReportFiltersProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+    <AppCard className="flex flex-col gap-3 p-4">
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -108,6 +109,6 @@ export function ReportFilters({
           Réinitialiser les filtres
         </AppButton>
       )}
-    </div>
+    </AppCard>
   );
 }

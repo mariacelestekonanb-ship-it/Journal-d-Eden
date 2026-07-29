@@ -12,3 +12,4 @@ export { MemberSelfProfileView } from "./pages/member-self-profile-view";
 export type { Member, MemberFilters, MemberRole, MemberStatus } from "./types/member.types";
 export { MemberService } from "./services/member.service";
 export { getMemberPermissions, type MemberPermissions } from "./utils/member-permissions";
+export { MemberStatusBadge } from "./components/member-status-badge";

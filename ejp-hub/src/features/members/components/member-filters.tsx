@@ -3,6 +3,7 @@
 import { Search, X } from "lucide-react";
 
 import { AppButton } from "@/shared/components/app-button";
+import { AppCard } from "@/shared/components/app-card";
 import { ROLES, ROLE_LABELS } from "@/shared/constants/roles";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
@@ -22,7 +23,7 @@ const ALL_VALUE = "__all__";
 /** Filtres combinables des Membres : recherche, statut, rôle. */
 export function MemberFilters({ filters, onChange, onReset, hasActiveFilters }: MemberFiltersProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+    <AppCard className="flex flex-col gap-3 p-4">
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -34,7 +35,7 @@ export function MemberFilters({ filters, onChange, onReset, hasActiveFilters }: 
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3">
         <Select
           value={filters.status ?? ALL_VALUE}
           onValueChange={(value) => onChange("status", value === ALL_VALUE ? null : (value as MemberFiltersValue["status"]))}
@@ -76,6 +77,6 @@ export function MemberFilters({ filters, onChange, onReset, hasActiveFilters }: 
           Réinitialiser les filtres
         </AppButton>
       )}
-    </div>
+    </AppCard>
   );
 }

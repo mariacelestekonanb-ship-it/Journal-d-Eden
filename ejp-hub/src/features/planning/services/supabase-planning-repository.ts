@@ -1,3 +1,5 @@
+import { getFullName } from "@/shared/utils/get-full-name";
+
 import { PlanningMapper } from "../mappers/planning.mapper";
 import {
   createPlanningSlotQuery,
@@ -76,7 +78,7 @@ export const SupabasePlanningRepository: PlanningRepository = {
 
   async listLeaderOptions() {
     const rows = await queryActiveLeaders();
-    return rows.map((row) => ({ id: row.id, fullName: `${row.firstname} ${row.lastname}`.trim() }));
+    return rows.map((row) => ({ id: row.id, fullName: getFullName(row) }));
   },
 
   async listPrayerTopicOptions() {

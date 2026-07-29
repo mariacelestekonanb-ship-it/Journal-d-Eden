@@ -14,14 +14,15 @@ src/
 │   └── auth/callback/      # Échange de code Supabase (reset password, invitations)
 │
 ├── features/
-│   ├── auth/               # Authentification (fonctionnel)
-│   ├── dashboard/           # Tableau de bord (placeholder)
-│   ├── planning/            # Planning (placeholder)
-│   ├── prayer-topics/       # Sujets de prière (placeholder)
-│   ├── reports/             # Comptes rendus (placeholder)
-│   ├── testimonies/         # Témoignages (placeholder)
-│   ├── profile/             # Mon profil (placeholder)
-│   └── admin/               # Administration (placeholder)
+│   ├── auth/               # Authentification (transverse, voir plus bas)
+│   ├── dashboard/           # Tableau de bord
+│   ├── planning/            # Planning
+│   ├── prayer-topics/       # Sujets de prière
+│   ├── reports/             # Comptes rendus
+│   ├── members/             # Membres (adhésions, rôles, auto-profil — voir MEMBERS.md)
+│   ├── notifications/       # Notifications (centre personnel — voir NOTIFICATIONS.md)
+│   ├── admin/               # Administration (voir ADMIN.md)
+│   └── testimonies/         # Témoignages (état vide, non développé)
 │
 ├── shared/
 │   ├── components/          # Design system (App*) + layout global + providers
@@ -55,12 +56,13 @@ propres à EJP Hub, et inversement.
 
 ### Exception Feature First : `features/auth/`
 
-Le module `auth` exporte des providers, hooks et guards (`AuthProvider`, `RoleProvider`,
-`useAuth`, `useUser`, `useRole`, `<RoleGuard>`) consommés par `shared/` et par les autres
-features (ex. `shared/providers/app-providers.tsx` monte `AuthProvider`/`RoleProvider`).
-C'est la seule feature à qui ce statut « transverse » est accordé : l'authentification est un
-prérequis de toute l'application, pas un module métier comme les autres. Voir
-[`AUTHENTICATION.md`](./AUTHENTICATION.md) pour le détail.
+Le module `auth` exporte, via son `index.ts` public, des providers et des hooks
+(`AuthProvider`, `RoleProvider`, `useAuth`, `useUser`, `useRole`) consommés par `shared/` et par
+les autres features (ex. `shared/providers/app-providers.tsx` monte
+`AuthProvider`/`RoleProvider` ; `useUser` est le moyen standard, dans tous les modules, de lire
+le profil courant côté client). C'est la seule feature à qui ce statut « transverse » est
+accordé : l'authentification est un prérequis de toute l'application, pas un module métier
+comme les autres. Voir [`AUTHENTICATION.md`](./AUTHENTICATION.md) pour le détail.
 
 ## Design system
 

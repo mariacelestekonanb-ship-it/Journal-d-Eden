@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { signOutAction } from "@/features/auth/actions/sign-out.action";
+import { signOutAction } from "@/features/auth";
 import { getCurrentProfile } from "@/shared/lib/auth/get-current-profile";
 import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
 import { Button } from "@/shared/ui/button";

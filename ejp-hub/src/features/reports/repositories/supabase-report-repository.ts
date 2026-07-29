@@ -1,3 +1,5 @@
+import { getFullName } from "@/shared/utils/get-full-name";
+
 import { ReportMapper } from "../mappers/report.mapper";
 import {
   createReportCommentQuery,
@@ -71,7 +73,7 @@ export const SupabaseReportRepository: ReportRepository = {
       endTime: row.end_time,
       location: row.location,
       leaderId: row.leader?.id ?? row.prayer_leader_id ?? "",
-      leaderName: row.leader ? `${row.leader.firstname} ${row.leader.lastname}`.trim() : "Non assigné",
+      leaderName: row.leader ? getFullName(row.leader) : "Non assigné",
     }));
   },
 

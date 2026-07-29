@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 
 import { AdminService } from "../services/admin.service";
 

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 
 import type { MemberListContext } from "../repositories/member-repository";
 import { MemberService } from "../services/member.service";

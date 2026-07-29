@@ -56,11 +56,11 @@ Demande d'adhésion (formulaire public /rejoindre)
    e-mail, téléphone, mot de passe + confirmation, photo optionnelle).
 2. La soumission crée **immédiatement** un compte Supabase Auth réel (mot de passe
    haché par Supabase, jamais stocké par l'application) via l'API Admin, avec
-   `status: PENDING` et `is_active: false` passés en métadonnées — lues par le
-   trigger `handle_new_user` (voir `DATABASE.md`). Le compte existe donc déjà, mais
-   reste bloqué.
-3. Un administrateur consulte `/administration/demandes` (page dédiée, uniquement les
-   membres `PENDING`) et accepte ou refuse, avec confirmation obligatoire.
+   `status: PENDING` et `is_active: false` passés en `app_metadata` (jamais en
+   `user_metadata`, modifiable par n'importe quel appelant — voir `DATABASE.md#profiles`)
+   — lues par le trigger `handle_new_user`. Le compte existe donc déjà, mais reste bloqué.
+3. Un administrateur consulte `/administration/membres/demandes` (page dédiée, uniquement
+   les membres `PENDING`) et accepte ou refuse, avec confirmation obligatoire.
 4. **Acceptation** : `status → ACTIVE`, `is_active → true`, `role` réaffirmé à
    `PRAYER_LEADER`, `validatedAt`/`validatedBy` renseignés. Le membre peut alors se
    connecter et utiliser l'application normalement.
@@ -161,7 +161,7 @@ données (`list`/`getById`).
 
 ## Fiche membre et auto-profil — un contenu partagé, deux points d'entrée
 
-`/administration/[id]` (admin, n'importe quel membre) et `/mon-profil` (chaque membre,
+`/administration/membres/[id]` (admin, n'importe quel membre) et `/mon-profil` (chaque membre,
 lui-même) affichent le même type de contenu — informations personnelles, statut, rôle,
 historique Planning, historique Comptes rendus — mais avec des capacités différentes
 (l'admin gère statut/rôle/e-mail, chacun gère sa propre photo/téléphone/mot de passe).

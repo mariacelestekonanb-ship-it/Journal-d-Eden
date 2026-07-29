@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import { MemberService, type Member, type MemberRole } from "@/features/members";
 
 export const ADMIN_ROLE_MEMBERS_KEY = ["admin", "roles", "members"] as const;

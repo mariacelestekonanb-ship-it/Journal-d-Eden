@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 
 import { AppButton } from "@/shared/components/app-button";
+import { AppCard } from "@/shared/components/app-card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 
 import type { Notification, NotificationCallbacks } from "../types/notification.types";
@@ -50,7 +51,7 @@ export function NotificationTable({ notifications, callbacks }: NotificationTabl
     <div className="space-y-3">
       <p className="text-xs text-muted-foreground">Maj+clic sur une colonne pour trier sur plusieurs critères.</p>
 
-      <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <AppCard className="overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -89,7 +90,7 @@ export function NotificationTable({ notifications, callbacks }: NotificationTabl
             ))}
           </TableBody>
         </Table>
-      </div>
+      </AppCard>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <p>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { TestimoniesView } from "@/features/testimonies/components/testimonies-view";
+import { TestimoniesView } from "@/features/testimonies";
 
 export const metadata: Metadata = {
   title: "Témoignages",

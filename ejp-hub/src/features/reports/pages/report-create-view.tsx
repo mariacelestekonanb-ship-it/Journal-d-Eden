@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { useUser } from "@/features/auth/hooks/use-user";
+import { useUser } from "@/features/auth";
 import { AppButton } from "@/shared/components/app-button";
 import { AppPageHeader } from "@/shared/components/app-page-header";
 import type { Role } from "@/shared/constants/roles";

@@ -4,8 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { useUser } from "@/features/auth/hooks/use-user";
-import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
+import { ResetPasswordForm, useUser } from "@/features/auth";
 import { AppAvatar } from "@/shared/components/app-avatar";
 import { AppButton } from "@/shared/components/app-button";
 import { AppCard, AppCardContent, AppCardHeader, AppCardTitle } from "@/shared/components/app-card";
