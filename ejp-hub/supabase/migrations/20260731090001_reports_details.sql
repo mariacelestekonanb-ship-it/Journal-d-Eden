@@ -59,7 +59,14 @@ alter table public.reports alter column session_end_time set not null;
 -- libre de l'ancienne structure générique n'ont pas d'équivalent dans le
 -- déroulé réel d'une chaîne de prière : ils sont abandonnés au profit des
 -- sections structurées ci-dessus.
-update public.reports set connected_count = attendees_count where connected_count is null;
+do $$ begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'reports' and column_name = 'attendees_count'
+  ) then
+    update public.reports set connected_count = attendees_count where connected_count is null;
+  end if;
+end $$;
 alter table public.reports drop column if exists attendees_count;
 alter table public.reports drop column if exists topics_covered;
 alter table public.reports drop column if exists content;
