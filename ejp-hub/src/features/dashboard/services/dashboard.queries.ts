@@ -229,7 +229,8 @@ export async function queryRecentActivityRows(limit: number): Promise<{
   const [reportsResult, testimoniesResult, topicsResult] = await Promise.all([
     supabase
       .from("reports")
-      .select("id, submitted_at, actor:profiles(firstname, lastname)")
+      .select("id, submitted_at, actor:profiles!reports_created_by_fkey(firstname, lastname)")
+      .not("submitted_at", "is", null)
       .order("submitted_at", { ascending: false })
       .limit(limit),
     supabase
@@ -255,7 +256,7 @@ export async function queryRecentActivityRows(limit: number): Promise<{
   });
 
   return {
-    reports: reportsResult.data.map((row) => toActivityRow(row, row.submitted_at)),
+    reports: reportsResult.data.map((row) => toActivityRow(row, row.submitted_at as string)),
     testimonies: testimoniesResult.data.map((row) => toActivityRow(row, row.created_at)),
     topics: topicsResult.data.map((row) => toActivityRow(row, row.created_at)),
   };

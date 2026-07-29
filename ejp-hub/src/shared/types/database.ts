@@ -10,6 +10,20 @@ export type TopicStatus = "DRAFT" | "ACTIVE" | "COMPLETED" | "ARCHIVED";
 export type TopicCategory = "CHURCH" | "FAMILY" | "YOUTH" | "EVANGELISM" | "HEALING" | "NATIONS" | "PERSONAL";
 export type NotificationType = "UPCOMING_SLOT" | "PENDING_REPORT" | "NEW_TOPIC";
 export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
+export type ReportStatus = "DRAFT" | "SUBMITTED" | "VALIDATED" | "REJECTED";
+
+/** Forme jsonb d'une référence biblique au sein d'une liste (`reports.thanksgiving`, `reports.prayer_points[].references`, …). */
+export interface BibleReferenceJson {
+  id: string;
+  reference: string;
+}
+
+/** Forme jsonb d'un point de prière (`reports.prayer_points`). */
+export interface PrayerPointJson {
+  id: string;
+  title: string;
+  references: BibleReferenceJson[];
+}
 
 export interface Database {
   public: {
@@ -170,27 +184,56 @@ export interface Database {
           id: string;
           planning_id: string;
           prayer_leader_id: string;
-          attendees_count: number | null;
-          topics_covered: string | null;
-          content: string;
-          follow_up: string | null;
-          submitted_at: string;
+          session_date: string;
+          session_start_time: string;
+          session_end_time: string;
+          connected_count: number | null;
+          has_instrumental: boolean;
+          thanksgiving: BibleReferenceJson[];
+          holy_spirit_invitation: BibleReferenceJson[];
+          prayer_points: PrayerPointJson[];
+          closing_thanksgiving: BibleReferenceJson[];
+          announcements: string | null;
+          status: ReportStatus;
+          created_by: string;
+          submitted_at: string | null;
+          validated_at: string | null;
+          created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
           planning_id: string;
           prayer_leader_id: string;
-          attendees_count?: number | null;
-          topics_covered?: string | null;
-          content: string;
-          follow_up?: string | null;
+          session_date: string;
+          session_start_time: string;
+          session_end_time: string;
+          connected_count?: number | null;
+          has_instrumental?: boolean;
+          thanksgiving?: BibleReferenceJson[];
+          holy_spirit_invitation?: BibleReferenceJson[];
+          prayer_points?: PrayerPointJson[];
+          closing_thanksgiving?: BibleReferenceJson[];
+          announcements?: string | null;
+          status?: ReportStatus;
+          created_by: string;
+          submitted_at?: string | null;
+          validated_at?: string | null;
         };
         Update: Partial<{
-          attendees_count: number | null;
-          topics_covered: string | null;
-          content: string;
-          follow_up: string | null;
+          session_date: string;
+          session_start_time: string;
+          session_end_time: string;
+          connected_count: number | null;
+          has_instrumental: boolean;
+          thanksgiving: BibleReferenceJson[];
+          holy_spirit_invitation: BibleReferenceJson[];
+          prayer_points: PrayerPointJson[];
+          closing_thanksgiving: BibleReferenceJson[];
+          announcements: string | null;
+          status: ReportStatus;
+          submitted_at: string | null;
+          validated_at: string | null;
         }>;
         Relationships: [
           {
@@ -203,6 +246,47 @@ export interface Database {
           {
             foreignKeyName: "reports_prayer_leader_id_fkey";
             columns: ["prayer_leader_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reports_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      report_comments: {
+        Row: {
+          id: string;
+          report_id: string;
+          author_id: string;
+          message: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          report_id: string;
+          author_id: string;
+          message: string;
+        };
+        Update: Partial<{
+          message: string;
+        }>;
+        Relationships: [
+          {
+            foreignKeyName: "report_comments_report_id_fkey";
+            columns: ["report_id"];
+            isOneToOne: false;
+            referencedRelation: "reports";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "report_comments_author_id_fkey";
+            columns: ["author_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];

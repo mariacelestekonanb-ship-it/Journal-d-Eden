@@ -15,13 +15,13 @@ procédure d'application.
 auth.users (géré par Supabase Auth)
       │ 1:1
       ▼
-profiles ──────────────┬──────────────┬──────────────┐
-   │ created_by        │ prayer_leader_id             │ author_id
-   ▼                    ▼                              ▼
-prayer_topics ◄─── planning ──── reports        testimonies
-                       │ 1:1 (planning_id)
-                       ▼
-                    reports
+profiles ──────────────┬──────────────┬──────────────┬──────────────┐
+   │ created_by        │ prayer_leader_id             │ author_id     │ created_by/author_id
+   ▼                    ▼                              ▼               ▼
+prayer_topics ◄─── planning                     testimonies    reports ── report_comments
+                       │ 1:1 (planning_id)                        ▲ report_id
+                       ▼                                          │
+                    reports ───────────────────────────────────────┘
 
 notifications (user_id → profiles)
 ```
@@ -99,19 +99,54 @@ Index : `slot_date`, `prayer_leader_id`, `secondary_leader_id`, `prayer_topic_id
 
 ### `reports`
 
-Un compte rendu par créneau (`planning_id` unique).
+Un compte rendu par créneau (`planning_id` unique) — reproduit le déroulé réel d'une
+chaîne de prière de l'EJP, pas un rapport de réunion générique (voir
+[`REPORTS.md`](./REPORTS.md) pour le modèle métier complet). Posée par
+`20260728100005_reports.sql` puis étendue par `20260731090001_reports_details.sql`.
 
 | Colonne | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` PK | |
 | `planning_id` | `uuid` → `planning.id`, **unique** | 1 CR maximum par créneau |
-| `prayer_leader_id` | `uuid` → `profiles.id` | |
-| `attendees_count` | `integer` | nullable, `>= 0` |
-| `topics_covered` | `text` | nullable |
-| `content` | `text` | |
-| `follow_up` | `text` | nullable |
+| `prayer_leader_id` | `uuid` → `profiles.id` | conducteur assigné au créneau |
+| `created_by` | `uuid` → `profiles.id` | auteur réel du CR (peut différer du conducteur) |
+| `status` | `report_status` | `DRAFT` \| `SUBMITTED` \| `VALIDATED` \| `REJECTED` |
+| `session_date` | `date` | préremplie depuis `planning.slot_date`, modifiable |
+| `session_start_time` / `session_end_time` | `time` | préremplies depuis `planning`, modifiables |
+| `connected_count` | `integer` | nullable, `>= 0` — « Nombre de personnes connectées » |
+| `has_instrumental` | `boolean` | |
+| `thanksgiving` | `jsonb` | Actions de grâce (ouverture) — `[{id, reference}]` |
+| `holy_spirit_invitation` | `jsonb` | Invitation du Saint-Esprit — `[{id, reference}]` |
+| `prayer_points` | `jsonb` | Points de prière — `[{id, title, references: [{id, reference}]}]`, ordre = ordre du tableau |
+| `closing_thanksgiving` | `jsonb` | Fin / Actions de grâce (clôture) — `[{id, reference}]` |
+| `announcements` | `text` | nullable — Annonces, texte libre |
+| `submitted_at` | `timestamptz` | nullable — renseignée à la soumission uniquement |
+| `validated_at` | `timestamptz` | nullable — renseignée automatiquement lors du passage à `VALIDATED` |
+| `created_at` / `updated_at` | `timestamptz` | |
 
-Index : `prayer_leader_id` (`planning_id` déjà indexé via la contrainte unique).
+Index : `prayer_leader_id`, `status`, `created_by` (`planning_id` déjà indexé via la
+contrainte unique).
+
+> Les listes de références bibliques et les points de prière sont des structures
+> imbriquées de taille variable (un point peut avoir un nombre illimité de versets) :
+> stockées en `jsonb` plutôt que normalisées en tables filles, car ce contenu n'est
+> jamais interrogé colonne par colonne — toujours lu et écrit comme un bloc par
+> section. Voir [`REPORTS.md`](./REPORTS.md#stockage-supabase-des-listes-imbriquées).
+
+### `report_comments`
+
+Retour de suivi (principalement admin) sur un compte rendu — historique conservé
+intégralement, jamais modifié ni supprimé unitairement.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` PK | |
+| `report_id` | `uuid` → `reports.id`, `on delete cascade` | |
+| `author_id` | `uuid` → `profiles.id` | |
+| `message` | `text` | |
+| `created_at` | `timestamptz` | |
+
+Index : `report_id`.
 
 ### `testimonies`
 
