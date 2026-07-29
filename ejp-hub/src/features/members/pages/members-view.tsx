@@ -27,7 +27,7 @@ export interface MembersViewProps {
 
 type PendingAction = { type: "suspend" | "refuse"; member: Member } | null;
 
-/** Composition de la page Membres — statistiques, filtres, tableau. Câblée sur `/administration`. */
+/** Composition de la page Membres — statistiques, filtres, tableau. Câblée sur `/administration/membres`. */
 export function MembersView({ role }: MembersViewProps) {
   const permissions = React.useMemo(() => getMemberPermissions(role), [role]);
   const { profile } = useUser();
@@ -49,7 +49,7 @@ export function MembersView({ role }: MembersViewProps) {
 
   const callbacks = React.useMemo(
     () => ({
-      onView: (member: Member) => router.push(`/administration/${member.id}`),
+      onView: (member: Member) => router.push(`/administration/membres/${member.id}`),
       onAccept: (member: Member) => profile && acceptMutation.mutate({ id: member.id, adminId: profile.id }),
       onRefuse: (member: Member) => setPendingAction({ type: "refuse", member }),
       onSuspend: (member: Member) => setPendingAction({ type: "suspend", member }),

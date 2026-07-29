@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 
-import { AdminDashboardView } from "@/features/admin";
+import { MembersView } from "@/features/members";
 import { redirectIfMissingRole } from "@/shared/lib/auth/guards";
 import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
+import { resolveProfile } from "@/shared/lib/auth/resolve-profile";
 
 export const metadata: Metadata = {
-  title: "Administration",
+  title: "Membres — Administration",
 };
 
-export default async function AdministrationPage() {
+export default async function AdministrationMembresPage() {
   // Garde-fou de second niveau : le middleware bloque déjà cette route pour
   // les non-administrateurs. En mode démo (Supabase non configuré), la page
   // reste consultable pour prévisualiser le shell.
@@ -16,5 +17,7 @@ export default async function AdministrationPage() {
     await redirectIfMissingRole(["ADMIN"]);
   }
 
-  return <AdminDashboardView />;
+  const profile = await resolveProfile();
+
+  return <MembersView role={profile.role} />;
 }

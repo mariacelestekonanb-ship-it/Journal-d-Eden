@@ -195,6 +195,70 @@ Index : `(user_id, read_at)`, `type`, `priority`.
 > appel direct (même acteur/destinataire) et trigger Postgres `security definer` (destinataire
 > différent de l'acteur, ex. conducteur → admin).
 
+### `app_settings`
+
+Paramètres généraux de la plateforme — module **Administration** (voir [`ADMIN.md`](./ADMIN.md)).
+Une seule ligne, garantie par un index unique sur une expression constante
+(`(true)`) plutôt qu'un identifiant fixe imposé par l'application.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` PK | |
+| `platform_name` | `text` | défaut `'EJP Hub'` |
+| `logo_url` | `text` | nullable |
+| `description` | `text` | nullable |
+| `timezone` | `text` | défaut `'Europe/Paris'` |
+| `language` | `text` | défaut `'fr'` |
+| `updated_by` | `uuid` → `profiles.id` | nullable |
+| `updated_at` | `timestamptz` | maintenu par `set_updated_at()` |
+
+> Pas encore branchée sur l'affichage réel (nom/logo du `Header`, voir
+> `shared/components/layout/header.tsx`) — un futur sprint remplacera `APP_NAME`
+> (`shared/constants/app.ts`) par une lecture de cette table.
+
+### `admin_categories`
+
+Listes configurables par module — module **Administration**. CRUD complet réservé aux
+administrateurs.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` PK | |
+| `scope` | `admin_category_scope` | `PRAYER_TOPIC_CATEGORY` \| `MEETING_TYPE` — extensible, ajouter une valeur suffit pour un futur module |
+| `label` | `text` | libellé affiché |
+| `value` | `text` | valeur technique — unique par `scope` |
+| `sort_order` | `integer` | ordre d'affichage |
+| `created_at` / `updated_at` | `timestamptz` | |
+
+Index : `(scope, sort_order)`.
+
+> Le module Sujets de prière lit encore son propre enum Postgres
+> `prayer_topic_category`, pas cette table (le seed reprend les mêmes valeurs pour rester
+> cohérent visuellement) — câbler `prayer_topics` sur `admin_categories` est documenté
+> dans [`ADMIN.md`](./ADMIN.md#évolutions-futures), pas fait dans ce sprint (ne modifie
+> pas le module Sujets de prière).
+
+### `admin_audit_log`
+
+Journal des actions importantes de la plateforme — module **Administration**, lecture
+seule pour les admins.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` PK | |
+| `actor_id` | `uuid` → `profiles.id`, `on delete set null` | utilisateur ayant effectué l'action (pas nécessairement un admin) |
+| `action` | `text` | ex. « a validé un compte rendu » |
+| `module` | `text` | module concerné (Membres, Comptes rendus, Planning…) |
+| `target_label` | `text` | nullable — nom lisible de l'élément concerné |
+| `created_at` | `timestamptz` | |
+
+Index : `created_at desc`, `module`.
+
+> Alimenté par des données de démonstration en mode mock. Le câblage réel (chaque
+> module producteur y écrit à chaque action notable) est documenté dans
+> [`ADMIN.md`](./ADMIN.md#évolutions-futures) — même choix d'architecture que pour
+> `notifications` (trigger `security definer` ou appel serveur), pas fait dans ce sprint.
+
 ## Row Level Security
 
 RLS activée sur les 6 tables dès leur création (`20260728100008_row_level_security.sql`). Principe
@@ -211,6 +275,11 @@ général :
 `notifications` déroge aussi à la règle d'écriture ci-dessus : l'insertion est ouverte à
 `auth.uid() = user_id` (notification pour soi-même) ou à un `ADMIN` (pour n'importe qui) — voir
 `20260802090001_notifications_details.sql` et [`NOTIFICATIONS.md`](./NOTIFICATIONS.md).
+
+Les trois tables du module Administration (`app_settings`, `admin_categories`,
+`admin_audit_log`, posées par `20260803090001_admin_details.sql`) suivent une règle plus stricte
+encore : **aucune** opération, y compris la lecture, n'est ouverte à autre chose qu'un `ADMIN` —
+voir [`ADMIN.md`](./ADMIN.md#permissions).
 
 La fonction `public.is_admin()` (definer, `stable`) centralise la vérification de rôle utilisée par
 toutes les policies — elle est la seule chose à auditer pour comprendre « qui est admin » côté base

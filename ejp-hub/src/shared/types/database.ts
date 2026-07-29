@@ -13,6 +13,7 @@ export type NotificationPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
 export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 export type ReportStatus = "DRAFT" | "SUBMITTED" | "VALIDATED" | "REJECTED";
 export type MemberStatus = "PENDING" | "ACTIVE" | "REFUSED" | "SUSPENDED";
+export type AdminCategoryScope = "PRAYER_TOPIC_CATEGORY" | "MEETING_TYPE";
 
 /** Forme jsonb d'une référence biblique au sein d'une liste (`reports.thanksgiving`, `reports.prayer_points[].references`, …). */
 export interface BibleReferenceJson {
@@ -370,6 +371,95 @@ export interface Database {
           {
             foreignKeyName: "notifications_user_id_fkey";
             columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      app_settings: {
+        Row: {
+          id: string;
+          platform_name: string;
+          logo_url: string | null;
+          description: string | null;
+          timezone: string;
+          language: string;
+          updated_by: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          platform_name?: string;
+          logo_url?: string | null;
+          description?: string | null;
+          timezone?: string;
+          language?: string;
+          updated_by?: string | null;
+        };
+        Update: Partial<{
+          platform_name: string;
+          logo_url: string | null;
+          description: string | null;
+          timezone: string;
+          language: string;
+          updated_by: string | null;
+        }>;
+        Relationships: [
+          {
+            foreignKeyName: "app_settings_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_categories: {
+        Row: {
+          id: string;
+          scope: AdminCategoryScope;
+          label: string;
+          value: string;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          scope: AdminCategoryScope;
+          label: string;
+          value: string;
+          sort_order?: number;
+        };
+        Update: Partial<{
+          label: string;
+          value: string;
+          sort_order: number;
+        }>;
+        Relationships: [];
+      };
+      admin_audit_log: {
+        Row: {
+          id: string;
+          actor_id: string | null;
+          action: string;
+          module: string;
+          target_label: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          actor_id?: string | null;
+          action: string;
+          module: string;
+          target_label?: string | null;
+        };
+        Update: Record<string, never>;
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_actor_id_fkey";
+            columns: ["actor_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];

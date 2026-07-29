@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
 
-import { MemberRequestsView } from "@/features/members";
+import { AdminCategoriesView } from "@/features/admin";
 import { redirectIfMissingRole } from "@/shared/lib/auth/guards";
 import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
 
 export const metadata: Metadata = {
-  title: "Demandes d'adhésion",
+  title: "Catégories — Administration",
 };
 
-export default async function AdministrationDemandesPage() {
+export default async function AdministrationCategoriesPage() {
   if (isSupabaseConfigured()) {
     await redirectIfMissingRole(["ADMIN"]);
   }
 
-  return <MemberRequestsView />;
+  return <AdminCategoriesView />;
 }

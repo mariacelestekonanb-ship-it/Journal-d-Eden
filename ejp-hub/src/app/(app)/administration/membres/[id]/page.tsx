@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Fiche membre",
 };
 
-export default async function AdministrationMemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdministrationMembreDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   if (isSupabaseConfigured()) {

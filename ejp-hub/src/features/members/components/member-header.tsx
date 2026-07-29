@@ -20,7 +20,7 @@ export function MemberHeader({ permissions, pendingCount }: MemberHeaderProps) {
       actions={
         permissions.canValidate ? (
           <Button asChild variant={pendingCount > 0 ? "default" : "outline"}>
-            <Link href="/administration/demandes">
+            <Link href="/administration/membres/demandes">
               <UserPlus className="size-4" />
               Demandes en attente
               {pendingCount > 0 && ` (${pendingCount})`}

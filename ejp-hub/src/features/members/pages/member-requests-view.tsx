@@ -35,7 +35,7 @@ export function MemberRequestsView() {
   return (
     <div className="space-y-6">
       <Button asChild variant="ghost" size="sm" className="w-fit">
-        <Link href="/administration">
+        <Link href="/administration/membres">
           <ArrowLeft className="size-4" />
           Retour aux membres
         </Link>
@@ -74,7 +74,7 @@ export function MemberRequestsView() {
               member={member}
               actions={
                 <>
-                  <AppButton variant="ghost" size="sm" onClick={() => router.push(`/administration/${member.id}`)}>
+                  <AppButton variant="ghost" size="sm" onClick={() => router.push(`/administration/membres/${member.id}`)}>
                     <Eye className="size-4" />
                     Consulter
                   </AppButton>
