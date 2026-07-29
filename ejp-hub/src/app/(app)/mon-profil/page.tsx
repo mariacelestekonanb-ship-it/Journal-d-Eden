@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
-import { ProfileView } from "@/features/profile/components/profile-view";
+import { MemberSelfProfileView } from "@/features/members";
 
 export const metadata: Metadata = {
   title: "Mon profil",
 };
 
 export default function MonProfilPage() {
-  return <ProfileView />;
+  return <MemberSelfProfileView />;
 }

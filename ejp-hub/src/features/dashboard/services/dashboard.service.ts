@@ -19,6 +19,7 @@ import {
   queryMyUnreadNotificationsCount,
   queryMyUpcomingSlotsCount,
   queryNotifications,
+  queryPendingMembersCount,
   queryPendingReportsCount,
   queryPrayerLeadersCount,
   queryPublishedTestimoniesCount,
@@ -50,13 +51,14 @@ export const DashboardService = {
     }
 
     if (params.role === "ADMIN") {
-      const [prayerLeaders, activeTopics, pendingReports, testimonies] = await Promise.all([
+      const [prayerLeaders, activeTopics, pendingReports, testimonies, pendingMembers] = await Promise.all([
         queryPrayerLeadersCount(),
         queryActiveTopicsCount(),
         queryPendingReportsCount(),
         queryPublishedTestimoniesCount(),
+        queryPendingMembersCount(),
       ]);
-      const values = [prayerLeaders, activeTopics, pendingReports, testimonies];
+      const values = [prayerLeaders, activeTopics, pendingReports, testimonies, pendingMembers];
       return ADMIN_STATS_CONFIG.map((stat, index) => ({ ...stat, value: values[index] ?? 0 }));
     }
 

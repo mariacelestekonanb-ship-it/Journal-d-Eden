@@ -61,6 +61,17 @@ export async function queryPrayerLeadersCount(): Promise<number> {
   return count ?? 0;
 }
 
+export async function queryPendingMembersCount(): Promise<number> {
+  const supabase = createClient();
+  const { count, error } = await supabase
+    .from("profiles")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "PENDING");
+
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
 export async function queryActiveTopicsCount(): Promise<number> {
   const supabase = createClient();
   const { count, error } = await supabase

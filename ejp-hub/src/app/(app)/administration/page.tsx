@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
-import { AdminView } from "@/features/admin/components/admin-view";
+import { MembersView } from "@/features/members";
 import { redirectIfMissingRole } from "@/shared/lib/auth/guards";
 import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
+import { resolveProfile } from "@/shared/lib/auth/resolve-profile";
 
 export const metadata: Metadata = {
   title: "Administration",
@@ -16,5 +17,7 @@ export default async function AdministrationPage() {
     await redirectIfMissingRole(["ADMIN"]);
   }
 
-  return <AdminView />;
+  const profile = await resolveProfile();
+
+  return <MembersView role={profile.role} />;
 }

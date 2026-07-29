@@ -28,26 +28,38 @@ notifications (user_id → profiles)
 
 ### `profiles`
 
-Étend `auth.users` avec les informations applicatives. Créé automatiquement par le trigger
-`handle_new_user` à chaque inscription (voir `20260728100002_profiles.sql`).
+Étend `auth.users` avec les informations applicatives — c'est la table métier du module
+**Membres** (voir [`MEMBERS.md`](./MEMBERS.md)). Créé automatiquement par le trigger
+`handle_new_user` à chaque inscription (voir `20260728100002_profiles.sql`, complété par
+`20260801090001_members_details.sql` pour le workflow d'adhésion).
 
 | Colonne | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` PK | = `auth.users.id` |
 | `firstname` | `text` | |
 | `lastname` | `text` | |
-| `email` | `text` | unique |
+| `email` | `text` | unique — modifiable uniquement par un admin (voir sécurité ci-dessous) |
 | `role` | `user_role` | `ADMIN` \| `PRAYER_LEADER`, défaut `PRAYER_LEADER` |
 | `avatar_url` | `text` | nullable |
 | `phone` | `text` | nullable |
-| `is_active` | `boolean` | défaut `true` |
-| `created_at` / `updated_at` | `timestamptz` | `updated_at` maintenu par `set_updated_at()` |
+| `is_active` | `boolean` | défaut `true` — tenu en cohérence avec `status` (`ACTIVE` ⇔ `true`) par `MemberService`, jamais par une contrainte SQL |
+| `status` | `member_status` | `PENDING` \| `ACTIVE` \| `REFUSED` \| `SUSPENDED`, défaut `ACTIVE` (un compte créé hors demande d'adhésion — seed, invitation admin — est actif immédiatement) |
+| `validated_at` | `timestamptz` | nullable — renseignée au passage `PENDING` → `ACTIVE`/`REFUSED` |
+| `validated_by` | `uuid` → `profiles.id` | nullable — administrateur ayant traité la demande |
+| `created_at` / `updated_at` | `timestamptz` | `updated_at` maintenu par `set_updated_at()` ; `created_at` sert de « date d'inscription » |
 
 **Sécurité** : le trigger `prevent_privilege_escalation` empêche un utilisateur non-`ADMIN` de
-modifier `role` ou `is_active` — y compris le sien. Seul un `ADMIN` (ou la clé `service_role`, donc
-`scripts/seed.ts`) peut changer ces deux colonnes.
+modifier `role`, `is_active`, `status` ou `email` — y compris les siens. Seul un `ADMIN` (ou la clé
+`service_role`, donc `scripts/seed.ts` et les Server Actions du module Membres) peut changer ces
+colonnes.
 
-Index : `role`, `is_active`.
+`handle_new_user` lit `firstname`/`lastname`/`role` **et désormais** `phone`/`status`/`is_active`
+depuis les métadonnées de `auth.users` (`raw_user_meta_data`) : une demande d'adhésion publique
+(`features/members`, via `supabase.auth.admin.createUser(...)`) passe `status: 'PENDING'` et
+`is_active: false`, tandis que le seed et les futures invitations admin, qui ne passent pas ces
+métadonnées, obtiennent `ACTIVE`/actif par défaut — comportement inchangé pour eux.
+
+Index : `role`, `is_active`, `status`.
 
 ### `prayer_topics`
 

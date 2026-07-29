@@ -4,7 +4,22 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getRequiredRoles } from "@/shared/constants/route-permissions";
 import type { Role } from "@/shared/constants/roles";
 
-const PUBLIC_PATHS = ["/connexion", "/mot-de-passe-oublie", "/reinitialiser-mot-de-passe", "/auth/callback"];
+const PUBLIC_PATHS = [
+  "/connexion",
+  "/mot-de-passe-oublie",
+  "/reinitialiser-mot-de-passe",
+  "/rejoindre",
+  "/auth/callback",
+];
+
+/**
+ * Page affichée à un utilisateur authentifié dont le compte n'est pas (ou
+ * plus) `ACTIVE` — demande d'adhésion encore `PENDING`, `REFUSED`, ou compte
+ * `SUSPENDED`. Volontairement absente de `PUBLIC_PATHS` : il faut être
+ * connecté pour la voir, seule l'exigence de statut `ACTIVE` y est levée
+ * (sans quoi la redirection ci-dessous boucle indéfiniment).
+ */
+const ACCOUNT_STATUS_PATH = "/compte-en-attente";
 
 /**
  * Première ligne de défense : redirige les visiteurs non authentifiés vers
@@ -65,11 +80,30 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    const requiredRoles = getRequiredRoles(pathname);
-    if (user && requiredRoles) {
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    // Le workflow d'adhésion (module Membres) ne bloquerait rien si on
+    // s'arrêtait à Supabase Auth : une demande PENDING a déjà un compte et un
+    // mot de passe valides. C'est ce bloc qui l'empêche réellement d'entrer
+    // tant qu'un admin n'a pas validé — sans lui, /compte-en-attente ne
+    // servirait à rien.
+    if (user && !isPublicPath) {
+      const { data: profile } = await supabase.from("profiles").select("role, status").eq("id", user.id).single();
 
-      if (!profile || !requiredRoles.includes(profile.role as Role)) {
+      if (!profile) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+
+      const isActive = profile.status === "ACTIVE";
+
+      if (pathname === ACCOUNT_STATUS_PATH) {
+        return isActive ? NextResponse.redirect(new URL("/", request.url)) : response;
+      }
+
+      if (!isActive) {
+        return NextResponse.redirect(new URL(ACCOUNT_STATUS_PATH, request.url));
+      }
+
+      const requiredRoles = getRequiredRoles(pathname);
+      if (requiredRoles && !requiredRoles.includes(profile.role as Role)) {
         return NextResponse.redirect(new URL("/", request.url));
       }
     }

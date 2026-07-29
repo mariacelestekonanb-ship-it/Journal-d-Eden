@@ -1,4 +1,4 @@
-import { CalendarClock, CalendarDays, FileText, HeartHandshake, Sparkles, Users, type LucideIcon } from "lucide-react";
+import { CalendarClock, CalendarDays, FileText, HeartHandshake, Sparkles, UserPlus, Users, type LucideIcon } from "lucide-react";
 
 export interface StatConfig {
   id: string;
@@ -17,6 +17,7 @@ export const ADMIN_STATS_CONFIG: StatConfig[] = [
   { id: "active-topics-count", label: "Sujets de prière actifs", icon: HeartHandshake },
   { id: "pending-reports-count", label: "Comptes rendus en attente", icon: FileText },
   { id: "published-testimonies-count", label: "Témoignages publiés", icon: Sparkles },
+  { id: "pending-members-count", label: "Demandes d'adhésion en attente", icon: UserPlus },
 ];
 
 export const PRAYER_LEADER_STATS_CONFIG: StatConfig[] = [

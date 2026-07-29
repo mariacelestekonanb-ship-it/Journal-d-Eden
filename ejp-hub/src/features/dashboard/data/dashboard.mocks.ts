@@ -62,7 +62,7 @@ let mockNotifications: DashboardNotification[] = [
  * bascule vers de vraies requêtes.
  */
 export const DashboardMocks = {
-  statsForAdmin: (): DashboardStat[] => zipStatsWithValues(ADMIN_STATS_CONFIG, [12, 5, 3, 8]),
+  statsForAdmin: (): DashboardStat[] => zipStatsWithValues(ADMIN_STATS_CONFIG, [12, 5, 3, 8, 2]),
 
   statsForPrayerLeader: (): DashboardStat[] => zipStatsWithValues(PRAYER_LEADER_STATS_CONFIG, [2, 1, 4, 3]),
 

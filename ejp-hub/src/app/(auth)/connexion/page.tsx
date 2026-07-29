@@ -23,6 +23,12 @@ export default function ConnexionPage() {
           Mot de passe oublié ?
         </Link>
       </p>
+      <p className="text-center text-sm text-muted-foreground">
+        Pas encore de compte ?{" "}
+        <Link href="/rejoindre" className="font-medium text-primary hover:underline">
+          Rejoindre les Conducteurs de prière
+        </Link>
+      </p>
     </div>
   );
 }

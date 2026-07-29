@@ -11,6 +11,7 @@ export type TopicCategory = "CHURCH" | "FAMILY" | "YOUTH" | "EVANGELISM" | "HEAL
 export type NotificationType = "UPCOMING_SLOT" | "PENDING_REPORT" | "NEW_TOPIC";
 export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 export type ReportStatus = "DRAFT" | "SUBMITTED" | "VALIDATED" | "REJECTED";
+export type MemberStatus = "PENDING" | "ACTIVE" | "REFUSED" | "SUSPENDED";
 
 /** Forme jsonb d'une référence biblique au sein d'une liste (`reports.thanksgiving`, `reports.prayer_points[].references`, …). */
 export interface BibleReferenceJson {
@@ -38,6 +39,9 @@ export interface Database {
           avatar_url: string | null;
           phone: string | null;
           is_active: boolean;
+          status: MemberStatus;
+          validated_at: string | null;
+          validated_by: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -50,16 +54,31 @@ export interface Database {
           avatar_url?: string | null;
           phone?: string | null;
           is_active?: boolean;
+          status?: MemberStatus;
+          validated_at?: string | null;
+          validated_by?: string | null;
         };
         Update: Partial<{
           firstname: string;
           lastname: string;
+          email: string;
           role: UserRole;
           avatar_url: string | null;
           phone: string | null;
           is_active: boolean;
+          status: MemberStatus;
+          validated_at: string | null;
+          validated_by: string | null;
         }>;
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "profiles_validated_by_fkey";
+            columns: ["validated_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       prayer_topics: {
         Row: {
