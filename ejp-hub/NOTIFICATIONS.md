@@ -170,11 +170,15 @@ Android/Chrome n'a pas cette contrainte.
 2. Ajouter dans Vercel (Project Settings → Environment Variables) :
    `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `PUSH_VAPID_SUBJECT`
    (`mailto:...`), `PUSH_WEBHOOK_SECRET` — voir `.env.example`.
-3. Dans Supabase → Database → Webhooks → **Create a new hook** :
-   - Table : `notifications` · Événement : `Insert`
-   - Type : `HTTP Request` · Méthode : `POST`
-   - URL : `https://<domaine-vercel>/api/push/send`
-   - Headers : `x-webhook-secret` = la même valeur que `PUSH_WEBHOOK_SECRET`.
+3. Déclencher l'appel à chaque nouvelle notification — deux options :
+   - **Dashboard** (Database → Webhooks → Create a new hook, table `notifications`,
+     événement `Insert`, URL `https://<domaine>/api/push/send`, header
+     `x-webhook-secret`) si le schéma interne `supabase_functions` existe sur le projet.
+   - **SQL direct** (`20260808090001_push_trigger.sql`) sinon — rencontré en pratique sur
+     ce projet (« schema "supabase_functions" does not exist »). Un trigger `security
+     definer` appelle `net.http_post` (extension `pg_net`) directement, sans dépendre du
+     dashboard. L'URL et le secret y sont en dur : à mettre à jour manuellement si le
+     domaine ou le secret changent.
 
 ## Mode démo — une limitation assumée
 
