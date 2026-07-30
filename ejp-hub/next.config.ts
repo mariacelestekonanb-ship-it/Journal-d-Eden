@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      // Couvre la photo de profil (5 Mo max côté validation, voir
+      // member-join.schema.ts) + la marge d'encodage du transport RPC des
+      // Server Actions — le défaut de Next (1 Mo) la rejetait systématiquement.
+      bodySizeLimit: "8mb",
+    },
+  },
 };
 
 export default nextConfig;

@@ -25,10 +25,12 @@ export function MemberJoinView() {
     setIsSubmitting(true);
     try {
       const { photo, ...rest } = values;
-      await createMembershipRequestAction(rest, photo);
-      setIsSubmitted(true);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Impossible d'envoyer la demande.");
+      const result = await createMembershipRequestAction(rest, photo);
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        toast.error(result.message);
+      }
     } finally {
       setIsSubmitting(false);
     }
