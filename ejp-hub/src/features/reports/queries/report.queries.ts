@@ -156,15 +156,29 @@ export async function deleteReportQuery(id: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-export async function queryAvailablePlanningSlots(): Promise<
+export async function queryAvailablePlanningSlots(userId: string): Promise<
   { id: string; title: string; slot_date: string; start_time: string; end_time: string; location: string | null; prayer_leader_id: string | null; leader: RawReportProfile | null }[]
 > {
   const supabase = createClient();
-  const { data, error } = await supabase
+
+  // PostgREST n'accepte pas de sous-requête SQL comme valeur de `.not(col, "in", ...)` —
+  // seule une liste littérale est supportée. On récupère donc les créneaux déjà
+  // documentés séparément, puis on les exclut explicitement.
+  const { data: reportedRows, error: reportedError } = await supabase.from("reports").select("planning_id");
+  if (reportedError) throw new Error(reportedError.message);
+  const reportedIds = reportedRows.map((row) => row.planning_id);
+
+  let query = supabase
     .from("planning")
     .select("id, title, slot_date, start_time, end_time, location, prayer_leader_id, leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname)")
-    .not("id", "in", `(select planning_id from reports)`)
+    .eq("prayer_leader_id", userId)
     .order("slot_date", { ascending: false });
+
+  if (reportedIds.length > 0) {
+    query = query.not("id", "in", `(${reportedIds.join(",")})`);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw new Error(error.message);
   return data as unknown as {

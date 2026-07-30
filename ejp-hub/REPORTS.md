@@ -155,10 +155,31 @@ niveau des composants, jamais dans les services eux-mêmes :
 | Droit | `ADMIN` | `PRAYER_LEADER` |
 | --- | --- | --- |
 | Voir tous les CR | ✅ | ❌ (les siens uniquement) |
-| Créer un brouillon | ❌ | ✅ |
+| Créer un brouillon | ✅ (si conducteur assigné à un créneau) | ✅ |
 | Modifier / soumettre | ❌ | ✅, si auteur et statut `DRAFT`/`REJECTED` |
 | Valider / rejeter / commenter | ✅ | ❌ |
 | Supprimer / exporter | ✅ | ❌ |
+
+Un `ADMIN` peut lui-même être assigné comme conducteur sur un créneau (le rôle n'exclut
+pas d'apparaître dans le Planning) : `canCreate` était figé à `false` pour ce rôle, ce qui
+bloquait totalement la rédaction de son propre CR — sans qu'aucune autre porte de sortie
+n'existe. La policy RLS `reports_insert_own` (`prayer_leader_id = auth.uid()`) autorisait
+déjà ce cas côté base ; seul le front-end bloquait en trop. Corrigé en alignant
+`canCreate` sur cette même règle des deux côtés.
+
+### Bug corrigé : créneaux disponibles jamais chargés
+
+`queryAvailablePlanningSlots` (`report.queries.ts`) filtrait avec
+`.not("id", "in", "(select planning_id from reports)")` — PostgREST n'accepte **pas**
+de sous-requête SQL comme valeur de `.not(...)`, seulement une liste littérale. Cette
+requête échouait systématiquement (jamais fonctionnelle en production Supabase), ce qui
+vidait silencieusement le sélecteur de créneau de `/comptes-rendus/nouveau` : le
+tableau de bord comptait des CR en attente, mais impossible d'en créer un seul. Corrigé
+en récupérant les `planning_id` déjà documentés séparément, puis en les excluant
+explicitement — la requête est désormais aussi scoped au conducteur courant
+(`prayer_leader_id = userId`), pour matcher exactement ce que la RLS autorise réellement
+à l'insertion (`MockReportRepository` reste volontairement non filtré par conducteur en
+mode démo — voir le commentaire dans `mock-report-repository.ts`).
 
 ## Workflow
 

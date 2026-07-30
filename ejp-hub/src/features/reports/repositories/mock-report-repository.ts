@@ -124,6 +124,9 @@ export const MockReportRepository: ReportRepository = {
     comments = comments.filter((comment) => comment.reportId !== id);
   },
 
+  // Non filtré par conducteur en mode démo (contrairement à Supabase, dont la RLS ne permet
+  // de créer un CR que pour son propre créneau) : les données fictives n'assignent qu'à deux
+  // créneaux le conducteur de démo, ce qui viderait systématiquement la liste pour rien.
   async listAvailableSlots() {
     const takenSlotIds = new Set(reports.map((report) => report.planningSlot.id));
     return MOCK_SLOT_OPTIONS.filter((slot) => !takenSlotIds.has(slot.id)).map((slot) => ({ ...slot }));

@@ -63,8 +63,8 @@ export const SupabaseReportRepository: ReportRepository = {
     await deleteReportQuery(id);
   },
 
-  async listAvailableSlots() {
-    const rows = await queryAvailablePlanningSlots();
+  async listAvailableSlots(userId) {
+    const rows = await queryAvailablePlanningSlots(userId);
     return rows.map((row) => ({
       id: row.id,
       title: row.title,

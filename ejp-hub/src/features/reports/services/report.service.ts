@@ -58,8 +58,8 @@ export const ReportService = {
     return getRepository().remove(id);
   },
 
-  async listAvailableSlots(): Promise<ReportSlotOption[]> {
-    return getRepository().listAvailableSlots();
+  async listAvailableSlots(userId: string): Promise<ReportSlotOption[]> {
+    return getRepository().listAvailableSlots(userId);
   },
 
   async listComments(reportId: string): Promise<ReportComment[]> {

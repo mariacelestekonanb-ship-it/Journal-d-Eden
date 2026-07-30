@@ -13,7 +13,12 @@ export interface ReportPermissions {
 
 const ADMIN: ReportPermissions = {
   canViewAll: true,
-  canCreate: false,
+  // Un admin peut lui-même être conducteur assigné à un créneau (le rôle
+  // n'empêche pas d'apparaître dans le Planning) : la RLS `reports_insert_own`
+  // n'autorise de toute façon la création que pour son propre créneau
+  // (`prayer_leader_id = auth.uid()`), donc bloquer ici n'ajoutait qu'une
+  // impasse — un admin-conducteur ne pouvait jamais rédiger son propre CR.
+  canCreate: true,
   canValidate: true,
   canReject: true,
   canDelete: true,

@@ -86,8 +86,8 @@ export function ReportCreateView({ role }: ReportCreateViewProps) {
 
       {!isLoading && availableSlots?.length === 0 && (
         <ReportEmptyState
-          title="Tous les créneaux ont déjà un compte rendu"
-          description="Aucun créneau du Planning n'est disponible pour un nouveau compte rendu pour le moment."
+          title="Aucun créneau à documenter"
+          description="Aucun de vos créneaux du Planning n'attend de compte rendu pour le moment."
         />
       )}
 

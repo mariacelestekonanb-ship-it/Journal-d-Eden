@@ -27,9 +27,11 @@ export function useReports() {
 }
 
 export function useAvailableSlots() {
+  const { profile } = useUser();
   return useQuery({
-    queryKey: ["reports", "available-slots"],
-    queryFn: () => ReportService.listAvailableSlots(),
+    queryKey: ["reports", "available-slots", profile?.id],
+    queryFn: () => ReportService.listAvailableSlots(profile!.id),
+    enabled: !!profile,
     staleTime: 60 * 1000,
   });
 }

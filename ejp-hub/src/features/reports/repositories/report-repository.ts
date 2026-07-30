@@ -29,7 +29,7 @@ export interface ReportRepository {
   validate(id: string): Promise<Report>;
   reject(id: string): Promise<Report>;
   remove(id: string): Promise<void>;
-  listAvailableSlots(): Promise<ReportSlotOption[]>;
+  listAvailableSlots(userId: string): Promise<ReportSlotOption[]>;
   listComments(reportId: string): Promise<ReportComment[]>;
   addComment(reportId: string, author: ReportParticipant, message: string): Promise<ReportComment>;
 }
