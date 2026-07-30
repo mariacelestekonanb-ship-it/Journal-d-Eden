@@ -118,5 +118,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|webp)$).*)"],
+  // `api/` exclu : ces routes (ex. le webhook `/api/push/send` appelé par Supabase, sans
+  // cookie de session) gèrent leur propre autorisation — la redirection vers /connexion
+  // sur un appelant serveur-à-serveur cassait l'appel (le client suivait la redirection
+  // avec la même méthode HTTP, POST, vers une page qui ne l'accepte pas → 405).
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|webp)$).*)"],
 };
