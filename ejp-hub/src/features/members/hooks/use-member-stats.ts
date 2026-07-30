@@ -5,10 +5,16 @@ import * as React from "react";
 import type { Member, MemberStatsSummary } from "../types/member.types";
 import { useMembers } from "./use-members";
 
-/** Calcule les indicateurs du module à partir des membres déjà en cache — aucun appel réseau supplémentaire. */
+/**
+ * Calcule les indicateurs du module à partir des membres déjà en cache —
+ * aucun appel réseau supplémentaire. `totalCount` exclut les demandes
+ * `REFUSED` : une personne refusée n'est jamais devenue membre, elle ne
+ * doit donc pas gonfler ce total (elle reste visible via le filtre de
+ * statut de la liste, juste absente de ce compteur).
+ */
 export function computeMemberStats(members: Member[]): MemberStatsSummary {
   return {
-    totalCount: members.length,
+    totalCount: members.filter((member) => member.status !== "REFUSED").length,
     activeCount: members.filter((member) => member.status === "ACTIVE").length,
     pendingCount: members.filter((member) => member.status === "PENDING").length,
     suspendedCount: members.filter((member) => member.status === "SUSPENDED").length,
