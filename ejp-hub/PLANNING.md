@@ -103,6 +103,19 @@ chargés (aucun appel réseau à chaque frappe) :
 observées (`watch()`) sont recalculées à chaque changement et les conflits s'affichent en direct,
 sans bloquer la soumission (avertissement, pas une erreur de validation Zod).
 
+## Programmes
+
+Un 5e onglet (« Programmes », à côté de Calendrier/Semaine/Mois/Liste) regroupe certains créneaux
+et une équipe de conducteurs dédiée — ex. « Programme Jeunesse ». Un membre peut appartenir à
+plusieurs programmes ; un créneau appartient à zéro ou un seul programme (`planning.program_id`,
+nullable). L'appartenance à un programme est une liste assignée explicitement par un
+administrateur (`program_members`), jamais déduite des créneaux existants.
+
+Il n'existe pas de vue calendrier/liste dupliquée pour un programme : le bouton « Voir le
+planning » d'une carte programme règle simplement le filtre général `programId` et bascule sur
+l'onglet Liste — le Planning général et « le planning de ce programme » sont la même UI, juste
+filtrée différemment. Voir `DATABASE.md#programs` pour le schéma.
+
 ## Permissions
 
 `getPlanningPermissions(role)` centralise les droits — aucun `role === "ADMIN"` dispersé dans les
@@ -115,6 +128,8 @@ composants :
 | Consulter (calendrier, liste, détail) | ✅ | ✅ |
 | Exporter en CSV | ✅ | ✅ |
 | Importer des créneaux depuis un CSV | ✅ | ❌ (aligné sur le droit de créer) |
+| Consulter les programmes | ✅ | ✅ |
+| Créer / modifier / supprimer un programme | ✅ | ❌ |
 
 ## Composants
 
@@ -129,17 +144,22 @@ composants :
 | `PlanningDialog` | Bascule consultation / création / édition dans une même modale |
 | `PlanningForm` | Formulaire Zod, délègue conducteurs (`PlanningFormLeaderFields`) et conflits (`PlanningConflictWarning`) |
 | `PlanningCard`, `PlanningEvent`, `PlanningStatusBadge`, `PlanningEmptyState` | Briques de présentation réutilisées par le calendrier, la liste et le tableau de bord |
+| `ProgramsTab` | Onglet Programmes : cartes + création/modification/suppression |
+| `ProgramCard` | Une carte programme (description, équipe, raccourci « Voir le planning ») |
+| `ProgramForm` | Formulaire Zod : nom, description, équipe (cases à cocher sur les conducteurs) |
 
 ## Services
 
 | Service | Rôle |
 | --- | --- |
-| `PlanningRepository` (interface) | Contrat CRUD + options (conducteurs, lieux, sujets) |
+| `PlanningRepository` (interface) | Contrat CRUD + options (conducteurs, lieux, sujets, programmes) |
 | `MockPlanningRepository` / `SupabasePlanningRepository` | Implémentations, choisies par `PlanningService` |
 | `PlanningService` | API publique consommée par les hooks (seul point d'entrée) |
 | `PlanningConflictService` | Détection de conflits, pur et testable |
 | `PlanningExportService` | Export CSV (Blob + `URL.createObjectURL`) |
 | `PlanningImportService` | Parse un CSV (`shared/utils/csv.ts`), reconnaît les conducteurs par nom complet, valide chaque ligne avec `planningSlotSchema` — une ligne invalide est écartée et signalée, jamais bloquante pour les autres |
+| `ProgramRepository` (interface) / `MockProgramRepository` / `SupabaseProgramRepository` | Contrat CRUD des programmes, choisies par `ProgramService` |
+| `ProgramService` | API publique des programmes (liste, création, modification, suppression) |
 
 ## Prochaine étape : connexion Supabase réelle
 

@@ -2,7 +2,7 @@ import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
 import type { PlanningStatus } from "@/shared/types/database";
 
 import type { PlanningConflict } from "../types/planning.types";
-import type { PlanningLeaderOption, PlanningPrayerTopicRef, PrayerSlot } from "../types/planning.types";
+import type { PlanningLeaderOption, PlanningPrayerTopicRef, PlanningProgramRef, PrayerSlot } from "../types/planning.types";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 import { MockPlanningRepository } from "./mock-planning-repository";
 import { PlanningConflictService } from "./planning-conflict.service";
@@ -76,6 +76,10 @@ export const PlanningService = {
 
   async listPrayerTopicOptions(): Promise<PlanningPrayerTopicRef[]> {
     return getRepository().listPrayerTopicOptions();
+  },
+
+  async listProgramOptions(): Promise<PlanningProgramRef[]> {
+    return getRepository().listProgramOptions();
   },
 
   async listLocationOptions(): Promise<string[]> {

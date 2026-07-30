@@ -1,4 +1,4 @@
-import { CalendarRange, FileDown, LayoutGrid, List as ListIcon, Rows3, Upload } from "lucide-react";
+import { CalendarRange, FileDown, LayoutGrid, List as ListIcon, Rows3, Upload, Users } from "lucide-react";
 
 import { AppButton } from "@/shared/components/app-button";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
@@ -13,7 +13,7 @@ export interface PlanningToolbarProps {
   onImport?: () => void;
 }
 
-/** Barre d'outils du Planning : bascule entre les 4 vues, export/import CSV de la vue courante. */
+/** Barre d'outils du Planning : bascule entre les 5 onglets, export/import CSV (masqués sur l'onglet Programmes). */
 export function PlanningToolbar({ view, onViewChange, onExport, onImport }: PlanningToolbarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -35,21 +35,27 @@ export function PlanningToolbar({ view, onViewChange, onExport, onImport }: Plan
             <ListIcon className="size-4 sm:hidden" />
             <span className="hidden sm:inline">Liste</span>
           </TabsTrigger>
+          <TabsTrigger value="programs" aria-label="Programmes">
+            <Users className="size-4 sm:hidden" />
+            <span className="hidden sm:inline">Programmes</span>
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 
-      <div className="flex items-center gap-2">
-        {onImport && (
-          <AppButton variant="outline" size="sm" onClick={onImport} aria-label="Importer des créneaux depuis un CSV">
-            <Upload className="size-4" />
-            Importer
+      {view !== "programs" && (
+        <div className="flex items-center gap-2">
+          {onImport && (
+            <AppButton variant="outline" size="sm" onClick={onImport} aria-label="Importer des créneaux depuis un CSV">
+              <Upload className="size-4" />
+              Importer
+            </AppButton>
+          )}
+          <AppButton variant="outline" size="sm" onClick={onExport} aria-label="Exporter la vue courante en CSV">
+            <FileDown className="size-4" />
+            Exporter
           </AppButton>
-        )}
-        <AppButton variant="outline" size="sm" onClick={onExport} aria-label="Exporter la vue courante en CSV">
-          <FileDown className="size-4" />
-          Exporter
-        </AppButton>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

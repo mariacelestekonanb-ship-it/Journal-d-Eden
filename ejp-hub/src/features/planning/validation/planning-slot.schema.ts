@@ -12,6 +12,7 @@ export const planningSlotSchema = z
     secondaryLeaderId: z.string().optional().or(z.literal("")),
     theme: z.string().max(100).optional().or(z.literal("")),
     prayerTopicId: z.string().optional().or(z.literal("")),
+    programId: z.string().optional().or(z.literal("")),
     status: z.enum(["DRAFT", "CONFIRMED", "COMPLETED", "CANCELLED"]),
     notes: z.string().max(2000).optional().or(z.literal("")),
   })
@@ -37,6 +38,7 @@ export const DEFAULT_PLANNING_SLOT_FORM_VALUES: PlanningSlotFormValues = {
   secondaryLeaderId: "",
   theme: "",
   prayerTopicId: "",
+  programId: "",
   status: "DRAFT",
   notes: "",
 };

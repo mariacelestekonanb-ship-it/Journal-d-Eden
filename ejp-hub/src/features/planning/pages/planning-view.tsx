@@ -15,6 +15,7 @@ import { PlanningHeader } from "../components/planning-header";
 import { PlanningImportDialog } from "../components/planning-import-dialog";
 import { PlanningTable } from "../components/planning-table";
 import { PlanningToolbar } from "../components/planning-toolbar";
+import { ProgramsTab } from "../components/programs-tab";
 import { applyPlanningFilters, usePlanningFilters } from "../hooks/use-planning-filters";
 import { useCancelSlot, useDeleteSlot, useDuplicateSlot, useRescheduleSlot } from "../hooks/use-planning-mutations";
 import { usePlanningSlots } from "../hooks/use-planning-slots";
@@ -114,51 +115,63 @@ export function PlanningView({ role }: PlanningViewProps) {
         onImport={permissions.canCreate ? () => setIsImportOpen(true) : undefined}
       />
 
-      <PlanningFilters
-        filters={filters}
-        onChange={updateFilter}
-        onReset={resetFilters}
-        hasActiveFilters={hasActiveFilters}
-      />
-
-      {isLoading && (
-        <div className="space-y-3">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-64 w-full" />
-        </div>
-      )}
-      {isError && (
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
-          <p className="text-sm text-muted-foreground">Impossible de charger le planning pour le moment.</p>
-          <AppButton variant="outline" size="sm" onClick={() => refetch()}>
-            Réessayer
-          </AppButton>
-        </div>
-      )}
-
-      {!isLoading && !isError && filteredSlots.length === 0 && (
-        <PlanningEmptyState
-          description={
-            hasActiveFilters
-              ? "Aucun créneau ne correspond à ces filtres. Essayez de les réinitialiser."
-              : "Aucun créneau n'a encore été planifié."
-          }
+      {view === "programs" ? (
+        <ProgramsTab
+          canManage={permissions.canCreate}
+          onViewProgramPlanning={(programId) => {
+            updateFilter("programId", programId);
+            setView("list");
+          }}
         />
-      )}
-
-      {!isLoading && !isError && filteredSlots.length > 0 && (
+      ) : (
         <>
-          {view === "list" ? (
-            <PlanningTable slots={filteredSlots} permissions={permissions} callbacks={tableCallbacks} />
-          ) : (
-            <PlanningCalendar
-              slots={filteredSlots}
-              view={view}
-              permissions={permissions}
-              onSlotClick={handleView}
-              onDateClick={(dateStr) => setDialogState({ mode: "create", defaultDate: dateStr })}
-              onReschedule={(id, schedule) => rescheduleMutation.mutateAsync({ id, schedule })}
+          <PlanningFilters
+            filters={filters}
+            onChange={updateFilter}
+            onReset={resetFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
+
+          {isLoading && (
+            <div className="space-y-3">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-64 w-full" />
+            </div>
+          )}
+          {isError && (
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+              <p className="text-sm text-muted-foreground">Impossible de charger le planning pour le moment.</p>
+              <AppButton variant="outline" size="sm" onClick={() => refetch()}>
+                Réessayer
+              </AppButton>
+            </div>
+          )}
+
+          {!isLoading && !isError && filteredSlots.length === 0 && (
+            <PlanningEmptyState
+              description={
+                hasActiveFilters
+                  ? "Aucun créneau ne correspond à ces filtres. Essayez de les réinitialiser."
+                  : "Aucun créneau n'a encore été planifié."
+              }
             />
+          )}
+
+          {!isLoading && !isError && filteredSlots.length > 0 && (
+            <>
+              {view === "list" ? (
+                <PlanningTable slots={filteredSlots} permissions={permissions} callbacks={tableCallbacks} />
+              ) : (
+                <PlanningCalendar
+                  slots={filteredSlots}
+                  view={view}
+                  permissions={permissions}
+                  onSlotClick={handleView}
+                  onDateClick={(dateStr) => setDialogState({ mode: "create", defaultDate: dateStr })}
+                  onReschedule={(id, schedule) => rescheduleMutation.mutateAsync({ id, schedule })}
+                />
+              )}
+            </>
           )}
         </>
       )}

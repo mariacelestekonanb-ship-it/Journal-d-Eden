@@ -15,6 +15,7 @@ import { usePlanningConflicts } from "../hooks/use-planning-conflicts";
 import {
   usePlanningLeaderOptions,
   usePlanningPrayerTopicOptions,
+  usePlanningProgramOptions,
 } from "../hooks/use-planning-slots";
 import { DEFAULT_PLANNING_SLOT_FORM_VALUES, planningSlotSchema, type PlanningSlotFormValues } from "../validation/planning-slot.schema";
 import { PLANNING_STATUS_LABELS, PLANNING_STATUS_OPTIONS } from "../utils/planning-status";
@@ -35,6 +36,7 @@ export interface PlanningFormProps {
 export function PlanningForm({ defaultValues, editingSlotId, isSubmitting, onSubmit, onCancel }: PlanningFormProps) {
   const { data: leaders } = usePlanningLeaderOptions();
   const { data: topics } = usePlanningPrayerTopicOptions();
+  const { data: programs } = usePlanningProgramOptions();
 
   const {
     register,
@@ -127,6 +129,32 @@ export function PlanningForm({ defaultValues, editingSlotId, isSubmitting, onSub
             )}
           />
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="programId">Programme</Label>
+        <Controller
+          control={control}
+          name="programId"
+          render={({ field }) => (
+            <Select
+              value={field.value || NONE_VALUE}
+              onValueChange={(value) => field.onChange(value === NONE_VALUE ? "" : value)}
+            >
+              <SelectTrigger id="programId">
+                <SelectValue placeholder="Aucun (planning général)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE_VALUE}>Aucun (planning général)</SelectItem>
+                {programs?.map((program) => (
+                  <SelectItem key={program.id} value={program.id}>
+                    {program.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
       </div>
 
       <div className="space-y-2">

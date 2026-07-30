@@ -14,6 +14,7 @@ export function mapSlotToFormValues(slot: PrayerSlot): PlanningSlotFormValues {
     secondaryLeaderId: slot.secondaryLeader?.id ?? "",
     theme: slot.theme ?? "",
     prayerTopicId: slot.prayerTopic?.id ?? "",
+    programId: slot.program?.id ?? "",
     status: slot.status,
     notes: slot.notes ?? "",
   };

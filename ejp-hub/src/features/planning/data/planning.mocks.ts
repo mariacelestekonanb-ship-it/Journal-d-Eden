@@ -1,4 +1,5 @@
-import type { PlanningLeaderOption, PlanningPrayerTopicRef, PrayerSlot } from "../types/planning.types";
+import type { PlanningLeaderOption, PlanningPrayerTopicRef, PlanningProgramRef, PrayerSlot } from "../types/planning.types";
+import { MOCK_PROGRAM_REFS } from "./program.mocks";
 
 /**
  * Fixtures de démonstration du module Planning. Utilisées par
@@ -43,6 +44,12 @@ function topic(id: string): PlanningPrayerTopicRef {
   return found;
 }
 
+function program(id: string): PlanningProgramRef {
+  const found = MOCK_PROGRAM_REFS.find((candidate) => candidate.id === id);
+  if (!found) throw new Error(`Programme fictif inconnu : ${id}`);
+  return found;
+}
+
 function nextTimestamp(offsetMinutes: number): string {
   return new Date(Date.now() - offsetMinutes * 60_000).toISOString();
 }
@@ -62,6 +69,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "COMPLETED",
     theme: MOCK_THEMES[0]!,
     prayerTopic: topic("topic-unite"),
+    program: null,
     notes: null,
     createdAt: nextTimestamp(60_000),
     updatedAt: nextTimestamp(60_000),
@@ -79,6 +87,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "COMPLETED",
     theme: MOCK_THEMES[1]!,
     prayerTopic: topic("topic-reveil"),
+    program: null,
     notes: "Bonne participation malgré l'horaire matinal.",
     createdAt: nextTimestamp(50_000),
     updatedAt: nextTimestamp(48_000),
@@ -96,6 +105,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "CONFIRMED",
     theme: MOCK_THEMES[4]!,
     prayerTopic: topic("topic-guerison"),
+    program: program("program-guerison"),
     notes: null,
     createdAt: nextTimestamp(40_000),
     updatedAt: nextTimestamp(40_000),
@@ -113,6 +123,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "CONFIRMED",
     theme: MOCK_THEMES[1]!,
     prayerTopic: null,
+    program: null,
     notes: null,
     createdAt: nextTimestamp(35_000),
     updatedAt: nextTimestamp(35_000),
@@ -130,6 +141,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "DRAFT",
     theme: MOCK_THEMES[0]!,
     prayerTopic: topic("topic-reveil"),
+    program: null,
     notes: null,
     createdAt: nextTimestamp(20_000),
     updatedAt: nextTimestamp(20_000),
@@ -147,6 +159,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "DRAFT",
     theme: MOCK_THEMES[2]!,
     prayerTopic: topic("topic-perseverance"),
+    program: program("program-jeunesse"),
     notes: null,
     createdAt: nextTimestamp(15_000),
     updatedAt: nextTimestamp(15_000),
@@ -164,6 +177,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "CANCELLED",
     theme: MOCK_THEMES[3]!,
     prayerTopic: topic("topic-missions"),
+    program: null,
     notes: "À reprogrammer la semaine suivante.",
     createdAt: nextTimestamp(10_000),
     updatedAt: nextTimestamp(1_000),
@@ -181,6 +195,7 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     status: "CONFIRMED",
     theme: MOCK_THEMES[0]!,
     prayerTopic: topic("topic-unite"),
+    program: null,
     notes: null,
     createdAt: nextTimestamp(5_000),
     updatedAt: nextTimestamp(5_000),

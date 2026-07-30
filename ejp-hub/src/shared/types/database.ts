@@ -143,6 +143,7 @@ export interface Database {
           status: PlanningStatus;
           theme: string | null;
           prayer_topic_id: string | null;
+          program_id: string | null;
           notes: string | null;
           created_at: string;
           updated_at: string;
@@ -160,6 +161,7 @@ export interface Database {
           status?: PlanningStatus;
           theme?: string | null;
           prayer_topic_id?: string | null;
+          program_id?: string | null;
           notes?: string | null;
         };
         Update: Partial<{
@@ -174,6 +176,7 @@ export interface Database {
           status: PlanningStatus;
           theme: string | null;
           prayer_topic_id: string | null;
+          program_id: string | null;
           notes: string | null;
         }>;
         Relationships: [
@@ -196,6 +199,13 @@ export interface Database {
             columns: ["prayer_topic_id"];
             isOneToOne: false;
             referencedRelation: "prayer_topics";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "planning_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "programs";
             referencedColumns: ["id"];
           },
         ];
@@ -460,6 +470,53 @@ export interface Database {
           {
             foreignKeyName: "admin_audit_log_actor_id_fkey";
             columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      programs: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          description?: string | null;
+        };
+        Update: Partial<{
+          name: string;
+          description: string | null;
+        }>;
+        Relationships: [];
+      };
+      program_members: {
+        Row: {
+          program_id: string;
+          member_id: string;
+          created_at: string;
+        };
+        Insert: {
+          program_id: string;
+          member_id: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [
+          {
+            foreignKeyName: "program_members_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "programs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "program_members_member_id_fkey";
+            columns: ["member_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];

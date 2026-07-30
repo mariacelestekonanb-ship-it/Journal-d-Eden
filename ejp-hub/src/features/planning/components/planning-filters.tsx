@@ -7,7 +7,12 @@ import { AppCard } from "@/shared/components/app-card";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
-import { usePlanningLeaderOptions, usePlanningLocationOptions, usePlanningPrayerTopicOptions } from "../hooks/use-planning-slots";
+import {
+  usePlanningLeaderOptions,
+  usePlanningLocationOptions,
+  usePlanningPrayerTopicOptions,
+  usePlanningProgramOptions,
+} from "../hooks/use-planning-slots";
 import type { PlanningFilters as PlanningFiltersValue } from "../types/planning.types";
 import { PLANNING_STATUS_LABELS, PLANNING_STATUS_OPTIONS } from "../utils/planning-status";
 
@@ -25,6 +30,7 @@ export function PlanningFilters({ filters, onChange, onReset, hasActiveFilters }
   const { data: leaders } = usePlanningLeaderOptions();
   const { data: locations } = usePlanningLocationOptions();
   const { data: topics } = usePlanningPrayerTopicOptions();
+  const { data: programs } = usePlanningProgramOptions();
 
   return (
     <AppCard className="flex flex-col gap-3 p-4">
@@ -39,7 +45,7 @@ export function PlanningFilters({ filters, onChange, onReset, hasActiveFilters }
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         <Input
           type="date"
           value={filters.dateFrom ?? ""}
@@ -110,6 +116,23 @@ export function PlanningFilters({ filters, onChange, onReset, hasActiveFilters }
             {topics?.map((topic) => (
               <SelectItem key={topic.id} value={topic.id}>
                 {topic.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={filters.programId ?? ALL_VALUE}
+          onValueChange={(value) => onChange("programId", value === ALL_VALUE ? null : value)}
+        >
+          <SelectTrigger aria-label="Filtrer par programme">
+            <SelectValue placeholder="Programme" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL_VALUE}>Tous les programmes</SelectItem>
+            {programs?.map((program) => (
+              <SelectItem key={program.id} value={program.id}>
+                {program.name}
               </SelectItem>
             ))}
           </SelectContent>

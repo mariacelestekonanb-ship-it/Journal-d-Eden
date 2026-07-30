@@ -1,6 +1,6 @@
 import type { PlanningStatus } from "@/shared/types/database";
 
-import type { PlanningLeaderOption, PlanningPrayerTopicRef, PrayerSlot } from "../types/planning.types";
+import type { PlanningLeaderOption, PlanningPrayerTopicRef, PlanningProgramRef, PrayerSlot } from "../types/planning.types";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 
 /**
@@ -21,5 +21,6 @@ export interface PlanningRepository {
   duplicate(id: string): Promise<PrayerSlot>;
   listLeaderOptions(): Promise<PlanningLeaderOption[]>;
   listPrayerTopicOptions(): Promise<PlanningPrayerTopicRef[]>;
+  listProgramOptions(): Promise<PlanningProgramRef[]>;
   listLocationOptions(): Promise<string[]>;
 }

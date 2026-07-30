@@ -6,7 +6,8 @@ import {
   MOCK_LOCATIONS,
   MOCK_PRAYER_TOPICS,
 } from "../data/planning.mocks";
-import type { PlanningLeaderOption, PlanningPrayerTopicRef, PrayerSlot } from "../types/planning.types";
+import { MOCK_PROGRAM_REFS } from "../data/program.mocks";
+import type { PlanningLeaderOption, PlanningPrayerTopicRef, PlanningProgramRef, PrayerSlot } from "../types/planning.types";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 import type { PlanningRepository } from "./planning-repository";
 
@@ -28,6 +29,11 @@ function findTopic(id: string | undefined | null): PrayerSlot["prayerTopic"] {
   return MOCK_PRAYER_TOPICS.find((topic) => topic.id === id) ?? null;
 }
 
+function findProgram(id: string | undefined | null): PrayerSlot["program"] {
+  if (!id) return null;
+  return MOCK_PROGRAM_REFS.find((candidate) => candidate.id === id) ?? null;
+}
+
 function buildSlot(id: string, values: PlanningSlotFormValues, existing?: PrayerSlot): PrayerSlot {
   const now = new Date().toISOString();
   return {
@@ -43,6 +49,7 @@ function buildSlot(id: string, values: PlanningSlotFormValues, existing?: Prayer
     status: values.status,
     theme: values.theme || null,
     prayerTopic: findTopic(values.prayerTopicId),
+    program: findProgram(values.programId),
     notes: values.notes || null,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
@@ -121,6 +128,10 @@ export const MockPlanningRepository: PlanningRepository = {
 
   async listPrayerTopicOptions(): Promise<PlanningPrayerTopicRef[]> {
     return MOCK_PRAYER_TOPICS.map((topic) => ({ ...topic }));
+  },
+
+  async listProgramOptions(): Promise<PlanningProgramRef[]> {
+    return MOCK_PROGRAM_REFS.map((ref) => ({ ...ref }));
   },
 
   async listLocationOptions(): Promise<string[]> {

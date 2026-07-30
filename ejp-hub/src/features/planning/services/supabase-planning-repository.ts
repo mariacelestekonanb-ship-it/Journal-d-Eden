@@ -7,6 +7,7 @@ import {
   queryActiveLeaders,
   queryActivePrayerTopics,
   queryAllPlanningSlots,
+  queryProgramOptions,
   updatePlanningSlotQuery,
   updatePlanningSlotScheduleQuery,
   updatePlanningSlotStatusQuery,
@@ -70,6 +71,7 @@ export const SupabasePlanningRepository: PlanningRepository = {
       secondaryLeaderId: existing.secondary_leader?.id ?? "",
       theme: existing.theme ?? "",
       prayerTopicId: existing.prayer_topic?.id ?? "",
+      programId: existing.program?.id ?? "",
       status: "DRAFT",
       notes: existing.notes ?? "",
     });
@@ -83,6 +85,10 @@ export const SupabasePlanningRepository: PlanningRepository = {
 
   async listPrayerTopicOptions() {
     return queryActivePrayerTopics();
+  },
+
+  async listProgramOptions() {
+    return queryProgramOptions();
   },
 
   async listLocationOptions() {

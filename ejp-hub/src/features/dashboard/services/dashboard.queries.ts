@@ -44,7 +44,7 @@ export interface RawActivityRow {
 }
 
 const UPCOMING_SLOT_SELECT =
-  "id, slot_date, start_time, end_time, location, prayer_topic:prayer_topics(title), prayer_leader:profiles(firstname, lastname)";
+  "id, slot_date, start_time, end_time, location, prayer_topic:prayer_topics(title), prayer_leader:profiles!planning_prayer_leader_id_fkey(firstname, lastname)";
 
 function todayIsoDate(): string {
   return new Date().toISOString().slice(0, 10);

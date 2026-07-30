@@ -25,7 +25,8 @@ export function usePlanningFilters() {
       filters.leaderId !== null ||
       filters.location !== null ||
       filters.status !== null ||
-      filters.prayerTopicId !== null,
+      filters.prayerTopicId !== null ||
+      filters.programId !== null,
     [filters],
   );
 
@@ -53,6 +54,7 @@ export function applyPlanningFilters(slots: PrayerSlot[], filters: PlanningFilte
     if (filters.location && slot.location !== filters.location) return false;
     if (filters.status && slot.status !== filters.status) return false;
     if (filters.prayerTopicId && slot.prayerTopic?.id !== filters.prayerTopicId) return false;
+    if (filters.programId && slot.program?.id !== filters.programId) return false;
     return true;
   });
 }

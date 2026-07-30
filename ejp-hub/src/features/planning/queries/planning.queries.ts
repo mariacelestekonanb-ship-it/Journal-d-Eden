@@ -35,13 +35,15 @@ export interface RawPlanningRow {
   primary_leader: RawPlanningLeader | null;
   secondary_leader: RawPlanningLeader | null;
   prayer_topic: { id: string; title: string } | null;
+  program: { id: string; name: string } | null;
 }
 
 const PLANNING_SELECT = `
   id, title, description, slot_date, start_time, end_time, location, status, theme, notes, created_at, updated_at,
   primary_leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname),
   secondary_leader:profiles!planning_secondary_leader_id_fkey(id, firstname, lastname),
-  prayer_topic:prayer_topics(id, title)
+  prayer_topic:prayer_topics(id, title),
+  program:programs(id, name)
 `;
 
 function toInsertPayload(values: PlanningSlotFormValues) {
@@ -56,6 +58,7 @@ function toInsertPayload(values: PlanningSlotFormValues) {
     secondary_leader_id: values.secondaryLeaderId || null,
     theme: values.theme || null,
     prayer_topic_id: values.prayerTopicId || null,
+    program_id: values.programId || null,
     status: values.status,
     notes: values.notes || null,
   };
@@ -166,6 +169,14 @@ export async function queryActivePrayerTopics(): Promise<{ id: string; title: st
     .select("id, title")
     .eq("status", "ACTIVE")
     .order("title", { ascending: true });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function queryProgramOptions(): Promise<{ id: string; name: string }[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("programs").select("id, name").order("name", { ascending: true });
 
   if (error) throw new Error(error.message);
   return data;

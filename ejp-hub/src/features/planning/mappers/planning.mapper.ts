@@ -28,6 +28,7 @@ export const PlanningMapper = {
       status: row.status,
       theme: row.theme,
       prayerTopic: row.prayer_topic,
+      program: row.program,
       notes: row.notes,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

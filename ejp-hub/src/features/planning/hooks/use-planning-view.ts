@@ -8,7 +8,7 @@ const STORAGE_KEY = "ejp-hub:planning:view";
 const DEFAULT_VIEW: PlanningViewMode = "month";
 
 function isPlanningViewMode(value: string | null): value is PlanningViewMode {
-  return value === "overview" || value === "week" || value === "month" || value === "list";
+  return value === "overview" || value === "week" || value === "month" || value === "list" || value === "programs";
 }
 
 /** Vue courante du Planning (Calendrier/Semaine/Mois/Liste), conservée entre les sessions. */

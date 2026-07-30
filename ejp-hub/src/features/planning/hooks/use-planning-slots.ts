@@ -29,6 +29,14 @@ export function usePlanningPrayerTopicOptions() {
   });
 }
 
+export function usePlanningProgramOptions() {
+  return useQuery({
+    queryKey: ["planning", "program-options"],
+    queryFn: () => PlanningService.listProgramOptions(),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function usePlanningLocationOptions() {
   return useQuery({
     queryKey: ["planning", "location-options"],

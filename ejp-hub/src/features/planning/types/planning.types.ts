@@ -14,6 +14,32 @@ export interface PlanningPrayerTopicRef {
   title: string;
 }
 
+/** Référence légère vers un programme — utilisée sur un créneau. */
+export interface PlanningProgramRef {
+  id: string;
+  name: string;
+}
+
+/** Un conducteur assigné à un programme. */
+export interface ProgramMemberRef {
+  id: string;
+  fullName: string;
+}
+
+/**
+ * Un programme (ex. « Programme Jeunesse ») : regroupe certains créneaux et
+ * une équipe de conducteurs dédiée, assignée explicitement par un
+ * administrateur — une personne peut appartenir à plusieurs programmes.
+ */
+export interface Program {
+  id: string;
+  name: string;
+  description: string | null;
+  members: ProgramMemberRef[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 /**
  * Un créneau de prière — le modèle métier central du module Planning, dont
  * dépendent les comptes rendus, notifications et statistiques du tableau
@@ -32,6 +58,7 @@ export interface PrayerSlot {
   status: PlanningStatus;
   theme: string | null;
   prayerTopic: PlanningPrayerTopicRef | null;
+  program: PlanningProgramRef | null;
   notes: string | null;
   createdAt: string;
   updatedAt: string;
@@ -62,6 +89,7 @@ export interface PlanningFilters {
   location: string | null;
   status: PlanningStatus | null;
   prayerTopicId: string | null;
+  programId: string | null;
 }
 
 export const EMPTY_PLANNING_FILTERS: PlanningFilters = {
@@ -72,7 +100,8 @@ export const EMPTY_PLANNING_FILTERS: PlanningFilters = {
   location: null,
   status: null,
   prayerTopicId: null,
+  programId: null,
 };
 
-/** Les 4 vues du module — voir PlanningToolbar et use-planning-view. */
-export type PlanningViewMode = "overview" | "week" | "month" | "list";
+/** Les 5 vues du module — voir PlanningToolbar et use-planning-view. */
+export type PlanningViewMode = "overview" | "week" | "month" | "list" | "programs";

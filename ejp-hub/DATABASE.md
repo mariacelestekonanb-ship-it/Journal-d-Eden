@@ -103,18 +103,50 @@ Créneaux de prière assignés à un conducteur. Étendue par
 | `prayer_leader_id` | `uuid` → `profiles.id` | nullable (créneau non encore assigné) |
 | `secondary_leader_id` | `uuid` → `profiles.id` | nullable, second conducteur |
 | `prayer_topic_id` | `uuid` → `prayer_topics.id` | nullable |
+| `program_id` | `uuid` → `programs.id` | nullable, `on delete set null` — planning général si absent |
 | `location` | `text` | nullable |
 | `theme` | `text` | nullable |
 | `status` | `planning_status` | `DRAFT` \| `CONFIRMED` \| `COMPLETED` \| `CANCELLED`, défaut `DRAFT` |
 | `notes` | `text` | nullable |
 
-Index : `slot_date`, `prayer_leader_id`, `secondary_leader_id`, `prayer_topic_id`, `status`.
+Index : `slot_date`, `prayer_leader_id`, `secondary_leader_id`, `prayer_topic_id`, `program_id`, `status`.
 
 > `planning` a deux clés étrangères vers `profiles` (`prayer_leader_id` et
 > `secondary_leader_id`) : toute requête PostgREST qui charge les deux relations en même temps doit
 > lever l'ambiguïté avec des indices explicites, ex. `profiles!planning_prayer_leader_id_fkey(...)`
 > et `profiles!planning_secondary_leader_id_fkey(...)` — voir
-> `src/features/planning/queries/planning.queries.ts`.
+> `src/features/planning/queries/planning.queries.ts`. **Piège déjà rencontré** : une requête du
+> tableau de bord embedait `profiles(...)` sans cet indice (`dashboard.queries.ts`) — PostgREST ne
+> pouvait pas choisir entre les deux relations, la requête échouait silencieusement et la section
+> « Prochaines conduites » restait vide même avec des créneaux existants. Corrigé en précisant
+> `profiles!planning_prayer_leader_id_fkey(...)`.
+
+### `programs`
+
+Un programme (ex. « Programme Jeunesse ») regroupant certains créneaux et une équipe de
+conducteurs dédiée. Ajoutée par `20260805090001_programs.sql`.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` PK | |
+| `name` | `text` | |
+| `description` | `text` | nullable |
+| `created_at` / `updated_at` | `timestamptz` | |
+
+### `program_members`
+
+Table de jointure : appartenance d'un membre à un programme, assignée explicitement par un
+administrateur (jamais déduite des créneaux) — un membre peut appartenir à plusieurs programmes.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `program_id` | `uuid` → `programs.id` | `on delete cascade`, PK composite avec `member_id` |
+| `member_id` | `uuid` → `profiles.id` | `on delete cascade` |
+| `created_at` | `timestamptz` | |
+
+L'appartenance est remplacée intégralement à chaque sauvegarde du formulaire programme
+(suppression puis réinsertion des lignes, voir `src/features/planning/queries/program.queries.ts`)
+plutôt qu'ajoutée/retirée ligne à ligne.
 
 ### `reports`
 

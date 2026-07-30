@@ -17,7 +17,7 @@ import { PlanningEvent } from "./planning-event";
 
 import "./planning-calendar.css";
 
-const VIEW_TO_FULLCALENDAR: Record<Exclude<PlanningViewMode, "list">, string> = {
+const VIEW_TO_FULLCALENDAR: Record<Exclude<PlanningViewMode, "list" | "programs">, string> = {
   overview: "multiMonthThreeMonth",
   week: "timeGridWeek",
   month: "dayGridMonth",
@@ -25,7 +25,7 @@ const VIEW_TO_FULLCALENDAR: Record<Exclude<PlanningViewMode, "list">, string> = 
 
 export interface PlanningCalendarProps {
   slots: PrayerSlot[];
-  view: Exclude<PlanningViewMode, "list">;
+  view: Exclude<PlanningViewMode, "list" | "programs">;
   permissions: PlanningPermissions;
   onSlotClick: (slot: PrayerSlot) => void;
   onDateClick: (dateStr: string) => void;
