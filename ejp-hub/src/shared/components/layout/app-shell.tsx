@@ -3,6 +3,7 @@
 import { HandHeart } from "lucide-react";
 import * as React from "react";
 
+import { ServiceWorkerRegistration } from "@/features/notifications";
 import { APP_NAME } from "@/shared/constants/app";
 import type { CurrentProfile } from "@/shared/lib/auth/get-current-profile";
 import { Sheet, SheetContent, SheetTitle } from "@/shared/ui/sheet";
@@ -26,6 +27,7 @@ export function AppShell({ profile, children }: { profile: CurrentProfile; child
 
   return (
     <div className="flex min-h-svh bg-background">
+      <ServiceWorkerRegistration />
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <Brand />
         <div className="flex flex-1 flex-col py-4">

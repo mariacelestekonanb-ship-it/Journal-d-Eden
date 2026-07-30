@@ -16,6 +16,7 @@ import { NotificationFilters } from "../components/notification-filters";
 import { NotificationList } from "../components/notification-list";
 import { NotificationStats } from "../components/notification-stats";
 import { NotificationTable } from "../components/notification-table";
+import { PushNotificationToggle } from "../components/push-notification-toggle";
 import { useMarkAllNotificationsRead, useDeleteNotification, useMarkNotificationRead } from "../hooks/use-notification-mutations";
 import { useNotificationStats } from "../hooks/use-notification-stats";
 import { useNotificationListContext, useNotifications } from "../hooks/use-notifications";
@@ -74,6 +75,8 @@ export function NotificationsView() {
           ) : undefined
         }
       />
+
+      <PushNotificationToggle />
 
       <NotificationStats stats={stats} isLoading={isStatsLoading} />
 

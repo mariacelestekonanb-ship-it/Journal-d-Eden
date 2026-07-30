@@ -18,6 +18,16 @@ export const metadata: Metadata = {
     template: `%s · ${APP_NAME}`,
   },
   description: "Centralisez l'organisation des conducteurs de prière de l'EJP.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/icon-192.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_NAME,
+  },
 };
 
 export const viewport: Viewport = {

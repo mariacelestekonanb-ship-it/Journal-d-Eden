@@ -6,6 +6,7 @@
  */
 export { NotificationsView } from "./pages/notifications-view";
 export { NotificationBell } from "./components/notification-bell";
+export { ServiceWorkerRegistration } from "./components/service-worker-registration";
 export type { Notification, NotificationFilters, NotificationPriority, NotificationType } from "./types/notification.types";
 export { NotificationService } from "./services/notification.service";
 export { getNotificationPermissions, type NotificationPermissions } from "./utils/notification-permissions";

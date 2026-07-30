@@ -92,24 +92,27 @@ lecture et la mise à jour de `read_at` étaient possibles. Ce module ajoute :
   personnel, diffusion système) sans policy dangereusement permissive.
 - `notifications_delete_own` : chacun supprime les siennes.
 
-Ce que cette policy **ne couvre pas** : un conducteur qui soumet un compte rendu ne peut
+Ce que cette policy **ne couvrait pas** : un conducteur qui soumet un compte rendu ne peut
 pas, avec sa propre session, créer une notification pour l'administrateur (acteur ≠
-destinataire, ni l'un ni l'autre n'est admin). Câbler la génération automatique
-inter-rôles (« CR soumis → notifier l'admin », « demande d'adhésion → notifier les
-admins ») nécessite l'une de ces deux approches, à choisir lors de l'intégration de
-chaque module producteur :
+destinataire, ni l'un ni l'autre n'est admin). C'est câblé depuis
+`20260806090001_notification_triggers.sql` via des **triggers Postgres `security
+definer`** sur les tables source (`reports`, `planning`, `profiles`) — l'approche
+retenue plutôt qu'un appel serveur applicatif : elle capture tout chemin d'écriture (y
+compris `db:seed` ou une requête SQL manuelle), pas seulement les hooks React de
+l'application.
 
-1. **Trigger Postgres `security definer`** sur la table source (`reports`, `planning`,
-   `profiles`, `prayer_topics`) qui insère directement dans `notifications`, en
-   contournant la RLS — l'approche la plus robuste, indépendante de l'appelant
-   applicatif.
-2. **Appel serveur avec la clé de service** depuis la Server Action du module producteur
-   (même schéma que `features/members/actions/create-membership-request.action.ts`).
+| Table | Événement | Destinataire |
+| --- | --- | --- |
+| `profiles` | Nouvelle demande d'adhésion (`insert ... status = 'PENDING'`) | Tous les `ADMIN` actifs |
+| `profiles` | Décision (`PENDING` → `ACTIVE`/`REFUSED`) | Le demandeur |
+| `reports` | Soumission (`status = 'SUBMITTED'`) | Tous les `ADMIN` actifs |
+| `reports` | Décision (`SUBMITTED` → `VALIDATED`/`REJECTED`) | L'auteur (`created_by`) |
+| `planning` | Assignation (création ou changement de conducteur) | Le(s) conducteur(s) assigné(s) |
+| `planning` | Changement d'horaire ou annulation | Le conducteur principal |
 
-Aucune des deux n'est câblée dans ce sprint — la consigne était de « préparer » cette
-architecture, pas de modifier Reports/Planning/Membres/Sujets de prière pour qu'ils
-appellent réellement `NotificationService.notify(...)`. C'est le travail du prochain
-sprint qui touchera chacun de ces modules.
+`prayer_topics` reste volontairement en dehors : un nouveau sujet n'a pas de destinataire
+personnel évident (ce serait une diffusion à tous les utilisateurs) — à revisiter si le
+besoin se confirme.
 
 ## `NotificationService.notify(...)` — l'API prête pour les autres modules
 
@@ -128,6 +131,50 @@ await NotificationService.notify({
 valide la forme avant tout accès au dépôt — un futur appelant qui se trompe de type ou
 oublie un champ obtient un message clair immédiatement plutôt qu'une erreur de
 contrainte SQL. Aucun appelant n'existe encore ailleurs dans l'application.
+
+## Notifications push (Web Push) {#push}
+
+Chaque notification créée en base (par les triggers ci-dessus) peut aussi arriver comme
+une vraie notification système sur le téléphone/ordinateur de son destinataire — même
+application fermée. Architecture, du plus proche de l'utilisateur au plus proche de la
+base :
+
+1. **Service Worker** (`public/sw.js`) : enregistré une fois par appareil
+   (`ServiceWorkerRegistration`, monté dans `AppShell`). Écoute l'événement `push` et
+   affiche la notification système ; gère le clic dessus (ouvre/focus l'app sur
+   `actionUrl`).
+2. **Abonnement** (`push_subscriptions`) : depuis `/notifications`
+   (`PushNotificationToggle`), l'utilisateur active les notifications sur *cet appareil
+   précis* — `Notification.requestPermission()` puis
+   `registration.pushManager.subscribe(...)`, stocké dans `push_subscriptions` (RLS :
+   chacun ne gère que ses propres abonnements). Un appareil = un abonnement ; activer sur
+   son téléphone n'active pas automatiquement l'ordinateur.
+3. **Déclenchement** : un **Database Webhook Supabase** (table `notifications`, événement
+   `INSERT`) appelle `POST /api/push/send` à chaque nouvelle ligne.
+4. **Envoi** (`src/app/api/push/send/route.ts`) : vérifie un secret partagé
+   (`PUSH_WEBHOOK_SECRET`, l'appelant est Supabase, pas un utilisateur connecté), lit les
+   abonnements du destinataire avec la clé de service, envoie via `web-push` (clés VAPID).
+   Un abonnement expiré (404/410) est supprimé automatiquement.
+
+### iOS : une limite d'Apple, pas de l'application
+
+Safari n'expose l'API Push que si le site a été **ajouté à l'écran d'accueil**
+(Partager → « Sur l'écran d'accueil ») — impossible de l'activer depuis un simple onglet
+Safari. `PushNotificationToggle` l'explique directement si `PushManager` est absent.
+Android/Chrome n'a pas cette contrainte.
+
+### Mise en place (à faire une fois, après les migrations SQL habituelles)
+
+1. Générer une paire de clés VAPID (`npx web-push generate-vapid-keys`) et un secret
+   aléatoire pour `PUSH_WEBHOOK_SECRET` (ex. `openssl rand -hex 32`).
+2. Ajouter dans Vercel (Project Settings → Environment Variables) :
+   `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `PUSH_VAPID_SUBJECT`
+   (`mailto:...`), `PUSH_WEBHOOK_SECRET` — voir `.env.example`.
+3. Dans Supabase → Database → Webhooks → **Create a new hook** :
+   - Table : `notifications` · Événement : `Insert`
+   - Type : `HTTP Request` · Méthode : `POST`
+   - URL : `https://<domaine-vercel>/api/push/send`
+   - Headers : `x-webhook-secret` = la même valeur que `PUSH_WEBHOOK_SECRET`.
 
 ## Mode démo — une limitation assumée
 
@@ -156,6 +203,8 @@ problème disparaît de lui-même.
 | `NotificationTable` | Vue tableau (TanStack Table) — alternative à `NotificationList` |
 | `NotificationCard` | Carte d'une notification — icône, titre, message, date, priorité, statut, actions |
 | `NotificationPriorityBadge`, `NotificationTypeBadge`, `NotificationEmptyState` | Briques de présentation réutilisables |
+| `PushNotificationToggle` | Active/désactive les notifications push sur l'appareil courant (voir [Push](#push)) |
+| `ServiceWorkerRegistration` | Enregistre `/sw.js`, monté une fois dans `AppShell` — ne rend rien |
 
 ## Services
 
