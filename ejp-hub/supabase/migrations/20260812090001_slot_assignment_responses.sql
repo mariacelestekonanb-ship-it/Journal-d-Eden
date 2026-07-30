@@ -132,7 +132,7 @@ begin
     select firstname || ' ' || lastname into leader_name from public.profiles where id = new.prayer_leader_id;
     action_label := case when new.prayer_leader_response = 'ACCEPTED' then 'accepté' else 'refusé' end;
     perform public.notify_admins(
-      'PLANNING', case when new.prayer_leader_response = 'DECLINED' then 'HIGH' else 'LOW' end,
+      'PLANNING', (case when new.prayer_leader_response = 'DECLINED' then 'HIGH' else 'LOW' end)::public.notification_priority,
       'Réponse à une assignation',
       coalesce(leader_name, 'Le conducteur') || ' a ' || action_label || ' le créneau « ' || new.title || ' »'
         || case when new.prayer_leader_response_comment is not null and new.prayer_leader_response_comment <> ''
@@ -145,7 +145,7 @@ begin
     select firstname || ' ' || lastname into leader_name from public.profiles where id = new.secondary_leader_id;
     action_label := case when new.secondary_leader_response = 'ACCEPTED' then 'accepté' else 'refusé' end;
     perform public.notify_admins(
-      'PLANNING', case when new.secondary_leader_response = 'DECLINED' then 'HIGH' else 'LOW' end,
+      'PLANNING', (case when new.secondary_leader_response = 'DECLINED' then 'HIGH' else 'LOW' end)::public.notification_priority,
       'Réponse à une assignation',
       coalesce(leader_name, 'Le conducteur secondaire') || ' a ' || action_label
         || ' le créneau « ' || new.title || ' » (secondaire)'
@@ -290,7 +290,7 @@ begin
     end if;
 
     perform public.create_notification(
-      new.requested_by, 'PLANNING', case when new.status = 'APPROVED' then 'NORMAL' else 'HIGH' end,
+      new.requested_by, 'PLANNING', (case when new.status = 'APPROVED' then 'NORMAL' else 'HIGH' end)::public.notification_priority,
       case when new.status = 'APPROVED' then 'Remplacement accepté' else 'Remplacement refusé' end,
       case when new.status = 'APPROVED'
            then 'Votre demande de remplacement pour « ' || coalesce(slot_title, '') || ' » a été acceptée.'
