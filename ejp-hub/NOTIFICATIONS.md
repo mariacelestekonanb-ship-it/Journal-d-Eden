@@ -107,12 +107,27 @@ l'application.
 | `profiles` | Décision (`PENDING` → `ACTIVE`/`REFUSED`) | Le demandeur |
 | `reports` | Soumission (`status = 'SUBMITTED'`) | Tous les `ADMIN` actifs |
 | `reports` | Décision (`SUBMITTED` → `VALIDATED`/`REJECTED`) | L'auteur (`created_by`) |
-| `planning` | Assignation (création ou changement de conducteur) | Le(s) conducteur(s) assigné(s) |
+| `planning` | Assignation (création ou changement de conducteur) | Le conducteur assigné **et** tous les `ADMIN` actifs |
 | `planning` | Changement d'horaire ou annulation | Le conducteur principal |
+| `planning` (relance quotidienne, `pg_cron`) | Créneau passé sans compte rendu | Le conducteur assigné, chaque jour tant qu'aucun compte rendu n'existe |
 
 `prayer_topics` reste volontairement en dehors : un nouveau sujet n'a pas de destinataire
 personnel évident (ce serait une diffusion à tous les utilisateurs) — à revisiter si le
 besoin se confirme.
+
+### Relance quotidienne des comptes rendus (`20260809090001_report_reminders.sql`)
+
+Le déclencheur d'assignation notifie le conducteur (et désormais l'admin) **dès
+l'assignation** — mais l'assignation peut avoir lieu plusieurs jours avant que le créneau
+n'ait réellement eu lieu, donc rappeler seulement à ce moment-là ne suffit pas. Une tâche
+planifiée (`pg_cron`, `send_report_reminders()`, tous les jours à 8h UTC) parcourt les
+créneaux passés (`slot_date < aujourd'hui`), non annulés, sans compte rendu associé, et
+crée une notification `REPORT`/`HIGH` pour le conducteur à chaque exécution où aucune
+notification identique n'a déjà été créée le jour même (déduplication par
+titre+message+destinataire+date). Contrairement aux triggers d'assignation, c'est donc une
+relance **récurrente**, pas un événement ponctuel — jusqu'à ce que le compte rendu soit
+soumis. `select public.send_report_reminders();` permet de la déclencher manuellement pour
+tester sans attendre l'horaire planifié.
 
 ## `NotificationService.notify(...)` — l'API prête pour les autres modules
 
