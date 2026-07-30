@@ -31,6 +31,8 @@ export interface RawMemberRow {
   status: MemberStatus;
   is_active: boolean;
   validated_at: string | null;
+  validated_by: string | null;
+  /** Résolu séparément (voir `queryMemberById`) — jamais via un embed PostgREST, voir le commentaire de `MEMBER_SELECT`. */
   validator: RawMemberProfile | null;
   created_at: string;
   updated_at: string;
@@ -52,9 +54,18 @@ export interface RawMemberReportRow {
   planning: { title: string; slot_date: string } | null;
 }
 
+/**
+ * `validated_by` reste une colonne brute ici : l'embed PostgREST auto-référencé
+ * (`profiles!profiles_validated_by_fkey`) s'est révélé indisponible en
+ * production sur ce projet Supabase (« Could not find a relationship between
+ * 'profiles' and 'profiles' in the schema cache », persistant même après
+ * rechargement du cache et redémarrage du projet) — il bloquait la moindre
+ * lecture de `profiles`, donc tout le module Membres. Le nom du validateur
+ * est résolu par une requête séparée, seulement là où il est affiché (voir
+ * `queryMemberById`).
+ */
 const MEMBER_SELECT = `
-  id, firstname, lastname, email, phone, avatar_url, role, status, is_active, validated_at,
-  validator:profiles!profiles_validated_by_fkey(id, firstname, lastname),
+  id, firstname, lastname, email, phone, avatar_url, role, status, is_active, validated_at, validated_by,
   created_at, updated_at
 `;
 
@@ -63,7 +74,7 @@ export async function queryAllMembers(): Promise<RawMemberRow[]> {
   const { data, error } = await supabase.from("profiles").select(MEMBER_SELECT).order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return data as unknown as RawMemberRow[];
+  return ((data ?? []) as unknown as Omit<RawMemberRow, "validator">[]).map((row) => ({ ...row, validator: null }));
 }
 
 export async function queryMemberById(id: string): Promise<RawMemberRow | null> {
@@ -71,7 +82,18 @@ export async function queryMemberById(id: string): Promise<RawMemberRow | null> 
   const { data, error } = await supabase.from("profiles").select(MEMBER_SELECT).eq("id", id).maybeSingle();
 
   if (error) throw new Error(error.message);
-  return data as unknown as RawMemberRow | null;
+  if (!data) return null;
+
+  const row = data as unknown as Omit<RawMemberRow, "validator">;
+  if (!row.validated_by) return { ...row, validator: null };
+
+  const { data: validator } = await supabase
+    .from("profiles")
+    .select("id, firstname, lastname")
+    .eq("id", row.validated_by)
+    .maybeSingle();
+
+  return { ...row, validator: (validator as RawMemberProfile | null) ?? null };
 }
 
 /**
@@ -97,7 +119,7 @@ export async function updateMemberStatusQuery(
     .single();
 
   if (error) throw new Error(error.message);
-  return data as unknown as RawMemberRow;
+  return { ...(data as unknown as Omit<RawMemberRow, "validator">), validator: null };
 }
 
 export async function updateMemberRoleQuery(id: string, role: UserRole): Promise<RawMemberRow> {
@@ -105,7 +127,7 @@ export async function updateMemberRoleQuery(id: string, role: UserRole): Promise
   const { data, error } = await supabase.from("profiles").update({ role }).eq("id", id).select(MEMBER_SELECT).single();
 
   if (error) throw new Error(error.message);
-  return data as unknown as RawMemberRow;
+  return { ...(data as unknown as Omit<RawMemberRow, "validator">), validator: null };
 }
 
 export async function updateOwnMemberProfileQuery(
@@ -121,7 +143,7 @@ export async function updateOwnMemberProfileQuery(
     .single();
 
   if (error) throw new Error(error.message);
-  return data as unknown as RawMemberRow;
+  return { ...(data as unknown as Omit<RawMemberRow, "validator">), validator: null };
 }
 
 /** Upload de la photo de profil — chemin `avatars/<user_id>/<fichier>`, cohérent avec la policy `avatars_owner_write`. */

@@ -21,9 +21,13 @@ import type { RawMemberRow } from "./member.queries";
  * marquées `"use server"`).
  */
 
+/**
+ * `validated_by` reste une colonne brute : voir le commentaire de
+ * `MEMBER_SELECT` dans `member.queries.ts` (embed PostgREST auto-référencé
+ * indisponible en production, cassait toute lecture de `profiles`).
+ */
 const MEMBER_SELECT = `
-  id, firstname, lastname, email, phone, avatar_url, role, status, is_active, validated_at,
-  validator:profiles!profiles_validated_by_fkey(id, firstname, lastname),
+  id, firstname, lastname, email, phone, avatar_url, role, status, is_active, validated_at, validated_by,
   created_at, updated_at
 `;
 
@@ -84,7 +88,7 @@ export async function adminCreateMembershipRequestQuery(input: MembershipRequest
     .single();
 
   if (profileError) throw new Error(profileError.message);
-  return profile as unknown as RawMemberRow;
+  return { ...(profile as unknown as Omit<RawMemberRow, "validator">), validator: null };
 }
 
 /** Upload de la photo d'une demande d'adhésion — le compte vient d'être créé, aucune session utilisateur n'existe encore. */
@@ -115,5 +119,5 @@ export async function adminUpdateMemberEmailQuery(userId: string, email: string)
 
   const { data, error } = await supabase.from("profiles").update({ email }).eq("id", userId).select(MEMBER_SELECT).single();
   if (error) throw new Error(error.message);
-  return data as unknown as RawMemberRow;
+  return { ...(data as unknown as Omit<RawMemberRow, "validator">), validator: null };
 }
