@@ -110,6 +110,7 @@ l'application.
 | `planning` | Assignation (création ou changement de conducteur) | Le conducteur assigné **et** tous les `ADMIN` actifs |
 | `planning` | Changement d'horaire ou annulation | Le conducteur principal |
 | `planning` (relance quotidienne, `pg_cron`) | Créneau passé sans compte rendu | Le conducteur assigné, chaque jour tant qu'aucun compte rendu n'existe |
+| `planning` (relance quotidienne, `pg_cron`) | Créneau la veille ou le jour même | Conducteur principal et secondaire du créneau |
 
 `prayer_topics` reste volontairement en dehors : un nouveau sujet n'a pas de destinataire
 personnel évident (ce serait une diffusion à tous les utilisateurs) — à revisiter si le
@@ -128,6 +129,15 @@ titre+message+destinataire+date). Contrairement aux triggers d'assignation, c'es
 relance **récurrente**, pas un événement ponctuel — jusqu'à ce que le compte rendu soit
 soumis. `select public.send_report_reminders();` permet de la déclencher manuellement pour
 tester sans attendre l'horaire planifié.
+
+### Rappel avant le créneau (`20260810090001_upcoming_slot_reminders.sql`)
+
+Symétrique du rappel précédent, mais **avant** le créneau plutôt qu'après :
+`send_upcoming_slot_reminders()` (tous les jours à 7h UTC, `pg_cron`) parcourt les
+créneaux dont la date est **aujourd'hui** ou **demain**, non annulés, et notifie chaque
+conducteur concerné (principal **et** secondaire, si renseigné) — « Vous conduisez la
+prière « … » demain/aujourd'hui à HH:MM. » Même déduplication quotidienne que les autres
+relances. `select public.send_upcoming_slot_reminders();` pour tester manuellement.
 
 ## `NotificationService.notify(...)` — l'API prête pour les autres modules
 
