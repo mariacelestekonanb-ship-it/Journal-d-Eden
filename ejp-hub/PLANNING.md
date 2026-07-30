@@ -114,13 +114,15 @@ composants :
 | Glisser-déposer / redimensionner dans le calendrier | ✅ | ❌ |
 | Consulter (calendrier, liste, détail) | ✅ | ✅ |
 | Exporter en CSV | ✅ | ✅ |
+| Importer des créneaux depuis un CSV | ✅ | ❌ (aligné sur le droit de créer) |
 
 ## Composants
 
 | Composant | Rôle |
 | --- | --- |
 | `PlanningHeader` | En-tête de page, bouton « Nouveau créneau » gated par permission |
-| `PlanningToolbar` | Bascule entre les 4 vues + export CSV |
+| `PlanningToolbar` | Bascule entre les 4 vues + export/import CSV |
+| `PlanningImportDialog` | Modèle CSV à télécharger, lecture du fichier, import ligne par ligne avec résumé des erreurs |
 | `PlanningFilters` | Filtres combinables (recherche, dates, conducteur, lieu, statut, sujet) |
 | `PlanningCalendar` | FullCalendar (Calendrier/Semaine/Mois), drag & drop, resize |
 | `PlanningTable` | TanStack Table (vue Liste) : tri, pagination, colonnes masquables |
@@ -137,6 +139,7 @@ composants :
 | `PlanningService` | API publique consommée par les hooks (seul point d'entrée) |
 | `PlanningConflictService` | Détection de conflits, pur et testable |
 | `PlanningExportService` | Export CSV (Blob + `URL.createObjectURL`) |
+| `PlanningImportService` | Parse un CSV (`shared/utils/csv.ts`), reconnaît les conducteurs par nom complet, valide chaque ligne avec `planningSlotSchema` — une ligne invalide est écartée et signalée, jamais bloquante pour les autres |
 
 ## Prochaine étape : connexion Supabase réelle
 

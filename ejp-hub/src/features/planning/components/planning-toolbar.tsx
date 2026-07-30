@@ -1,4 +1,4 @@
-import { CalendarRange, FileDown, LayoutGrid, List as ListIcon, Rows3 } from "lucide-react";
+import { CalendarRange, FileDown, LayoutGrid, List as ListIcon, Rows3, Upload } from "lucide-react";
 
 import { AppButton } from "@/shared/components/app-button";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
@@ -9,10 +9,12 @@ export interface PlanningToolbarProps {
   view: PlanningViewMode;
   onViewChange: (view: PlanningViewMode) => void;
   onExport: () => void;
+  /** Absent pour un rôle sans droit de création (pas d'import possible sans droit de créer un créneau). */
+  onImport?: () => void;
 }
 
-/** Barre d'outils du Planning : bascule entre les 4 vues, export de la vue courante. */
-export function PlanningToolbar({ view, onViewChange, onExport }: PlanningToolbarProps) {
+/** Barre d'outils du Planning : bascule entre les 4 vues, export/import CSV de la vue courante. */
+export function PlanningToolbar({ view, onViewChange, onExport, onImport }: PlanningToolbarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <Tabs value={view} onValueChange={(value) => onViewChange(value as PlanningViewMode)}>
@@ -36,10 +38,18 @@ export function PlanningToolbar({ view, onViewChange, onExport }: PlanningToolba
         </TabsList>
       </Tabs>
 
-      <AppButton variant="outline" size="sm" onClick={onExport} aria-label="Exporter la vue courante en CSV">
-        <FileDown className="size-4" />
-        Exporter
-      </AppButton>
+      <div className="flex items-center gap-2">
+        {onImport && (
+          <AppButton variant="outline" size="sm" onClick={onImport} aria-label="Importer des créneaux depuis un CSV">
+            <Upload className="size-4" />
+            Importer
+          </AppButton>
+        )}
+        <AppButton variant="outline" size="sm" onClick={onExport} aria-label="Exporter la vue courante en CSV">
+          <FileDown className="size-4" />
+          Exporter
+        </AppButton>
+      </div>
     </div>
   );
 }

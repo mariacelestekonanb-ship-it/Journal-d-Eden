@@ -12,6 +12,7 @@ import { PlanningDialog, type PlanningDialogMode } from "../components/planning-
 import { PlanningEmptyState } from "../components/planning-empty-state";
 import { PlanningFilters } from "../components/planning-filters";
 import { PlanningHeader } from "../components/planning-header";
+import { PlanningImportDialog } from "../components/planning-import-dialog";
 import { PlanningTable } from "../components/planning-table";
 import { PlanningToolbar } from "../components/planning-toolbar";
 import { applyPlanningFilters, usePlanningFilters } from "../hooks/use-planning-filters";
@@ -56,6 +57,7 @@ export function PlanningView({ role }: PlanningViewProps) {
 
   const [dialogState, setDialogState] = React.useState<DialogState | null>(null);
   const [confirmState, setConfirmState] = React.useState<ConfirmState | null>(null);
+  const [isImportOpen, setIsImportOpen] = React.useState(false);
 
   const rescheduleMutation = useRescheduleSlot();
   const cancelMutation = useCancelSlot();
@@ -109,6 +111,7 @@ export function PlanningView({ role }: PlanningViewProps) {
         view={view}
         onViewChange={setView}
         onExport={() => PlanningExportService.downloadCsv(filteredSlots, `planning-${view}`)}
+        onImport={permissions.canCreate ? () => setIsImportOpen(true) : undefined}
       />
 
       <PlanningFilters
@@ -174,6 +177,8 @@ export function PlanningView({ role }: PlanningViewProps) {
           onDeleteRequested={handleDelete}
         />
       )}
+
+      <PlanningImportDialog open={isImportOpen} onOpenChange={setIsImportOpen} />
 
       <ConfirmDialog
         open={!!confirmState}
