@@ -108,8 +108,17 @@ Créneaux de prière assignés à un conducteur. Étendue par
 | `theme` | `text` | nullable |
 | `status` | `planning_status` | `DRAFT` \| `CONFIRMED` \| `COMPLETED` \| `CANCELLED`, défaut `DRAFT` |
 | `notes` | `text` | nullable |
+| `prayer_leader_response` / `secondary_leader_response` | `assignment_response` | `PENDING` \| `ACCEPTED` \| `DECLINED`, défaut `PENDING` — un conducteur assigné accepte/refuse son créneau |
+| `prayer_leader_response_comment` / `secondary_leader_response_comment` | `text` | nullable |
+| `prayer_leader_response_at` / `secondary_leader_response_at` | `timestamptz` | nullable, horodaté automatiquement par trigger |
 
 Index : `slot_date`, `prayer_leader_id`, `secondary_leader_id`, `prayer_topic_id`, `program_id`, `status`.
+
+Ajoutée par `20260812090001_slot_assignment_responses.sql` : le trigger `before insert or update`
+`manage_planning_assignment_response` remet la réponse d'un rôle à `PENDING` dès que son
+conducteur change, horodate toute nouvelle réponse, et — pour un appelant non-admin — rejette
+toute modification hors de sa propre réponse (policy RLS `planning_leader_response_update` en
+complément de `planning_admin_update`). Voir `PLANNING.md#réponse-à-lassignation--remplacements`.
 
 > `planning` a deux clés étrangères vers `profiles` (`prayer_leader_id` et
 > `secondary_leader_id`) : toute requête PostgREST qui charge les deux relations en même temps doit
@@ -147,6 +156,30 @@ administrateur (jamais déduite des créneaux) — un membre peut appartenir à 
 L'appartenance est remplacée intégralement à chaque sauvegarde du formulaire programme
 (suppression puis réinsertion des lignes, voir `src/features/planning/queries/program.queries.ts`)
 plutôt qu'ajoutée/retirée ligne à ligne.
+
+### `planning_replacement_requests`
+
+Un conducteur assigné (principal ou secondaire) propose un membre précis pour le remplacer sur
+un créneau — soumis à validation d'un administrateur. Ajoutée par
+`20260812090001_slot_assignment_responses.sql`.
+
+| Colonne | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` PK | |
+| `planning_id` | `uuid` → `planning.id` | `on delete cascade` |
+| `role` | `planning_leader_role` | `PRAYER_LEADER` \| `SECONDARY_LEADER` — quel rôle du créneau est concerné |
+| `requested_by` | `uuid` → `profiles.id` | le conducteur qui demande le remplacement |
+| `proposed_member_id` | `uuid` → `profiles.id` | le remplaçant proposé |
+| `comment` | `text` | nullable |
+| `status` | `replacement_request_status` | `PENDING` \| `APPROVED` \| `REJECTED`, défaut `PENDING` |
+| `created_at` / `decided_at` | `timestamptz` | `decided_at` nullable |
+| `decided_by` | `uuid` → `profiles.id` | nullable, l'admin qui a tranché |
+
+RLS : lecture pour l'admin, le demandeur ou le remplaçant proposé ; création réservée au
+conducteur assigné lui-même (`requested_by = auth.uid()` et propriétaire du rôle sur ce
+créneau) ; décision (`update`) réservée à l'admin ; suppression (annulation) par le demandeur
+tant que `PENDING`, ou par l'admin à tout moment. Une décision `APPROVED` réassigne réellement
+le créneau via un trigger — voir `NOTIFICATIONS.md`.
 
 ### `reports`
 

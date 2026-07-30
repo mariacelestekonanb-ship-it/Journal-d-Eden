@@ -1,6 +1,6 @@
-import type { PlanningStatus } from "@/shared/types/database";
+import type { AssignmentResponse, PlanningLeaderRole, PlanningStatus, ReplacementRequestStatus } from "@/shared/types/database";
 
-export type { PlanningStatus };
+export type { AssignmentResponse, PlanningLeaderRole, PlanningStatus, ReplacementRequestStatus };
 
 /** Un conducteur (principal ou secondaire) tel qu'affiché sur un créneau. */
 export interface PlanningParticipant {
@@ -60,8 +60,31 @@ export interface PrayerSlot {
   prayerTopic: PlanningPrayerTopicRef | null;
   program: PlanningProgramRef | null;
   notes: string | null;
+  prayerLeaderResponse: AssignmentResponse;
+  prayerLeaderResponseComment: string | null;
+  prayerLeaderResponseAt: string | null;
+  secondaryLeaderResponse: AssignmentResponse;
+  secondaryLeaderResponseComment: string | null;
+  secondaryLeaderResponseAt: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * Demande de remplacement : un conducteur assigné (principal ou secondaire)
+ * propose un membre précis pour le remplacer sur un créneau — soumise à
+ * validation d'un administrateur (voir `ReplacementRequestService`).
+ */
+export interface ReplacementRequest {
+  id: string;
+  planningId: string;
+  role: PlanningLeaderRole;
+  requestedBy: PlanningParticipant;
+  proposedMember: PlanningParticipant;
+  comment: string | null;
+  status: ReplacementRequestStatus;
+  createdAt: string;
+  decidedAt: string | null;
 }
 
 /** Entrée du sélecteur de conducteur (principal/secondaire) dans le formulaire. */

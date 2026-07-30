@@ -2,7 +2,14 @@ import { isSupabaseConfigured } from "@/shared/lib/supabase/config";
 import type { PlanningStatus } from "@/shared/types/database";
 
 import type { PlanningConflict } from "../types/planning.types";
-import type { PlanningLeaderOption, PlanningPrayerTopicRef, PlanningProgramRef, PrayerSlot } from "../types/planning.types";
+import type {
+  PlanningLeaderOption,
+  PlanningLeaderRole,
+  PlanningPrayerTopicRef,
+  PlanningProgramRef,
+  PrayerSlot,
+} from "../types/planning.types";
+import type { AssignmentResponseFormValues } from "../validation/assignment-response.schema";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 import { MockPlanningRepository } from "./mock-planning-repository";
 import { PlanningConflictService } from "./planning-conflict.service";
@@ -60,6 +67,15 @@ export const PlanningService = {
 
   async cancel(id: string): Promise<PrayerSlot> {
     return getRepository().updateStatus(id, "CANCELLED" satisfies PlanningStatus);
+  },
+
+  /** Un conducteur assigné (principal ou secondaire) accepte ou refuse son assignation. */
+  async respondToAssignment(
+    id: string,
+    role: PlanningLeaderRole,
+    values: AssignmentResponseFormValues,
+  ): Promise<PrayerSlot> {
+    return getRepository().respondToAssignment(id, role, values);
   },
 
   async remove(id: string): Promise<void> {

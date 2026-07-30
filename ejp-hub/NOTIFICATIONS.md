@@ -111,6 +111,9 @@ l'application.
 | `planning` | Changement d'horaire ou annulation | Le conducteur principal |
 | `planning` (relance quotidienne, `pg_cron`) | Créneau passé sans compte rendu | Le conducteur assigné, chaque jour tant qu'aucun compte rendu n'existe |
 | `planning` (relance quotidienne, `pg_cron`) | Créneau la veille ou le jour même | Conducteur principal et secondaire du créneau |
+| `planning` | Réponse d'un conducteur à son assignation (accepter/refuser) | Tous les `ADMIN` actifs |
+| `planning_replacement_requests` | Nouvelle demande de remplacement | Tous les `ADMIN` actifs |
+| `planning_replacement_requests` | Décision admin (approuvée/refusée) | Le demandeur (le conducteur qui a proposé le remplacement) |
 
 `prayer_topics` reste volontairement en dehors : un nouveau sujet n'a pas de destinataire
 personnel évident (ce serait une diffusion à tous les utilisateurs) — à revisiter si le
@@ -138,6 +141,22 @@ créneaux dont la date est **aujourd'hui** ou **demain**, non annulés, et notif
 conducteur concerné (principal **et** secondaire, si renseigné) — « Vous conduisez la
 prière « … » demain/aujourd'hui à HH:MM. » Même déduplication quotidienne que les autres
 relances. `select public.send_upcoming_slot_reminders();` pour tester manuellement.
+
+### Réponse à l'assignation & demandes de remplacement (`20260812090001_slot_assignment_responses.sql`)
+
+Un conducteur assigné peut accepter/refuser (avec commentaire) directement depuis le détail de
+son créneau — voir `PLANNING.md#réponse-à-lassignation--remplacements`. Deux triggers sur
+`planning` gèrent ceci : `manage_planning_assignment_response` (avant écriture — réinitialise la
+réponse à `PENDING` dès que le conducteur change, horodate la réponse, et empêche un conducteur
+non-admin de modifier autre chose que sa propre réponse) et `notify_planning_response` (après
+écriture — notifie tous les `ADMIN` de la réponse, avec le commentaire s'il y en a un).
+
+La table `planning_replacement_requests` porte les demandes de remplacement (un conducteur
+propose un membre précis). `notify_replacement_request` notifie les admins à la création ;
+`notify_replacement_decision` notifie le demandeur de la décision et, si **approuvée**,
+réassigne réellement le créneau (`update planning set prayer_leader_id = ...`) — ce qui
+redéclenche à son tour `manage_planning_assignment_response` (remise à `PENDING`) et
+`notify_planning_assignment` (nouvelle notification au conducteur nouvellement assigné).
 
 ## `NotificationService.notify(...)` — l'API prête pour les autres modules
 

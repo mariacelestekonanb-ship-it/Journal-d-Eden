@@ -14,6 +14,9 @@ export type PlanningStatus = "DRAFT" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 export type ReportStatus = "DRAFT" | "SUBMITTED" | "VALIDATED" | "REJECTED";
 export type MemberStatus = "PENDING" | "ACTIVE" | "REFUSED" | "SUSPENDED";
 export type AdminCategoryScope = "PRAYER_TOPIC_CATEGORY" | "MEETING_TYPE";
+export type AssignmentResponse = "PENDING" | "ACCEPTED" | "DECLINED";
+export type ReplacementRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type PlanningLeaderRole = "PRAYER_LEADER" | "SECONDARY_LEADER";
 
 /** Forme jsonb d'une référence biblique au sein d'une liste (`reports.thanksgiving`, `reports.prayer_points[].references`, …). */
 export interface BibleReferenceJson {
@@ -145,6 +148,12 @@ export interface Database {
           prayer_topic_id: string | null;
           program_id: string | null;
           notes: string | null;
+          prayer_leader_response: AssignmentResponse;
+          prayer_leader_response_comment: string | null;
+          prayer_leader_response_at: string | null;
+          secondary_leader_response: AssignmentResponse;
+          secondary_leader_response_comment: string | null;
+          secondary_leader_response_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -178,6 +187,10 @@ export interface Database {
           prayer_topic_id: string | null;
           program_id: string | null;
           notes: string | null;
+          prayer_leader_response: AssignmentResponse;
+          prayer_leader_response_comment: string | null;
+          secondary_leader_response: AssignmentResponse;
+          secondary_leader_response_comment: string | null;
         }>;
         Relationships: [
           {
@@ -206,6 +219,56 @@ export interface Database {
             columns: ["program_id"];
             isOneToOne: false;
             referencedRelation: "programs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      planning_replacement_requests: {
+        Row: {
+          id: string;
+          planning_id: string;
+          role: PlanningLeaderRole;
+          requested_by: string;
+          proposed_member_id: string;
+          comment: string | null;
+          status: ReplacementRequestStatus;
+          created_at: string;
+          decided_at: string | null;
+          decided_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          planning_id: string;
+          role: PlanningLeaderRole;
+          requested_by: string;
+          proposed_member_id: string;
+          comment?: string | null;
+        };
+        Update: Partial<{
+          status: ReplacementRequestStatus;
+          decided_at: string | null;
+          decided_by: string | null;
+        }>;
+        Relationships: [
+          {
+            foreignKeyName: "planning_replacement_requests_planning_id_fkey";
+            columns: ["planning_id"];
+            isOneToOne: false;
+            referencedRelation: "planning";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "planning_replacement_requests_requested_by_fkey";
+            columns: ["requested_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "planning_replacement_requests_proposed_member_id_fkey";
+            columns: ["proposed_member_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];

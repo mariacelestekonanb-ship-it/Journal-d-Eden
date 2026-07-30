@@ -54,8 +54,18 @@ function nextTimestamp(offsetMinutes: number): string {
   return new Date(Date.now() - offsetMinutes * 60_000).toISOString();
 }
 
+type BaseMockSlot = Omit<
+  PrayerSlot,
+  | "prayerLeaderResponse"
+  | "prayerLeaderResponseComment"
+  | "prayerLeaderResponseAt"
+  | "secondaryLeaderResponse"
+  | "secondaryLeaderResponseComment"
+  | "secondaryLeaderResponseAt"
+>;
+
 /** Jeu de créneaux initial : passés (COMPLETED), en cours de semaine et à venir, statuts variés. */
-export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
+const BASE_MOCK_SLOTS: BaseMockSlot[] = [
   {
     id: "slot-1",
     title: "Prière du mercredi soir",
@@ -201,3 +211,37 @@ export const INITIAL_MOCK_SLOTS: PrayerSlot[] = [
     updatedAt: nextTimestamp(5_000),
   },
 ];
+
+function withResponseDefaults(slot: BaseMockSlot): PrayerSlot {
+  return {
+    ...slot,
+    prayerLeaderResponse: "PENDING",
+    prayerLeaderResponseComment: null,
+    prayerLeaderResponseAt: null,
+    secondaryLeaderResponse: "PENDING",
+    secondaryLeaderResponseComment: null,
+    secondaryLeaderResponseAt: null,
+  };
+}
+
+/** Réponses par défaut d'un créneau fictif — surchargées ci-dessous pour quelques créneaux, pour illustrer chaque état à l'écran. */
+export const INITIAL_MOCK_SLOTS: PrayerSlot[] = BASE_MOCK_SLOTS.map(withResponseDefaults).map((slot) => {
+  if (slot.id === "slot-2") {
+    return {
+      ...slot,
+      prayerLeaderResponse: "ACCEPTED",
+      prayerLeaderResponseAt: nextTimestamp(49_000),
+      secondaryLeaderResponse: "ACCEPTED",
+      secondaryLeaderResponseAt: nextTimestamp(49_000),
+    } satisfies PrayerSlot;
+  }
+  if (slot.id === "slot-4") {
+    return {
+      ...slot,
+      prayerLeaderResponse: "DECLINED",
+      prayerLeaderResponseComment: "En déplacement ce jour-là, désolé.",
+      prayerLeaderResponseAt: nextTimestamp(30_000),
+    } satisfies PrayerSlot;
+  }
+  return slot;
+});

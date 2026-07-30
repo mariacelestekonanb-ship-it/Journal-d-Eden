@@ -34,8 +34,14 @@ function findProgram(id: string | undefined | null): PrayerSlot["program"] {
   return MOCK_PROGRAM_REFS.find((candidate) => candidate.id === id) ?? null;
 }
 
+/** Reproduit en mémoire la remise à PENDING que fait le trigger `manage_planning_assignment_response` quand un conducteur change. */
 function buildSlot(id: string, values: PlanningSlotFormValues, existing?: PrayerSlot): PrayerSlot {
   const now = new Date().toISOString();
+  const primaryLeader = findLeader(values.primaryLeaderId);
+  const secondaryLeader = findLeader(values.secondaryLeaderId);
+  const primaryUnchanged = existing?.primaryLeader?.id === primaryLeader?.id;
+  const secondaryUnchanged = existing?.secondaryLeader?.id === secondaryLeader?.id;
+
   return {
     id,
     title: values.title,
@@ -44,13 +50,19 @@ function buildSlot(id: string, values: PlanningSlotFormValues, existing?: Prayer
     startTime: values.startTime,
     endTime: values.endTime,
     location: values.location || null,
-    primaryLeader: findLeader(values.primaryLeaderId),
-    secondaryLeader: findLeader(values.secondaryLeaderId),
+    primaryLeader,
+    secondaryLeader,
     status: values.status,
     theme: values.theme || null,
     prayerTopic: findTopic(values.prayerTopicId),
     program: findProgram(values.programId),
     notes: values.notes || null,
+    prayerLeaderResponse: primaryUnchanged ? (existing?.prayerLeaderResponse ?? "PENDING") : "PENDING",
+    prayerLeaderResponseComment: primaryUnchanged ? (existing?.prayerLeaderResponseComment ?? null) : null,
+    prayerLeaderResponseAt: primaryUnchanged ? (existing?.prayerLeaderResponseAt ?? null) : null,
+    secondaryLeaderResponse: secondaryUnchanged ? (existing?.secondaryLeaderResponse ?? "PENDING") : "PENDING",
+    secondaryLeaderResponseComment: secondaryUnchanged ? (existing?.secondaryLeaderResponseComment ?? null) : null,
+    secondaryLeaderResponseAt: secondaryUnchanged ? (existing?.secondaryLeaderResponseAt ?? null) : null,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };
@@ -60,6 +72,41 @@ function requireSlot(id: string): PrayerSlot {
   const found = slots.find((slot) => slot.id === id);
   if (!found) throw new Error("Créneau introuvable.");
   return found;
+}
+
+/**
+ * Réassigne un créneau suite à l'approbation d'une demande de remplacement
+ * (voir `MockReplacementRequestRepository`) — reproduit en mémoire ce que le
+ * trigger `notify_replacement_decision` fait côté Supabase : réassigner le
+ * conducteur remet sa réponse à PENDING.
+ */
+export function mockReassignSlotLeader(
+  planningId: string,
+  role: "PRAYER_LEADER" | "SECONDARY_LEADER",
+  memberId: string,
+): void {
+  const existing = requireSlot(planningId);
+  const newLeader = findLeader(memberId);
+  const now = new Date().toISOString();
+  const updated: PrayerSlot =
+    role === "PRAYER_LEADER"
+      ? {
+          ...existing,
+          primaryLeader: newLeader,
+          prayerLeaderResponse: "PENDING",
+          prayerLeaderResponseComment: null,
+          prayerLeaderResponseAt: null,
+          updatedAt: now,
+        }
+      : {
+          ...existing,
+          secondaryLeader: newLeader,
+          secondaryLeaderResponse: "PENDING",
+          secondaryLeaderResponseComment: null,
+          secondaryLeaderResponseAt: null,
+          updatedAt: now,
+        };
+  slots = slots.map((slot) => (slot.id === planningId ? updated : slot));
 }
 
 export const MockPlanningRepository: PlanningRepository = {
@@ -100,6 +147,30 @@ export const MockPlanningRepository: PlanningRepository = {
   async updateStatus(id, status: PlanningStatus) {
     const existing = requireSlot(id);
     const updated: PrayerSlot = { ...existing, status, updatedAt: new Date().toISOString() };
+    slots = slots.map((slot) => (slot.id === id ? updated : slot));
+    return updated;
+  },
+
+  async respondToAssignment(id, role, values) {
+    const existing = requireSlot(id);
+    const comment = values.comment || null;
+    const now = new Date().toISOString();
+    const updated: PrayerSlot =
+      role === "PRAYER_LEADER"
+        ? {
+            ...existing,
+            prayerLeaderResponse: values.response,
+            prayerLeaderResponseComment: comment,
+            prayerLeaderResponseAt: now,
+            updatedAt: now,
+          }
+        : {
+            ...existing,
+            secondaryLeaderResponse: values.response,
+            secondaryLeaderResponseComment: comment,
+            secondaryLeaderResponseAt: now,
+            updatedAt: now,
+          };
     slots = slots.map((slot) => (slot.id === id ? updated : slot));
     return updated;
   },

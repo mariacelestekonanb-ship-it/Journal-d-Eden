@@ -8,6 +8,7 @@ import {
   queryActivePrayerTopics,
   queryAllPlanningSlots,
   queryProgramOptions,
+  updatePlanningAssignmentResponseQuery,
   updatePlanningSlotQuery,
   updatePlanningSlotScheduleQuery,
   updatePlanningSlotStatusQuery,
@@ -48,6 +49,14 @@ export const SupabasePlanningRepository: PlanningRepository = {
 
   async updateStatus(id, status) {
     const row = await updatePlanningSlotStatusQuery(id, status);
+    return PlanningMapper.toPrayerSlot(row);
+  },
+
+  async respondToAssignment(id, role, values) {
+    const row = await updatePlanningAssignmentResponseQuery(id, role, {
+      response: values.response,
+      comment: values.comment || null,
+    });
     return PlanningMapper.toPrayerSlot(row);
   },
 

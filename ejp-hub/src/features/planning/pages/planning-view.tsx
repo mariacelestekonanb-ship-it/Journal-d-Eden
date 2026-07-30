@@ -67,6 +67,14 @@ export function PlanningView({ role }: PlanningViewProps) {
 
   const filteredSlots = React.useMemo(() => applyPlanningFilters(slots ?? [], filters), [slots, filters]);
 
+  // Le créneau affiché en dialogue reste synchronisé avec les données à jour (ex. réponse
+  // d'un conducteur, remplacement approuvé) tant qu'il existe encore côté serveur — sinon on
+  // garde l'instantané initial (ex. juste après une suppression).
+  const dialogSlot = React.useMemo(() => {
+    if (!dialogState?.slot) return dialogState?.slot;
+    return slots?.find((candidate) => candidate.id === dialogState.slot!.id) ?? dialogState.slot;
+  }, [dialogState, slots]);
+
   const handleView = React.useCallback((slot: PrayerSlot) => {
     setDialogState({ mode: "view", slot });
   }, []);
@@ -181,7 +189,7 @@ export function PlanningView({ role }: PlanningViewProps) {
           open={!!dialogState}
           onOpenChange={(open) => !open && setDialogState(null)}
           mode={dialogState.mode}
-          slot={dialogState.slot}
+          slot={dialogSlot}
           defaultDate={dialogState.defaultDate}
           permissions={permissions}
           onEditRequested={handleEdit}

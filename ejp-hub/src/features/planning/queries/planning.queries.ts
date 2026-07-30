@@ -1,5 +1,5 @@
 import { createClient } from "@/shared/lib/supabase/client";
-import type { PlanningStatus } from "@/shared/types/database";
+import type { AssignmentResponse, PlanningLeaderRole, PlanningStatus } from "@/shared/types/database";
 
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 
@@ -36,6 +36,12 @@ export interface RawPlanningRow {
   secondary_leader: RawPlanningLeader | null;
   prayer_topic: { id: string; title: string } | null;
   program: { id: string; name: string } | null;
+  prayer_leader_response: AssignmentResponse;
+  prayer_leader_response_comment: string | null;
+  prayer_leader_response_at: string | null;
+  secondary_leader_response: AssignmentResponse;
+  secondary_leader_response_comment: string | null;
+  secondary_leader_response_at: string | null;
 }
 
 const PLANNING_SELECT = `
@@ -43,7 +49,9 @@ const PLANNING_SELECT = `
   primary_leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname),
   secondary_leader:profiles!planning_secondary_leader_id_fkey(id, firstname, lastname),
   prayer_topic:prayer_topics(id, title),
-  program:programs(id, name)
+  program:programs(id, name),
+  prayer_leader_response, prayer_leader_response_comment, prayer_leader_response_at,
+  secondary_leader_response, secondary_leader_response_comment, secondary_leader_response_at
 `;
 
 function toInsertPayload(values: PlanningSlotFormValues) {
@@ -180,4 +188,21 @@ export async function queryProgramOptions(): Promise<{ id: string; name: string 
 
   if (error) throw new Error(error.message);
   return data;
+}
+
+export async function updatePlanningAssignmentResponseQuery(
+  id: string,
+  role: PlanningLeaderRole,
+  input: { response: "ACCEPTED" | "DECLINED"; comment: string | null },
+): Promise<RawPlanningRow> {
+  const supabase = createClient();
+  const payload =
+    role === "PRAYER_LEADER"
+      ? { prayer_leader_response: input.response, prayer_leader_response_comment: input.comment }
+      : { secondary_leader_response: input.response, secondary_leader_response_comment: input.comment };
+
+  const { data, error } = await supabase.from("planning").update(payload).eq("id", id).select(PLANNING_SELECT).single();
+
+  if (error) throw new Error(error.message);
+  return data as unknown as RawPlanningRow;
 }

@@ -30,6 +30,12 @@ export const PlanningMapper = {
       prayerTopic: row.prayer_topic,
       program: row.program,
       notes: row.notes,
+      prayerLeaderResponse: row.prayer_leader_response,
+      prayerLeaderResponseComment: row.prayer_leader_response_comment,
+      prayerLeaderResponseAt: row.prayer_leader_response_at,
+      secondaryLeaderResponse: row.secondary_leader_response,
+      secondaryLeaderResponseComment: row.secondary_leader_response_comment,
+      secondaryLeaderResponseAt: row.secondary_leader_response_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

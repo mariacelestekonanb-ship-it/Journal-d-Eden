@@ -116,6 +116,26 @@ planning » d'une carte programme règle simplement le filtre général `program
 l'onglet Liste — le Planning général et « le planning de ce programme » sont la même UI, juste
 filtrée différemment. Voir `DATABASE.md#programs` pour le schéma.
 
+## Réponse à l'assignation & remplacements
+
+Un conducteur assigné (principal **ou** secondaire) peut accepter ou refuser son assignation,
+avec un commentaire libre — visible dans le détail du créneau (`AssignmentResponsePanel`), sous
+les informations générales. La décision reste **modifiable à tout moment** (les boutons
+Accepter/Refuser restent actifs après une première réponse) ; réassigner le créneau à quelqu'un
+d'autre remet automatiquement sa réponse à `PENDING` (voir le trigger
+`manage_planning_assignment_response`, `DATABASE.md#planning`).
+
+Plutôt que de simplement refuser, un conducteur peut aussi **signaler un remplacement** : il
+propose un membre précis (`planning_replacement_requests`), avec un commentaire optionnel.
+Un administrateur voit la demande dans ce même panneau et l'approuve ou la refuse :
+
+- **Approuvée** → le créneau est réellement réassigné au membre proposé (même mécanique que
+  changer le conducteur depuis le formulaire — nouvelle notification, réponse remise à `PENDING`).
+- **Refusée** → rien ne change sur le créneau ; le demandeur est notifié du refus.
+
+Chaque réponse (accepter/refuser) et chaque demande de remplacement déclenche une notification —
+voir `NOTIFICATIONS.md` pour le détail des événements et destinataires.
+
 ## Permissions
 
 `getPlanningPermissions(role)` centralise les droits — aucun `role === "ADMIN"` dispersé dans les
@@ -130,6 +150,8 @@ composants :
 | Importer des créneaux depuis un CSV | ✅ | ❌ (aligné sur le droit de créer) |
 | Consulter les programmes | ✅ | ✅ |
 | Créer / modifier / supprimer un programme | ✅ | ❌ |
+| Accepter/refuser sa propre assignation, signaler un remplacement | — | ✅ (si assigné) |
+| Approuver/refuser une demande de remplacement | ✅ | ❌ |
 
 ## Composants
 
@@ -147,14 +169,18 @@ composants :
 | `ProgramsTab` | Onglet Programmes : cartes + création/modification/suppression |
 | `ProgramCard` | Une carte programme (description, équipe, raccourci « Voir le planning ») |
 | `ProgramForm` | Formulaire Zod : nom, description, équipe (cases à cocher sur les conducteurs) |
+| `AssignmentResponsePanel` | Réponse à l'assignation (badges, accepter/refuser, commentaire) + demandes de remplacement, dans le détail d'un créneau |
 
 ## Services
 
 | Service | Rôle |
 | --- | --- |
-| `PlanningRepository` (interface) | Contrat CRUD + options (conducteurs, lieux, sujets, programmes) |
+| `PlanningRepository` (interface) | Contrat CRUD + options (conducteurs, lieux, sujets, programmes) + `respondToAssignment` |
 | `MockPlanningRepository` / `SupabasePlanningRepository` | Implémentations, choisies par `PlanningService` |
 | `PlanningService` | API publique consommée par les hooks (seul point d'entrée) |
+| `ReplacementRequestRepository` (interface) | Contrat CRUD des demandes de remplacement |
+| `MockReplacementRequestRepository` / `SupabaseReplacementRequestRepository` | Implémentations, choisies par `ReplacementRequestService` |
+| `ReplacementRequestService` | API publique consommée par les hooks — création, décision admin, annulation |
 | `PlanningConflictService` | Détection de conflits, pur et testable |
 | `PlanningExportService` | Export CSV (Blob + `URL.createObjectURL`) |
 | `PlanningImportService` | Parse un CSV (`shared/utils/csv.ts`), reconnaît les conducteurs par nom complet, valide chaque ligne avec `planningSlotSchema` — une ligne invalide est écartée et signalée, jamais bloquante pour les autres |

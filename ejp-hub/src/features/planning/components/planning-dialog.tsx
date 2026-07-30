@@ -3,6 +3,7 @@
 import { CalendarDays, Copy, MapPin, Pencil, Sparkles, User, XCircle } from "lucide-react";
 import * as React from "react";
 
+import { useRole, useUser } from "@/features/auth";
 import { AppButton } from "@/shared/components/app-button";
 import {
   Dialog,
@@ -19,6 +20,7 @@ import type { PrayerSlot } from "../types/planning.types";
 import { mapSlotToFormValues } from "../utils/map-slot-to-form-values";
 import type { PlanningPermissions } from "../utils/planning-permissions";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
+import { AssignmentResponsePanel } from "./assignment-response-panel";
 import { PlanningForm } from "./planning-form";
 import { PlanningStatusBadge } from "./planning-status-badge";
 
@@ -39,6 +41,9 @@ export interface PlanningDialogProps {
 
 /** Détail en lecture seule d'un créneau — l'aperçu rapide du calendrier ET le mode « Consulter » de la liste. */
 function SlotDetails({ slot }: { slot: PrayerSlot }) {
+  const { profile } = useUser();
+  const { isAdmin } = useRole();
+
   return (
     <div className="space-y-3">
       <div className="flex items-start justify-between gap-2">
@@ -78,6 +83,7 @@ function SlotDetails({ slot }: { slot: PrayerSlot }) {
           {slot.notes}
         </div>
       )}
+      {profile && <AssignmentResponsePanel slot={slot} currentUserId={profile.id} isAdmin={isAdmin} />}
     </div>
   );
 }

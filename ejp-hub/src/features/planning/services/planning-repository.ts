@@ -1,6 +1,13 @@
 import type { PlanningStatus } from "@/shared/types/database";
 
-import type { PlanningLeaderOption, PlanningPrayerTopicRef, PlanningProgramRef, PrayerSlot } from "../types/planning.types";
+import type {
+  PlanningLeaderOption,
+  PlanningLeaderRole,
+  PlanningPrayerTopicRef,
+  PlanningProgramRef,
+  PrayerSlot,
+} from "../types/planning.types";
+import type { AssignmentResponseFormValues } from "../validation/assignment-response.schema";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 
 /**
@@ -17,6 +24,8 @@ export interface PlanningRepository {
   update(id: string, values: PlanningSlotFormValues): Promise<PrayerSlot>;
   updateSchedule(id: string, schedule: { date: string; startTime: string; endTime: string }): Promise<PrayerSlot>;
   updateStatus(id: string, status: PlanningStatus): Promise<PrayerSlot>;
+  /** Réponse (accepter/refuser, avec commentaire) d'un conducteur assigné à sa propre assignation. */
+  respondToAssignment(id: string, role: PlanningLeaderRole, values: AssignmentResponseFormValues): Promise<PrayerSlot>;
   remove(id: string): Promise<void>;
   duplicate(id: string): Promise<PrayerSlot>;
   listLeaderOptions(): Promise<PlanningLeaderOption[]>;

@@ -7,7 +7,10 @@ import { cancelSlotAction } from "../actions/cancel-slot.action";
 import { deleteSlotAction } from "../actions/delete-slot.action";
 import { duplicateSlotAction } from "../actions/duplicate-slot.action";
 import { createSlotAction } from "../actions/create-slot.action";
+import { respondToAssignmentAction } from "../actions/respond-to-assignment.action";
 import { rescheduleSlotAction, updateSlotAction } from "../actions/update-slot.action";
+import type { PlanningLeaderRole } from "../types/planning.types";
+import type { AssignmentResponseFormValues } from "../validation/assignment-response.schema";
 import type { PlanningSlotFormValues } from "../validation/planning-slot.schema";
 import { PLANNING_SLOTS_KEY } from "./use-planning-slots";
 
@@ -70,6 +73,26 @@ export function useDeleteSlot() {
     onSuccess: () => {
       invalidate();
       toast.success("Créneau supprimé.");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+}
+
+export function useRespondToAssignment() {
+  const invalidate = useInvalidatePlanningSlots();
+  return useMutation({
+    mutationFn: ({
+      id,
+      role,
+      values,
+    }: {
+      id: string;
+      role: PlanningLeaderRole;
+      values: AssignmentResponseFormValues;
+    }) => respondToAssignmentAction(id, role, values),
+    onSuccess: (_, { values }) => {
+      invalidate();
+      toast.success(values.response === "ACCEPTED" ? "Créneau accepté." : "Créneau refusé.");
     },
     onError: (error) => toast.error(error.message),
   });
