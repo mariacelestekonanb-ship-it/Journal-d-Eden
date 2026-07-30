@@ -40,7 +40,8 @@ begin
 
       if not already_sent then
         perform public.create_notification(
-          leader_id, 'PLANNING', case when label = 'aujourd''hui' then 'HIGH' else 'NORMAL' end,
+          leader_id, 'PLANNING',
+          (case when label = 'aujourd''hui' then 'HIGH' else 'NORMAL' end)::public.notification_priority,
           'Rappel : vous conduisez la prière',
           'Vous conduisez la prière « ' || slot.title || ' » ' || label
             || ' à ' || to_char(slot.start_time, 'HH24:MI') || '.',
