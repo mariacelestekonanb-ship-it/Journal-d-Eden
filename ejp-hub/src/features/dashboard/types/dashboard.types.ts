@@ -49,9 +49,10 @@ export interface ActivityLogEntry {
   icon: LucideIcon;
 }
 
-/** Un raccourci de la section « Actions rapides » (aucune action réelle pour l'instant). */
+/** Un raccourci de la section « Actions rapides » — navigue vers `href` au clic. */
 export interface QuickAction {
   id: string;
   label: string;
   icon: LucideIcon;
+  href: string;
 }

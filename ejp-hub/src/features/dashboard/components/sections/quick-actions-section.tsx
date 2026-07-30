@@ -1,8 +1,8 @@
 "use client";
 
 import { Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
 import * as React from "react";
-import { toast } from "sonner";
 
 import type { Role } from "@/shared/constants/roles";
 
@@ -14,8 +14,9 @@ export interface QuickActionsSectionProps {
   role: Role;
 }
 
-/** Section « Actions rapides » : raccourcis adaptés au rôle — aucune action réelle pour l'instant. */
+/** Section « Actions rapides » : raccourcis adaptés au rôle, chacun navigue vers son module. */
 export function QuickActionsSection({ role }: QuickActionsSectionProps) {
+  const router = useRouter();
   const actions = React.useMemo(() => DashboardService.getQuickActions(role), [role]);
 
   return (
@@ -26,7 +27,7 @@ export function QuickActionsSection({ role }: QuickActionsSectionProps) {
             key={action.id}
             label={action.label}
             icon={action.icon}
-            onClick={() => toast.info("Bientôt disponible")}
+            onClick={() => router.push(action.href)}
           />
         ))}
       </div>

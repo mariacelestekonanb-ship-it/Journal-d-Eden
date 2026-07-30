@@ -180,16 +180,16 @@ export const DashboardMocks = {
   ],
 
   quickActionsForAdmin: (): QuickAction[] => [
-    { id: "create-topic", label: "Créer un sujet", icon: HeartHandshake },
-    { id: "create-slot", label: "Créer une conduite", icon: CalendarDays },
-    { id: "add-user", label: "Ajouter un utilisateur", icon: Users },
-    { id: "view-reports", label: "Voir les rapports", icon: FileText },
+    { id: "create-topic", label: "Créer un sujet", icon: HeartHandshake, href: "/sujets-de-priere" },
+    { id: "create-slot", label: "Créer une conduite", icon: CalendarDays, href: "/planning" },
+    { id: "add-user", label: "Ajouter un utilisateur", icon: Users, href: "/administration/membres/demandes" },
+    { id: "view-reports", label: "Voir les rapports", icon: FileText, href: "/comptes-rendus" },
   ],
 
   quickActionsForPrayerLeader: (): QuickAction[] => [
-    { id: "view-planning", label: "Voir mon planning", icon: CalendarDays },
-    { id: "create-report", label: "Créer mon compte rendu", icon: FileText },
-    { id: "view-topics", label: "Voir les sujets", icon: HeartHandshake },
-    { id: "view-testimonies", label: "Consulter les témoignages", icon: Sparkles },
+    { id: "view-planning", label: "Voir mon planning", icon: CalendarDays, href: "/planning" },
+    { id: "create-report", label: "Créer mon compte rendu", icon: FileText, href: "/comptes-rendus/nouveau" },
+    { id: "view-topics", label: "Voir les sujets", icon: HeartHandshake, href: "/sujets-de-priere" },
+    { id: "view-testimonies", label: "Consulter les témoignages", icon: Sparkles, href: "/temoignages" },
   ],
 };

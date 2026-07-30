@@ -14,6 +14,7 @@ export type {
   AdminCategoryScope,
   AdminDashboardStats,
   AdminSearchResult,
+  AdminSearchResultType,
   AuditLogEntry,
   PlatformSettings,
 } from "./types/admin.types";
