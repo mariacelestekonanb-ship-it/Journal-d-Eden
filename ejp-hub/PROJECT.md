@@ -94,3 +94,6 @@ audité, uniformisé et durci l'ensemble de ce qui précède.
 - Documentation par module : [`PLANNING.md`](./PLANNING.md), [`PRAYER_TOPICS.md`](./PRAYER_TOPICS.md),
   [`REPORTS.md`](./REPORTS.md), [`MEMBERS.md`](./MEMBERS.md), [`NOTIFICATIONS.md`](./NOTIFICATIONS.md),
   [`ADMIN.md`](./ADMIN.md).
+- [`DEPARTMENTS.md`](./DEPARTMENTS.md) — plan d'implémentation de l'architecture multi-département
+  (HUB by ICC Reims), pas encore développé : schéma, RLS, ordre des migrations, impact module par
+  module.
