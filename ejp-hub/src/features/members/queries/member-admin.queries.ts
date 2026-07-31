@@ -53,9 +53,31 @@ export interface MembershipRequestInput {
  * ne le peut jamais, contrairement à `user_metadata` qu'un appelant
  * quelconque peut renseigner librement. Voir le commentaire de la migration
  * pour le détail de la faille que ce choix ferme.
+ *
+ * **Redemande après un refus (ou une suppression)** : `auth.users.email` est
+ * unique — une fois le compte créé ici, il existe pour toujours, même
+ * `REFUSED`. Sans ce garde-fou, quiconque refusé restait bloqué à vie :
+ * `auth.admin.createUser` échoue systématiquement avec « already been
+ * registered » sur une adresse déjà utilisée, quel que soit le statut du
+ * profil associé. On vérifie donc d'abord si un profil existe déjà pour
+ * cette adresse ; s'il est `REFUSED` ou supprimé (`deleted_at`), la demande
+ * réutilise ce même compte (`resubmitMembershipRequest`) au lieu d'en créer
+ * un second — impossible de toute façon avec un e-mail unique.
  */
 export async function adminCreateMembershipRequestQuery(input: MembershipRequestInput): Promise<RawMemberRow> {
   const supabase = createAdminClient();
+
+  const { data: existing, error: existingError } = await supabase
+    .from("profiles")
+    .select("id, status, deleted_at")
+    .eq("email", input.email)
+    .maybeSingle();
+
+  if (existingError) throw new Error(existingError.message);
+
+  if (existing && (existing.status === "REFUSED" || existing.deleted_at)) {
+    return resubmitMembershipRequest(supabase, existing.id, input);
+  }
 
   const { data: created, error: createError } = await supabase.auth.admin.createUser({
     email: input.email,
@@ -85,6 +107,47 @@ export async function adminCreateMembershipRequestQuery(input: MembershipRequest
     .from("profiles")
     .select(MEMBER_SELECT)
     .eq("id", created.user.id)
+    .single();
+
+  if (profileError) throw new Error(profileError.message);
+  return { ...(profile as unknown as Omit<RawMemberRow, "validator">), validator: null };
+}
+
+/**
+ * Fait repasser un compte `REFUSED` (ou supprimé) par le début du workflow
+ * d'adhésion, avec les informations et le mot de passe fraîchement soumis —
+ * voir le commentaire de `adminCreateMembershipRequestQuery` ci-dessus.
+ */
+async function resubmitMembershipRequest(
+  supabase: ReturnType<typeof createAdminClient>,
+  userId: string,
+  input: MembershipRequestInput,
+): Promise<RawMemberRow> {
+  const { error: authError } = await supabase.auth.admin.updateUserById(userId, {
+    password: input.password,
+    email_confirm: true,
+    user_metadata: {
+      firstname: input.firstName,
+      lastname: input.lastName,
+      phone: input.phone,
+    },
+  });
+  if (authError) throw new Error(authError.message);
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .update({
+      firstname: input.firstName,
+      lastname: input.lastName,
+      phone: input.phone,
+      status: "PENDING",
+      is_active: false,
+      validated_at: null,
+      validated_by: null,
+      deleted_at: null,
+    })
+    .eq("id", userId)
+    .select(MEMBER_SELECT)
     .single();
 
   if (profileError) throw new Error(profileError.message);

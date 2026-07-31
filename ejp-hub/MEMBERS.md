@@ -67,6 +67,20 @@ Demande d'adhésion (formulaire public /rejoindre)
 5. **Refus** : `status → REFUSED`, `validatedAt`/`validatedBy` renseignés. Le compte
    existe toujours côté Supabase Auth mais reste bloqué (voir gate ci-dessous).
 
+### Redemande après un refus
+
+`REFUSED` n'est pas un état totalement terminal : la même personne peut soumettre une
+nouvelle demande d'adhésion (même formulaire `/rejoindre`, même adresse e-mail).
+Techniquement, le compte Supabase Auth créé à la *première* demande existe déjà et
+`auth.users.email` est unique — il ne peut jamais y avoir de second compte pour cette
+adresse. `adminCreateMembershipRequestQuery` détecte donc, avant de tenter de créer un
+compte, qu'un profil `REFUSED` (ou supprimé, voir « Suppression » ci-dessous) existe
+déjà pour cet e-mail, et réutilise ce même compte (`resubmitMembershipRequest`) : mot
+de passe et informations mis à jour, statut remis à `PENDING`, exactement comme une
+toute nouvelle demande. Sans ce garde-fou, une personne refusée restait bloquée à vie
+(l'API Admin échoue systématiquement sur un e-mail déjà enregistré, quel que soit le
+statut du profil associé) — c'était un bug, pas une restriction voulue.
+
 Un administrateur peut aussi `suspend` un membre `ACTIVE` (incident, départ temporaire)
 et le `reactivate` — ce sont les 5 actions exactes listées par le brief (valider,
 refuser, suspendre, réactiver, changer le rôle), portées par `MemberWorkflowService`
