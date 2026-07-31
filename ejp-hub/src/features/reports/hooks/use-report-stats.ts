@@ -1,11 +1,7 @@
-"use client";
-
 import { format, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
-import * as React from "react";
 
 import type { Report, ReportStatsSummary } from "../types/report.types";
-import { useReports } from "./use-reports";
 
 const EVOLUTION_MONTHS = 6;
 
@@ -33,7 +29,7 @@ function computeAverageValidationHours(reports: Report[]): number | null {
   return Math.round((durations.reduce((sum, hours) => sum + hours, 0) / durations.length) * 10) / 10;
 }
 
-/** Calcule les indicateurs du module à partir des CR déjà en cache — aucun appel réseau supplémentaire. */
+/** Calcule les indicateurs du module à partir d'un jeu de CR déjà en cache — pur, aucun appel réseau. */
 export function computeReportStats(reports: Report[]): ReportStatsSummary {
   return {
     pendingCount: reports.filter((report) => report.status === "SUBMITTED").length,
@@ -43,10 +39,4 @@ export function computeReportStats(reports: Report[]): ReportStatsSummary {
     averageValidationHours: computeAverageValidationHours(reports),
     evolution: computeEvolution(reports),
   };
-}
-
-export function useReportStats() {
-  const { data: reports, isLoading } = useReports();
-  const stats = React.useMemo(() => computeReportStats(reports ?? []), [reports]);
-  return { stats, isLoading };
 }

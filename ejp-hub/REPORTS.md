@@ -114,7 +114,7 @@ références imbriquées. Elle est pensée pour être imprimée telle quelle
 ReportsView (page liste)                  ReportDetailView / ReportEditView (pages dédiées)
    │                                          │
    ├─ useReports()      ──► ReportService.list(context) ──► Repository (mock | Supabase)
-   ├─ useReportStats()  ──► computeReportStats()   (pur, dérivé du cache)
+   ├─ [scope Tous/Mes créneaux] ──► computeReportStats()   (pur, appliqué au sous-ensemble scoped)
    ├─ useReportsFilters()──► applyReportFilters()  (pur, en mémoire)
    │                                          ├─ ReportForm ──► ReportFormFields (6 sections)
    ├─ ReportStatistics, ReportEvolutionChart      ├─ useReportAutosave() (debounce 2 s, silencieux)
@@ -166,6 +166,15 @@ bloquait totalement la rédaction de son propre CR — sans qu'aucune autre port
 n'existe. La policy RLS `reports_insert_own` (`prayer_leader_id = auth.uid()`) autorisait
 déjà ce cas côté base ; seul le front-end bloquait en trop. Corrigé en alignant
 `canCreate` sur cette même règle des deux côtés.
+
+Pour la même raison, un `ADMIN` peut vouloir distinguer l'activité de toute
+l'organisation de ses propres CR en tant que conducteur : `ReportsView` propose un
+sélecteur « Toute l'organisation / Mes créneaux » (`Tabs`) qui filtre statistiques,
+graphique d'évolution et tableau sur `report.leader.id === currentUserId` — purement
+client, en mémoire, sur les CR déjà chargés par `useReports()` (`canViewAll` renvoie déjà
+tout côté Supabase). Sans effet pour un `PRAYER_LEADER`, qui ne voit de toute façon jamais
+que ses propres CR (isolation appliquée dès `ReportRepository.list`, voir ci-dessus) — le
+sélecteur n'est donc affiché que pour `ADMIN`.
 
 ### Bug corrigé : créneaux disponibles jamais chargés
 

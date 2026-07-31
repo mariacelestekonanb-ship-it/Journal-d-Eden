@@ -11,6 +11,7 @@ import { AppCard, AppCardContent, AppCardHeader, AppCardTitle } from "@/shared/c
 import { ConfirmDialog } from "@/shared/components/confirm-dialog";
 import type { Role } from "@/shared/constants/roles";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 
 import { PendingReportsSection } from "../components/pending-reports-section";
 import { ReportFilters } from "../components/report-filters";
@@ -18,12 +19,14 @@ import { ReportHeader } from "../components/report-header";
 import { ReportStatistics } from "../components/report-statistics";
 import { ReportTable } from "../components/report-table";
 import { useSubmitReport, useDeleteReport } from "../hooks/use-report-mutations";
-import { useReportStats } from "../hooks/use-report-stats";
+import { computeReportStats } from "../hooks/use-report-stats";
 import { useReports } from "../hooks/use-reports";
 import { applyReportFilters, useReportsFilters } from "../hooks/use-reports-filters";
 import type { Report } from "../types/report.types";
 import { deriveAuthorOptions, deriveLeaderOptions } from "../utils/derive-report-options";
 import { getReportPermissions } from "../utils/report-permissions";
+
+type ReportScope = "all" | "mine";
 
 const ReportEvolutionChart = dynamic(
   () => import("../components/report-evolution-chart").then((mod) => mod.ReportEvolutionChart),
@@ -46,17 +49,27 @@ export function ReportsView({ role }: ReportsViewProps) {
   const router = useRouter();
 
   const { data: reports, isLoading, isError, refetch } = useReports();
-  const { stats, isLoading: isStatsLoading } = useReportStats();
   const { filters, updateFilter, resetFilters, hasActiveFilters } = useReportsFilters();
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [confirmReport, setConfirmReport] = React.useState<Report | null>(null);
+  const [scope, setScope] = React.useState<ReportScope>("all");
 
   const submitMutation = useSubmitReport();
   const deleteMutation = useDeleteReport();
 
-  const filteredReports = React.useMemo(() => applyReportFilters(reports ?? [], filters), [reports, filters]);
-  const leaderOptions = React.useMemo(() => deriveLeaderOptions(reports ?? []), [reports]);
-  const authorOptions = React.useMemo(() => deriveAuthorOptions(reports ?? []), [reports]);
+  // Un admin voit par défaut l'activité de toute l'organisation ; « Mes créneaux » restreint
+  // aux CR dont il est lui-même le conducteur assigné (il peut aussi être conducteur, pas
+  // seulement administrateur — voir REPORTS.md). Sans objet pour un conducteur, qui ne voit
+  // de toute façon jamais que ses propres CR (isolation appliquée dès `ReportRepository.list`).
+  const scopedReports = React.useMemo(() => {
+    if (scope === "all" || !profile) return reports ?? [];
+    return (reports ?? []).filter((report) => report.leader.id === profile.id);
+  }, [reports, scope, profile]);
+
+  const stats = React.useMemo(() => computeReportStats(scopedReports), [scopedReports]);
+  const filteredReports = React.useMemo(() => applyReportFilters(scopedReports, filters), [scopedReports, filters]);
+  const leaderOptions = React.useMemo(() => deriveLeaderOptions(scopedReports), [scopedReports]);
+  const authorOptions = React.useMemo(() => deriveAuthorOptions(scopedReports), [scopedReports]);
 
   const callbacks = React.useMemo(
     () => ({
@@ -72,9 +85,20 @@ export function ReportsView({ role }: ReportsViewProps) {
     <div className="space-y-6">
       <ReportHeader permissions={permissions} />
 
-      {permissions.canViewAll && <PendingReportsSection />}
+      {permissions.canViewAll && (
+        <>
+          <PendingReportsSection />
 
-      <ReportStatistics stats={stats} isLoading={isStatsLoading} />
+          <Tabs value={scope} onValueChange={(value) => setScope(value as ReportScope)}>
+            <TabsList>
+              <TabsTrigger value="all">Toute l&apos;organisation</TabsTrigger>
+              <TabsTrigger value="mine">Mes créneaux</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </>
+      )}
+
+      <ReportStatistics stats={stats} isLoading={isLoading} />
 
       <AppCard className="p-4">
         <AppCardHeader className="p-0 pb-2">
