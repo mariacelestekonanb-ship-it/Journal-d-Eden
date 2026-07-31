@@ -136,6 +136,14 @@ Un administrateur voit la demande dans ce même panneau et l'approuve ou la refu
 Chaque réponse (accepter/refuser) et chaque demande de remplacement déclenche une notification —
 voir `NOTIFICATIONS.md` pour le détail des événements et destinataires.
 
+### Nom grisé pour un conducteur supprimé
+
+Un conducteur reste assigné à ses créneaux passés même après suppression de son
+compte (`profiles.deleted_at`, voir `MEMBERS.md#suppression`) : son nom continue de
+s'afficher tel quel dans la carte, le tableau et le détail du créneau
+(`PlanningParticipant.isActive === false`), simplement grisé/italique — l'historique
+du Planning ne doit jamais changer rétroactivement.
+
 ## Permissions
 
 `getPlanningPermissions(role)` centralise les droits — aucun `role === "ADMIN"` dispersé dans les

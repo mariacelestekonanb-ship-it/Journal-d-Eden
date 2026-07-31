@@ -28,6 +28,7 @@ export const MemberMapper = {
       registeredAt: row.created_at,
       validatedAt: row.validated_at,
       validatedBy: row.validator ? { id: row.validator.id, fullName: getFullName(row.validator) } : null,
+      deletedAt: row.deleted_at,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

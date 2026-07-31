@@ -66,7 +66,7 @@ export function MemberSelfProfileView() {
         <div>
           <p className="text-lg font-semibold text-foreground">{member.fullName}</p>
           <div className="mt-1 flex flex-wrap gap-2">
-            <MemberStatusBadge status={member.status} />
+            <MemberStatusBadge status={member.status} deletedAt={member.deletedAt} />
             <MemberRoleBadge role={member.role} />
           </div>
         </div>

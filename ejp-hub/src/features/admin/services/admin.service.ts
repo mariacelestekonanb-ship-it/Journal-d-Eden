@@ -38,9 +38,12 @@ export const AdminService = {
     const today = todayIsoDate();
 
     return {
-      // Une demande refusée n'est jamais devenue membre — exclue du total (voir use-member-stats.ts).
-      totalMembers: members.filter((member) => member.status !== "REFUSED").length,
-      activeLeaders: members.filter((member) => member.role === "PRAYER_LEADER" && member.status === "ACTIVE").length,
+      // Une demande refusée n'est jamais devenue membre, et un membre supprimé n'en est plus un
+      // (historique conservé, mais il ne doit pas gonfler ce total) — voir use-member-stats.ts.
+      totalMembers: members.filter((member) => member.status !== "REFUSED" && !member.deletedAt).length,
+      activeLeaders: members.filter(
+        (member) => member.role === "PRAYER_LEADER" && member.status === "ACTIVE" && !member.deletedAt,
+      ).length,
       pendingMembershipRequests: members.filter((member) => member.status === "PENDING").length,
       scheduledSlots: slots.filter((slot) => slot.date >= today).length,
       pendingReports: reports.filter((report) => report.status === "SUBMITTED").length,

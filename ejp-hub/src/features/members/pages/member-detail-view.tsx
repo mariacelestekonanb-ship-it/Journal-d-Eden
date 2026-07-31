@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CheckCircle2, Mail, RotateCcw, ShieldAlert, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Mail, RotateCcw, ShieldAlert, Trash2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -26,8 +26,10 @@ import { MemberStatusBadge } from "../components/member-status-badge";
 import {
   useAcceptMember,
   useChangeMemberRole,
+  useDeleteMember,
   useReactivateMember,
   useRefuseMember,
+  useRestoreMember,
   useSuspendMember,
 } from "../hooks/use-member-mutations";
 import { useMember, useMemberAssignments, useMemberReports } from "../hooks/use-members";
@@ -58,8 +60,10 @@ export function MemberDetailView({ role, memberId }: MemberDetailViewProps) {
   const suspendMutation = useSuspendMember();
   const reactivateMutation = useReactivateMember();
   const changeRoleMutation = useChangeMemberRole();
+  const deleteMutation = useDeleteMember();
+  const restoreMutation = useRestoreMember();
 
-  const [confirmAction, setConfirmAction] = React.useState<"suspend" | "refuse" | null>(null);
+  const [confirmAction, setConfirmAction] = React.useState<"suspend" | "refuse" | "delete" | null>(null);
   const [emailDialogOpen, setEmailDialogOpen] = React.useState(false);
 
   if (isLoading) return <Skeleton className="h-64 w-full" />;
@@ -74,6 +78,8 @@ export function MemberDetailView({ role, memberId }: MemberDetailViewProps) {
   const canSuspend = permissions.canSuspend && !isOwnProfile && MemberWorkflowService.isSuspendable(member.status);
   const canReactivate = permissions.canReactivate && MemberWorkflowService.isReactivatable(member.status);
   const canChangeRole = permissions.canChangeRole && !isOwnProfile;
+  const canDelete = permissions.canDelete && !isOwnProfile && MemberWorkflowService.isDeletable(member.deletedAt);
+  const canRestore = permissions.canDelete && MemberWorkflowService.isRestorable(member.deletedAt);
 
   return (
     <div className="space-y-6">
@@ -90,7 +96,7 @@ export function MemberDetailView({ role, memberId }: MemberDetailViewProps) {
           <div>
             <AppPageHeader title={member.fullName} description={member.email} />
             <div className="mt-2 flex flex-wrap gap-2">
-              <MemberStatusBadge status={member.status} />
+              <MemberStatusBadge status={member.status} deletedAt={member.deletedAt} />
               <MemberRoleBadge role={member.role} />
             </div>
           </div>
@@ -125,6 +131,18 @@ export function MemberDetailView({ role, memberId }: MemberDetailViewProps) {
             <AppButton variant="outline" onClick={() => setEmailDialogOpen(true)}>
               <Mail className="size-4" />
               Modifier l&apos;e-mail
+            </AppButton>
+          )}
+          {canRestore && (
+            <AppButton variant="outline" isLoading={restoreMutation.isPending} onClick={() => restoreMutation.mutate(member.id)}>
+              <RotateCcw className="size-4" />
+              Restaurer
+            </AppButton>
+          )}
+          {canDelete && (
+            <AppButton variant="destructive" onClick={() => setConfirmAction("delete")}>
+              <Trash2 className="size-4" />
+              Supprimer
             </AppButton>
           )}
         </div>
@@ -253,6 +271,20 @@ export function MemberDetailView({ role, memberId }: MemberDetailViewProps) {
         onConfirm={async () => {
           if (!profile) return;
           await suspendMutation.mutateAsync({ id: member.id, adminId: profile.id });
+          setConfirmAction(null);
+        }}
+      />
+
+      <ConfirmDialog
+        open={confirmAction === "delete"}
+        onOpenChange={(open) => !open && setConfirmAction(null)}
+        title="Supprimer ce membre ?"
+        description={`« ${member.fullName} » ne pourra plus se connecter. Son nom reste visible (grisé) sur les créneaux, comptes rendus et témoignages déjà existants — cette suppression reste réversible.`}
+        confirmLabel="Supprimer"
+        isLoading={deleteMutation.isPending}
+        onConfirm={async () => {
+          if (!profile) return;
+          await deleteMutation.mutateAsync({ id: member.id, adminId: profile.id });
           setConfirmAction(null);
         }}
       />

@@ -22,6 +22,7 @@ export const MOCK_PROFILE: CurrentProfile = {
   status: "ACTIVE",
   validated_at: null,
   validated_by: null,
+  deleted_at: null,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 };

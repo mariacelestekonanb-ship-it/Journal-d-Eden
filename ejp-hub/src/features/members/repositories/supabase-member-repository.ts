@@ -4,6 +4,7 @@ import {
   queryMemberAssignments,
   queryMemberById,
   queryMemberReports,
+  updateMemberDeletionQuery,
   updateMemberRoleQuery,
   updateMemberStatusQuery,
   updateOwnMemberProfileQuery,
@@ -51,6 +52,16 @@ export const SupabaseMemberRepository: MemberRepository = {
 
   async reactivate(id) {
     const row = await updateMemberStatusQuery(id, { status: "ACTIVE", isActive: true });
+    return MemberMapper.toMember(row);
+  },
+
+  async remove(id) {
+    const row = await updateMemberDeletionQuery(id, new Date().toISOString());
+    return MemberMapper.toMember(row);
+  },
+
+  async restore(id) {
+    const row = await updateMemberDeletionQuery(id, null);
     return MemberMapper.toMember(row);
   },
 

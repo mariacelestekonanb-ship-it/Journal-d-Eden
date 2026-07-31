@@ -47,6 +47,7 @@ export interface Database {
           status: MemberStatus;
           validated_at: string | null;
           validated_by: string | null;
+          deleted_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -74,6 +75,7 @@ export interface Database {
           status: MemberStatus;
           validated_at: string | null;
           validated_by: string | null;
+          deleted_at: string | null;
         }>;
         Relationships: [
           {

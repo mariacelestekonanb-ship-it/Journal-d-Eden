@@ -86,13 +86,16 @@ export async function middleware(request: NextRequest) {
     // tant qu'un admin n'a pas validé — sans lui, /compte-en-attente ne
     // servirait à rien.
     if (user && !isPublicPath) {
-      const { data: profile } = await supabase.from("profiles").select("role, status").eq("id", user.id).single();
+      const { data: profile } = await supabase.from("profiles").select("role, status, deleted_at").eq("id", user.id).single();
 
       if (!profile) {
         return NextResponse.redirect(new URL("/", request.url));
       }
 
-      const isActive = profile.status === "ACTIVE";
+      // Un membre supprimé (deleted_at) garde son status ACTIVE sous-jacent — l'historique
+      // (planning, comptes rendus, témoignages) reste cohérent — mais ne peut plus se connecter,
+      // exactement comme SUSPENDED. Voir MEMBERS.md#suppression.
+      const isActive = profile.status === "ACTIVE" && !profile.deleted_at;
 
       if (pathname === ACCOUNT_STATUS_PATH) {
         return isActive ? NextResponse.redirect(new URL("/", request.url)) : response;

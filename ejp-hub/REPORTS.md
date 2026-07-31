@@ -273,6 +273,14 @@ voir NOTIFICATIONS.md. Une relance quotidienne automatique (`pg_cron`,
 `send_report_reminders`) rappelle en plus chaque conducteur tant qu'un créneau passé n'a
 pas de CR.
 
+### Nom grisé pour un conducteur supprimé
+
+Comme pour le Planning, un compte rendu garde le nom réel de son conducteur
+(`report.leader`) même après suppression de son compte (`profiles.deleted_at`, voir
+`MEMBERS.md#suppression`) — seul l'affichage change (`ReportParticipant.isActive ===
+false` → nom grisé/italique dans `ReportCard` et `ReportTable`), jamais le contenu du
+compte rendu lui-même.
+
 `PendingReportsSection` (visible uniquement en `ADMIN`) liste ces créneaux en attente,
 tous conducteurs confondus, et permet d'envoyer la même relance **immédiatement** plutôt
 que d'attendre le prochain passage planifié — via `NotificationService.notify(...)`

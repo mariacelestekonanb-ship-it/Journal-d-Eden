@@ -32,6 +32,7 @@ export interface RawMemberRow {
   is_active: boolean;
   validated_at: string | null;
   validated_by: string | null;
+  deleted_at: string | null;
   /** Résolu séparément (voir `queryMemberById`) — jamais via un embed PostgREST, voir le commentaire de `MEMBER_SELECT`. */
   validator: RawMemberProfile | null;
   created_at: string;
@@ -66,7 +67,7 @@ export interface RawMemberReportRow {
  */
 const MEMBER_SELECT = `
   id, firstname, lastname, email, phone, avatar_url, role, status, is_active, validated_at, validated_by,
-  created_at, updated_at
+  deleted_at, created_at, updated_at
 `;
 
 export async function queryAllMembers(): Promise<RawMemberRow[]> {
@@ -114,6 +115,25 @@ export async function updateMemberStatusQuery(
       ...(fields.validatedBy !== undefined ? { validated_at: new Date().toISOString(), validated_by: fields.validatedBy } : {}),
       ...(fields.role !== undefined ? { role: fields.role } : {}),
     })
+    .eq("id", id)
+    .select(MEMBER_SELECT)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return { ...(data as unknown as Omit<RawMemberRow, "validator">), validator: null };
+}
+
+/**
+ * Suppression douce : `deleted_at` seul change (le `status` sous-jacent est
+ * volontairement conservé tel quel, voir `MemberWorkflowService`) — le profil
+ * et son historique (planning, comptes rendus, témoignages) restent intacts,
+ * seule la connexion est bloquée (`middleware.ts`).
+ */
+export async function updateMemberDeletionQuery(id: string, deletedAt: string | null): Promise<RawMemberRow> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ deleted_at: deletedAt })
     .eq("id", id)
     .select(MEMBER_SELECT)
     .single();

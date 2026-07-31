@@ -38,6 +38,8 @@ export interface Member {
   registeredAt: string;
   validatedAt: string | null;
   validatedBy: MemberValidator | null;
+  /** Suppression douce par un admin — profil et historique conservés, connexion bloquée. Voir MEMBERS.md#suppression. */
+  deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -86,4 +88,6 @@ export interface MemberCallbacks {
   onRefuse: (member: Member) => void;
   onSuspend: (member: Member) => void;
   onReactivate: (member: Member) => void;
+  onDelete: (member: Member) => void;
+  onRestore: (member: Member) => void;
 }

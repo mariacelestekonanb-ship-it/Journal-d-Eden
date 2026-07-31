@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { CheckCircle2, Eye, MoreHorizontal, RotateCcw, ShieldAlert, XCircle } from "lucide-react";
+import { CheckCircle2, Eye, MoreHorizontal, RotateCcw, ShieldAlert, Trash2, XCircle } from "lucide-react";
 
 import { AppAvatar } from "@/shared/components/app-avatar";
 import { AppButton } from "@/shared/components/app-button";
@@ -52,7 +52,9 @@ export function getMemberTableColumns(permissions: MemberPermissions, callbacks:
       header: "Nom",
       cell: ({ row }) => (
         <div>
-          <p className="font-medium text-foreground">{row.original.fullName}</p>
+          <p className={`font-medium ${row.original.deletedAt ? "text-muted-foreground" : "text-foreground"}`}>
+            {row.original.fullName}
+          </p>
           <p className="text-xs text-muted-foreground">{row.original.email}</p>
         </div>
       ),
@@ -72,7 +74,7 @@ export function getMemberTableColumns(permissions: MemberPermissions, callbacks:
       id: "status",
       accessorKey: "status",
       header: "Statut",
-      cell: ({ row }) => <MemberStatusBadge status={row.original.status} />,
+      cell: ({ row }) => <MemberStatusBadge status={row.original.status} deletedAt={row.original.deletedAt} />,
     },
     {
       id: "role",
@@ -97,6 +99,8 @@ export function getMemberTableColumns(permissions: MemberPermissions, callbacks:
         const canRefuse = permissions.canRefuse && MemberWorkflowService.isRefusable(member.status);
         const canSuspend = permissions.canSuspend && MemberWorkflowService.isSuspendable(member.status);
         const canReactivate = permissions.canReactivate && MemberWorkflowService.isReactivatable(member.status);
+        const canDelete = permissions.canDelete && MemberWorkflowService.isDeletable(member.deletedAt);
+        const canRestore = permissions.canDelete && MemberWorkflowService.isRestorable(member.deletedAt);
 
         return (
           <DropdownMenu>
@@ -132,6 +136,18 @@ export function getMemberTableColumns(permissions: MemberPermissions, callbacks:
                 <DropdownMenuItem onSelect={() => callbacks.onReactivate(member)}>
                   <RotateCcw className="size-4" />
                   Réactiver
+                </DropdownMenuItem>
+              )}
+              {canRestore && (
+                <DropdownMenuItem onSelect={() => callbacks.onRestore(member)}>
+                  <RotateCcw className="size-4" />
+                  Restaurer
+                </DropdownMenuItem>
+              )}
+              {canDelete && (
+                <DropdownMenuItem className="text-destructive focus:text-destructive" onSelect={() => callbacks.onDelete(member)}>
+                  <Trash2 className="size-4" />
+                  Supprimer
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

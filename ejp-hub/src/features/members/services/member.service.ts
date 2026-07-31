@@ -43,6 +43,15 @@ export const MemberService = {
     return getRepository().reactivate(id);
   },
 
+  async remove(id: string, adminId: string): Promise<Member> {
+    MemberValidationService.assertNotSelf(adminId, id, "supprimer");
+    return getRepository().remove(id);
+  },
+
+  async restore(id: string): Promise<Member> {
+    return getRepository().restore(id);
+  },
+
   async changeRole(id: string, role: MemberRole, adminId: string): Promise<Member> {
     MemberValidationService.assertNotSelf(adminId, id, "modifier le rôle de");
     return getRepository().changeRole(id, role);

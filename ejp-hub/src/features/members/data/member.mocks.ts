@@ -13,7 +13,7 @@ function timestamp(offsetDays: number): string {
   return new Date(Date.now() - offsetDays * 86_400_000).toISOString();
 }
 
-export const INITIAL_MOCK_MEMBERS: Member[] = [
+const BASE_MOCK_MEMBERS: Omit<Member, "deletedAt">[] = [
   {
     id: "mock-user",
     firstName: "Utilisateur",
@@ -143,6 +143,8 @@ export const INITIAL_MOCK_MEMBERS: Member[] = [
     updatedAt: timestamp(1),
   },
 ];
+
+export const INITIAL_MOCK_MEMBERS: Member[] = BASE_MOCK_MEMBERS.map((member) => ({ ...member, deletedAt: null }));
 
 /** Historique Planning fictif — seuls les membres actifs de longue date en ont un. */
 export const MOCK_MEMBER_ASSIGNMENTS: Record<string, MemberAssignmentSummary[]> = {

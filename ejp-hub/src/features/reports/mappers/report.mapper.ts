@@ -4,7 +4,9 @@ import type { RawReportComment, RawReportProfile, RawReportRow } from "../querie
 import type { Report, ReportComment, ReportParticipant } from "../types/report.types";
 
 function toParticipant(profile: RawReportProfile | null): ReportParticipant {
-  return profile ? { id: profile.id, fullName: getFullName(profile) } : { id: "", fullName: "Inconnu" };
+  return profile
+    ? { id: profile.id, fullName: getFullName(profile), isActive: profile.is_active }
+    : { id: "", fullName: "Inconnu" };
 }
 
 /**

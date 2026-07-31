@@ -36,8 +36,15 @@ function PlanningCardContent({ slot }: { slot: PrayerSlot }) {
 
       <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
         <User className="size-3.5 shrink-0" aria-hidden="true" />
-        {slot.primaryLeader?.fullName ?? "Non assigné"}
-        {slot.secondaryLeader && ` · ${slot.secondaryLeader.fullName}`}
+        <span className={slot.primaryLeader?.isActive === false ? "italic opacity-60" : undefined}>
+          {slot.primaryLeader?.fullName ?? "Non assigné"}
+        </span>
+        {slot.secondaryLeader && (
+          <span className={slot.secondaryLeader.isActive === false ? "italic opacity-60" : undefined}>
+            {" "}
+            · {slot.secondaryLeader.fullName}
+          </span>
+        )}
       </p>
 
       {(slot.theme || slot.prayerTopic) && (

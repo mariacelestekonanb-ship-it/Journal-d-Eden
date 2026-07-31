@@ -61,13 +61,23 @@ export function getPlanningTableColumns(
       id: "primaryLeader",
       accessorFn: (row) => row.primaryLeader?.fullName ?? "",
       header: "Conducteur principal",
-      cell: ({ row }) => row.original.primaryLeader?.fullName ?? "Non assigné",
+      cell: ({ row }) =>
+        row.original.primaryLeader?.isActive === false ? (
+          <span className="italic text-muted-foreground">{row.original.primaryLeader.fullName}</span>
+        ) : (
+          (row.original.primaryLeader?.fullName ?? "Non assigné")
+        ),
     },
     {
       id: "secondaryLeader",
       accessorFn: (row) => row.secondaryLeader?.fullName ?? "",
       header: "Conducteur secondaire",
-      cell: ({ row }) => row.original.secondaryLeader?.fullName ?? "—",
+      cell: ({ row }) =>
+        row.original.secondaryLeader?.isActive === false ? (
+          <span className="italic text-muted-foreground">{row.original.secondaryLeader.fullName}</span>
+        ) : (
+          (row.original.secondaryLeader?.fullName ?? "—")
+        ),
     },
     {
       id: "status",

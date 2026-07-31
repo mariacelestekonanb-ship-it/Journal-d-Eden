@@ -64,7 +64,12 @@ export function getReportTableColumns(
       id: "leader",
       accessorFn: (row) => row.leader.fullName,
       header: "Conducteur",
-      cell: ({ row }) => row.original.leader.fullName,
+      cell: ({ row }) =>
+        row.original.leader.isActive === false ? (
+          <span className="italic text-muted-foreground">{row.original.leader.fullName}</span>
+        ) : (
+          row.original.leader.fullName
+        ),
     },
     {
       id: "status",

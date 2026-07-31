@@ -17,6 +17,7 @@ export interface RawReportProfile {
   id: string;
   firstname: string;
   lastname: string;
+  is_active: boolean;
 }
 
 export interface RawReportSlot {
@@ -64,8 +65,8 @@ const REPORT_SELECT = `
   thanksgiving, holy_spirit_invitation, prayer_points, closing_thanksgiving, announcements,
   status, created_at, updated_at, submitted_at, validated_at,
   planning:planning(id, title, slot_date, start_time, end_time, location),
-  leader:profiles!reports_prayer_leader_id_fkey(id, firstname, lastname),
-  author:profiles!reports_created_by_fkey(id, firstname, lastname)
+  leader:profiles!reports_prayer_leader_id_fkey(id, firstname, lastname, is_active),
+  author:profiles!reports_created_by_fkey(id, firstname, lastname, is_active)
 `;
 
 function toUpsertPayload(values: ReportFormValues) {
@@ -170,7 +171,7 @@ export async function queryAvailablePlanningSlots(userId: string): Promise<
 
   let query = supabase
     .from("planning")
-    .select("id, title, slot_date, start_time, end_time, location, prayer_leader_id, leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname)")
+    .select("id, title, slot_date, start_time, end_time, location, prayer_leader_id, leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname, is_active)")
     .eq("prayer_leader_id", userId)
     .order("slot_date", { ascending: false });
 
@@ -205,7 +206,7 @@ export async function queryPendingReportSlots(): Promise<
 
   let query = supabase
     .from("planning")
-    .select("id, title, slot_date, start_time, end_time, location, prayer_leader_id, leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname)")
+    .select("id, title, slot_date, start_time, end_time, location, prayer_leader_id, leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname, is_active)")
     .lte("slot_date", new Date().toISOString().slice(0, 10))
     .not("prayer_leader_id", "is", null)
     .neq("status", "CANCELLED")
@@ -234,7 +235,7 @@ export async function queryReportComments(reportId: string): Promise<RawReportCo
   const supabase = createClient();
   const { data, error } = await supabase
     .from("report_comments")
-    .select("id, report_id, author_id, message, created_at, author:profiles(id, firstname, lastname)")
+    .select("id, report_id, author_id, message, created_at, author:profiles(id, firstname, lastname, is_active)")
     .eq("report_id", reportId)
     .order("created_at", { ascending: true });
 
@@ -251,7 +252,7 @@ export async function createReportCommentQuery(
   const { data, error } = await supabase
     .from("report_comments")
     .insert({ report_id: reportId, author_id: authorId, message })
-    .select("id, report_id, author_id, message, created_at, author:profiles(id, firstname, lastname)")
+    .select("id, report_id, author_id, message, created_at, author:profiles(id, firstname, lastname, is_active)")
     .single();
 
   if (error) throw new Error(error.message);

@@ -24,13 +24,15 @@ function MemberCardComponent({ member, actions, className }: MemberCardProps) {
         <div className="flex items-center gap-3">
           <AppAvatar name={member.fullName} src={member.photoUrl} className="size-11 shrink-0" />
           <div className="min-w-0">
-            <p className="truncate font-medium text-foreground">{member.fullName}</p>
+            <p className={`truncate font-medium ${member.deletedAt ? "text-muted-foreground" : "text-foreground"}`}>
+              {member.fullName}
+            </p>
             <p className="text-xs text-muted-foreground">Inscrit {formatRelative(member.registeredAt)}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-1.5">
-          <MemberStatusBadge status={member.status} />
+          <MemberStatusBadge status={member.status} deletedAt={member.deletedAt} />
           <MemberRoleBadge role={member.role} />
         </div>
 

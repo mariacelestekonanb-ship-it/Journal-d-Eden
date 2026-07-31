@@ -7,10 +7,20 @@ import { MEMBER_STATUS_BADGE_VARIANT, MEMBER_STATUS_LABELS } from "../utils/memb
 
 export interface MemberStatusBadgeProps {
   status: MemberStatus;
+  /** Prioritaire sur `status` — un compte supprimé reste affiché comme tel quel que soit son statut sous-jacent. */
+  deletedAt?: string | null;
   className?: string;
 }
 
-function MemberStatusBadgeComponent({ status, className }: MemberStatusBadgeProps) {
+function MemberStatusBadgeComponent({ status, deletedAt, className }: MemberStatusBadgeProps) {
+  if (deletedAt) {
+    return (
+      <AppBadge variant="outline" className={className}>
+        Supprimé
+      </AppBadge>
+    );
+  }
+
   return (
     <AppBadge variant={MEMBER_STATUS_BADGE_VARIANT[status]} className={className}>
       {MEMBER_STATUS_LABELS[status]}

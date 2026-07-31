@@ -75,6 +75,20 @@ export const MockMemberRepository: MemberRepository = {
     return updated;
   },
 
+  async remove(id) {
+    const existing = requireMember(id);
+    const updated = touch({ ...existing, deletedAt: new Date().toISOString() });
+    members = members.map((member) => (member.id === id ? updated : member));
+    return updated;
+  },
+
+  async restore(id) {
+    const existing = requireMember(id);
+    const updated = touch({ ...existing, deletedAt: null });
+    members = members.map((member) => (member.id === id ? updated : member));
+    return updated;
+  },
+
   async changeRole(id, role) {
     const existing = requireMember(id);
     const updated = touch({ ...existing, role });

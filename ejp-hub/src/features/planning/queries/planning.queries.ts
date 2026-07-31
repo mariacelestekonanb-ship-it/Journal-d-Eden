@@ -17,6 +17,7 @@ export interface RawPlanningLeader {
   id: string;
   firstname: string;
   lastname: string;
+  is_active: boolean;
 }
 
 export interface RawPlanningRow {
@@ -46,8 +47,8 @@ export interface RawPlanningRow {
 
 const PLANNING_SELECT = `
   id, title, description, slot_date, start_time, end_time, location, status, theme, notes, created_at, updated_at,
-  primary_leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname),
-  secondary_leader:profiles!planning_secondary_leader_id_fkey(id, firstname, lastname),
+  primary_leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname, is_active),
+  secondary_leader:profiles!planning_secondary_leader_id_fkey(id, firstname, lastname, is_active),
   prayer_topic:prayer_topics(id, title),
   program:programs(id, name),
   prayer_leader_response, prayer_leader_response_comment, prayer_leader_response_at,
@@ -162,7 +163,7 @@ export async function queryActiveLeaders(): Promise<RawPlanningLeader[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, firstname, lastname")
+    .select("id, firstname, lastname, is_active")
     .eq("is_active", true)
     .order("firstname", { ascending: true });
 

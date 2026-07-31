@@ -26,6 +26,11 @@ const STATUS_MESSAGES: Partial<Record<string, { title: string; description: stri
   },
 };
 
+const DELETED_MESSAGE = {
+  title: "Votre compte a été supprimé",
+  description: "Un administrateur a supprimé votre compte. Contactez l'EJP pour plus d'informations.",
+};
+
 /**
  * Page vue par un utilisateur authentifié dont le compte n'est pas (encore,
  * ou plus) `ACTIVE` — voir `middleware.ts`, qui redirige ici quel que soit le
@@ -43,11 +48,11 @@ export default async function CompteEnAttentePage() {
   if (!profile) {
     redirect("/connexion");
   }
-  if (profile.status === "ACTIVE") {
+  if (profile.status === "ACTIVE" && !profile.deleted_at) {
     redirect("/");
   }
 
-  const message = STATUS_MESSAGES[profile.status] ?? STATUS_MESSAGES.PENDING!;
+  const message = profile.deleted_at ? DELETED_MESSAGE : (STATUS_MESSAGES[profile.status] ?? STATUS_MESSAGES.PENDING!);
 
   return (
     <div className="space-y-5 text-center">

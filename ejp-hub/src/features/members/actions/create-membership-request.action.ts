@@ -50,6 +50,7 @@ export async function createMembershipRequestAction(
         registeredAt: now,
         validatedAt: null,
         validatedBy: null,
+        deletedAt: null,
         createdAt: now,
         updatedAt: now,
       },

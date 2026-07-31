@@ -42,7 +42,7 @@ Application SaaS de centralisation de l'organisation des conducteurs de prière 
 | Membres | `/administration/membres` | `ADMIN` (accès à tous) / soi-même | [`MEMBERS.md`](./MEMBERS.md) |
 | Notifications | `/notifications` | Tous (strictement personnel) | [`NOTIFICATIONS.md`](./NOTIFICATIONS.md) |
 | Administration | `/administration` | `ADMIN` uniquement | [`ADMIN.md`](./ADMIN.md) |
-| Témoignages | `/temoignages` | Tous | — (état vide, non développé) |
+| Témoignages | `/temoignages` | Tous (publication libre, sans modération) | [`TESTIMONIES.md`](./TESTIMONIES.md) |
 | Mon profil | `/mon-profil` | Tous | voir `MEMBERS.md#auto-profil` |
 
 ## Démarrage
@@ -116,7 +116,7 @@ ci-dessus) plutôt que de faire échouer le build ou le démarrage.
 - [`ROADMAP.md`](./ROADMAP.md) — historique des sprints, ce qui reste.
 - Documentation par module : [`PLANNING.md`](./PLANNING.md), [`PRAYER_TOPICS.md`](./PRAYER_TOPICS.md),
   [`REPORTS.md`](./REPORTS.md), [`MEMBERS.md`](./MEMBERS.md), [`NOTIFICATIONS.md`](./NOTIFICATIONS.md),
-  [`ADMIN.md`](./ADMIN.md).
+  [`ADMIN.md`](./ADMIN.md), [`TESTIMONIES.md`](./TESTIMONIES.md).
 
 ## Rôles
 

@@ -47,11 +47,23 @@ notifications (user_id → profiles)
 | `validated_at` | `timestamptz` | nullable — renseignée au passage `PENDING` → `ACTIVE`/`REFUSED` |
 | `validated_by` | `uuid` → `profiles.id` | nullable — administrateur ayant traité la demande |
 | `created_at` / `updated_at` | `timestamptz` | `updated_at` maintenu par `set_updated_at()` ; `created_at` sert de « date d'inscription » |
+| `deleted_at` | `timestamptz` | nullable, défaut `NULL` — suppression douce d'un membre par un admin (voir `20260813090001_member_deletion_and_profile_visibility.sql` et [`MEMBERS.md#suppression`](./MEMBERS.md#suppression)). Orthogonal à `status` : ne remplace pas `SUSPENDED`, permet un badge « Supprimé » distinct. `NULL` = compte non supprimé |
 
 **Sécurité** : le trigger `prevent_privilege_escalation` empêche un utilisateur non-`ADMIN` de
-modifier `role`, `is_active`, `status` ou `email` — y compris les siens. Seul un `ADMIN` (ou la clé
-`service_role`, donc `scripts/seed.ts` et les Server Actions du module Membres) peut changer ces
-colonnes.
+modifier `role`, `is_active`, `status`, `email` ou `deleted_at` — y compris les siens. Seul un
+`ADMIN` (ou la clé `service_role`, donc `scripts/seed.ts` et les Server Actions du module Membres)
+peut changer ces colonnes.
+
+**Lecture (`profiles_select`)** : ouverte à tout utilisateur authentifié (`auth.uid() is not
+null`), depuis `20260813090001_member_deletion_and_profile_visibility.sql`. Auparavant restreinte à
+« soi-même ou un admin », ce qui cassait silencieusement tout embed PostgREST vers `profiles`
+depuis une autre table pour un utilisateur non-admin (`planning.prayer_leader_id`,
+`reports.prayer_leader_id`/`created_by`, `testimonies.author_id`...) : un conducteur consultant un
+créneau conduit par quelqu'un d'autre voyait un nom vide (`null`), pas seulement un problème
+propre aux témoignages qui l'a révélé. Alignée sur les autres tables déjà lisibles par tout
+utilisateur connecté (`prayer_topics`, `planning`) — les données sensibles (email, téléphone) ne
+sont de toute façon exposées nulle part côté UI en dehors de son propre profil ou de la fiche
+membre (admin).
 
 `handle_new_user` lit `firstname`/`lastname`/`phone` depuis `raw_user_meta_data`
 (`user_metadata`), mais **`role`/`status`/`is_active` depuis `raw_app_meta_data`
@@ -234,13 +246,24 @@ Index : `report_id`.
 
 ### `testimonies`
 
+Table métier du module **Témoignages** (voir [`TESTIMONIES.md`](./TESTIMONIES.md)) — publication
+libre, sans modération, ouverte à tout membre connecté (`ADMIN` ou `PRAYER_LEADER`).
+
 | Colonne | Type | Notes |
 | --- | --- | --- |
 | `id` | `uuid` PK | |
 | `author_id` | `uuid` → `profiles.id` | |
 | `title` / `content` | `text` | |
+| `created_at` / `updated_at` | `timestamptz` | |
 
 Index : `author_id`, `created_at desc` (flux chronologique).
+
+RLS : lecture ouverte à tout utilisateur authentifié (`testimonies_select`) ; création réservée à
+l'auteur lui-même (`testimonies_insert_own`, `auth.uid() = author_id`), sans validation
+supplémentaire — aucune modération ; suppression par l'auteur **ou** un admin
+(`testimonies_delete_own_or_admin`, depuis
+`20260813090001_member_deletion_and_profile_visibility.sql` — auparavant réservée à l'admin
+seul).
 
 ### `notifications`
 

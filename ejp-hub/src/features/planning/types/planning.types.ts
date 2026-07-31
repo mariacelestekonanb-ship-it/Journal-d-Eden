@@ -6,6 +6,8 @@ export type { AssignmentResponse, PlanningLeaderRole, PlanningStatus, Replacemen
 export interface PlanningParticipant {
   id: string;
   fullName: string;
+  /** `false` si le membre a été supprimé (ou désactivé) depuis — le nom reste affiché, grisé. Absent = actif. */
+  isActive?: boolean;
 }
 
 /** Référence légère vers un sujet de prière, sans dupliquer tout le module Sujets de prière. */

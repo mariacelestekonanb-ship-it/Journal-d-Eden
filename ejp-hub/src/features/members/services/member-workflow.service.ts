@@ -8,6 +8,11 @@ import type { MemberStatus } from "../types/member.types";
  *   PENDING ──accept──► ACTIVE ──suspend──► SUSPENDED
  *      │                  ▲                    │
  *      └──refuse──► REFUSED                    └──reactivate──┘
+ *
+ * `deleted_at` (suppression douce, voir MEMBERS.md#suppression) est
+ * orthogonal à ce statut — un membre supprimé garde son `status` sous-jacent
+ * (l'historique reste cohérent) mais ne peut plus se connecter, exactement
+ * comme SUSPENDED.
  */
 export const MemberWorkflowService = {
   isAcceptable(status: MemberStatus): boolean {
@@ -24,5 +29,13 @@ export const MemberWorkflowService = {
 
   isReactivatable(status: MemberStatus): boolean {
     return status === "SUSPENDED";
+  },
+
+  isDeletable(deletedAt: string | null): boolean {
+    return !deletedAt;
+  },
+
+  isRestorable(deletedAt: string | null): boolean {
+    return !!deletedAt;
   },
 };

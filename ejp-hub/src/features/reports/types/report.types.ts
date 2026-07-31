@@ -7,6 +7,8 @@ export type ReportStatus = DbReportStatus;
 export interface ReportParticipant {
   id: string;
   fullName: string;
+  /** `false` si le membre a été supprimé (ou désactivé) depuis — le nom reste affiché, grisé. Absent = actif. */
+  isActive?: boolean;
 }
 
 /** Référence légère vers le créneau du Planning associé, sans dupliquer tout ce module. */

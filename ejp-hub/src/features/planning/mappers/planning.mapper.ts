@@ -4,7 +4,7 @@ import type { RawPlanningLeader, RawPlanningRow } from "../queries/planning.quer
 import type { PlanningParticipant, PrayerSlot } from "../types/planning.types";
 
 function toParticipant(leader: RawPlanningLeader | null): PlanningParticipant | null {
-  return leader ? { id: leader.id, fullName: getFullName(leader) } : null;
+  return leader ? { id: leader.id, fullName: getFullName(leader), isActive: leader.is_active } : null;
 }
 
 /**

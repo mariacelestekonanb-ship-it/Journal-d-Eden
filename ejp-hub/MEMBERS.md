@@ -176,6 +176,44 @@ petits tableaux de libellés (`utils/member-history-labels.ts`) sont dupliqués
 localement, un compromis largement moins coûteux qu'élargir la surface publique de deux
 autres modules pour un simple texte dans une liste.
 
+## Suppression
+
+Un administrateur peut **supprimer** un membre (bouton dédié, fiche membre et liste) —
+en plus de la suspension déjà existante. Contrairement à `SUSPENDED` (réversible,
+temporaire, l'historique reste visible normalement), une suppression pose la question
+de ce que devient l'historique de la personne : ses créneaux conduits (Planning), ses
+comptes rendus et ses témoignages ne peuvent pas disparaître sans casser l'intégrité
+de ces données pour tous les autres membres qui y sont associés (co-conducteur,
+commentaires, etc.).
+
+**Suppression douce, jamais un vrai `DELETE`** : `profiles.deleted_at` (timestamp,
+`NULL` = compte actif) plutôt qu'un hard-delete de la ligne. Un vrai `DELETE` était
+d'ailleurs impossible ici — `profiles.id references auth.users(id) on delete cascade` :
+supprimer le compte Supabase Auth aurait cascade-supprimé le profil, entraînant la
+perte définitive de son nom partout où il apparaît (Planning, Comptes rendus,
+Témoignages), à l'opposé de ce qui est demandé.
+
+- **Réversible** : un admin peut restaurer un membre supprimé (`deleted_at → NULL`) à
+  tout moment — bouton « Restaurer » sur la fiche membre.
+- **Connexion bloquée** : `middleware.ts` traite `deleted_at` renseigné exactement
+  comme un compte non actif (même redirection vers `/compte-en-attente`) — voir
+  [`DATABASE.md#profiles`](./DATABASE.md#profiles).
+- **Historique intact, nom grisé** : le nom réel reste affiché partout où il apparaît
+  déjà (Planning, Comptes rendus, Témoignages), mais visuellement grisé/italique dès
+  que `isActive === false` sur le participant embarqué — voir
+  [`PLANNING.md`](./PLANNING.md) et [`REPORTS.md`](./REPORTS.md). Rien n'est anonymisé
+  ni masqué : la demande explicite était de garder le nom, pas de le cacher.
+- **`MemberStatusBadge`** affiche un badge « Supprimé » distinct de « Suspendu » —
+  `deleted_at` est une information orthogonale à `status`, jamais un cinquième statut
+  de `MemberStatus` (éviterait la restriction Postgres qui empêche d'utiliser une
+  nouvelle valeur d'enum dans la même transaction où elle est ajoutée, et garde le
+  sens métier de `status` inchangé).
+
+`MemberWorkflowService.isDeletable`/`isRestorable` gardent cette logique pure, comme
+le reste de la machine à états ; `getMemberPermissions(role).canDelete` (`ADMIN`
+uniquement) et `MemberValidationService.assertNotSelf` (un admin ne peut pas se
+supprimer lui-même) suivent exactement le même patron que la suspension.
+
 ## Notifications — événements préparés
 
 Comme pour les Comptes rendus, aucun événement n'est encore émis (le module

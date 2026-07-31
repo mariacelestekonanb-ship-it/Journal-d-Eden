@@ -14,7 +14,14 @@ import { MemberFilters } from "../components/member-filters";
 import { MemberHeader } from "../components/member-header";
 import { MemberStatistics } from "../components/member-statistics";
 import { MemberTable } from "../components/member-table";
-import { useAcceptMember, useReactivateMember, useRefuseMember, useSuspendMember } from "../hooks/use-member-mutations";
+import {
+  useAcceptMember,
+  useDeleteMember,
+  useReactivateMember,
+  useRefuseMember,
+  useRestoreMember,
+  useSuspendMember,
+} from "../hooks/use-member-mutations";
 import { useMemberStats } from "../hooks/use-member-stats";
 import { useMembers } from "../hooks/use-members";
 import { applyMemberFilters, useMembersFilters } from "../hooks/use-members-filters";
@@ -25,7 +32,7 @@ export interface MembersViewProps {
   role: Role;
 }
 
-type PendingAction = { type: "suspend" | "refuse"; member: Member } | null;
+type PendingAction = { type: "suspend" | "refuse" | "delete"; member: Member } | null;
 
 /** Composition de la page Membres — statistiques, filtres, tableau. Câblée sur `/administration/membres`. */
 export function MembersView({ role }: MembersViewProps) {
@@ -43,6 +50,8 @@ export function MembersView({ role }: MembersViewProps) {
   const refuseMutation = useRefuseMember();
   const suspendMutation = useSuspendMember();
   const reactivateMutation = useReactivateMember();
+  const deleteMutation = useDeleteMember();
+  const restoreMutation = useRestoreMember();
 
   const filteredMembers = React.useMemo(() => applyMemberFilters(members ?? [], filters), [members, filters]);
   const pendingCount = React.useMemo(() => (members ?? []).filter((member) => member.status === "PENDING").length, [members]);
@@ -54,8 +63,10 @@ export function MembersView({ role }: MembersViewProps) {
       onRefuse: (member: Member) => setPendingAction({ type: "refuse", member }),
       onSuspend: (member: Member) => setPendingAction({ type: "suspend", member }),
       onReactivate: (member: Member) => reactivateMutation.mutate(member.id),
+      onDelete: (member: Member) => setPendingAction({ type: "delete", member }),
+      onRestore: (member: Member) => restoreMutation.mutate(member.id),
     }),
-    [router, profile, acceptMutation, reactivateMutation],
+    [router, profile, acceptMutation, reactivateMutation, restoreMutation],
   );
 
   return (
@@ -115,6 +126,20 @@ export function MembersView({ role }: MembersViewProps) {
         onConfirm={async () => {
           if (!pendingAction || !profile) return;
           await suspendMutation.mutateAsync({ id: pendingAction.member.id, adminId: profile.id });
+          setPendingAction(null);
+        }}
+      />
+
+      <ConfirmDialog
+        open={pendingAction?.type === "delete"}
+        onOpenChange={(open) => !open && setPendingAction(null)}
+        title="Supprimer ce membre ?"
+        description={`« ${pendingAction?.member.fullName} » ne pourra plus se connecter. Son nom reste visible (grisé) sur les créneaux, comptes rendus et témoignages déjà existants — cette suppression reste réversible.`}
+        confirmLabel="Supprimer"
+        isLoading={deleteMutation.isPending}
+        onConfirm={async () => {
+          if (!pendingAction || !profile) return;
+          await deleteMutation.mutateAsync({ id: pendingAction.member.id, adminId: profile.id });
           setPendingAction(null);
         }}
       />

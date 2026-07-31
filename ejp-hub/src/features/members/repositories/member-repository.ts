@@ -28,6 +28,8 @@ export interface MemberRepository {
   refuse(id: string, adminId: string): Promise<Member>;
   suspend(id: string): Promise<Member>;
   reactivate(id: string): Promise<Member>;
+  remove(id: string): Promise<Member>;
+  restore(id: string): Promise<Member>;
   changeRole(id: string, role: MemberRole): Promise<Member>;
   updateOwnProfile(id: string, values: { phone: string }, photo?: File): Promise<Member>;
   listAssignments(memberId: string): Promise<MemberAssignmentSummary[]>;

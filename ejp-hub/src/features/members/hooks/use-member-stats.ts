@@ -14,10 +14,10 @@ import { useMembers } from "./use-members";
  */
 export function computeMemberStats(members: Member[]): MemberStatsSummary {
   return {
-    totalCount: members.filter((member) => member.status !== "REFUSED").length,
-    activeCount: members.filter((member) => member.status === "ACTIVE").length,
-    pendingCount: members.filter((member) => member.status === "PENDING").length,
-    suspendedCount: members.filter((member) => member.status === "SUSPENDED").length,
+    totalCount: members.filter((member) => member.status !== "REFUSED" && !member.deletedAt).length,
+    activeCount: members.filter((member) => member.status === "ACTIVE" && !member.deletedAt).length,
+    pendingCount: members.filter((member) => member.status === "PENDING" && !member.deletedAt).length,
+    suspendedCount: members.filter((member) => member.status === "SUSPENDED" && !member.deletedAt).length,
   };
 }
 

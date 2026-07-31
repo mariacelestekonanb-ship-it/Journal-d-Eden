@@ -66,8 +66,15 @@ function SlotDetails({ slot }: { slot: PrayerSlot }) {
         <div className="flex items-center gap-2 text-foreground">
           <User className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           <span>
-            {slot.primaryLeader?.fullName ?? "Non assigné"}
-            {slot.secondaryLeader && ` · ${slot.secondaryLeader.fullName} (secondaire)`}
+            <span className={slot.primaryLeader?.isActive === false ? "italic opacity-60" : undefined}>
+              {slot.primaryLeader?.fullName ?? "Non assigné"}
+            </span>
+            {slot.secondaryLeader && (
+              <span className={slot.secondaryLeader.isActive === false ? "italic opacity-60" : undefined}>
+                {" "}
+                · {slot.secondaryLeader.fullName} (secondaire)
+              </span>
+            )}
           </span>
         </div>
         {(slot.theme || slot.prayerTopic) && (

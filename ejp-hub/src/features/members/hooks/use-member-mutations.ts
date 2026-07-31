@@ -5,8 +5,10 @@ import { toast } from "sonner";
 
 import { acceptMemberAction } from "../actions/accept-member.action";
 import { changeMemberRoleAction } from "../actions/change-member-role.action";
+import { deleteMemberAction } from "../actions/delete-member.action";
 import { reactivateMemberAction } from "../actions/reactivate-member.action";
 import { refuseMemberAction } from "../actions/refuse-member.action";
+import { restoreMemberAction } from "../actions/restore-member.action";
 import { suspendMemberAction } from "../actions/suspend-member.action";
 import { updateOwnProfileAction } from "../actions/update-own-profile.action";
 import type { MemberRole } from "../types/member.types";
@@ -60,6 +62,30 @@ export function useReactivateMember() {
     onSuccess: () => {
       invalidate();
       toast.success("Membre réactivé.");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+}
+
+export function useDeleteMember() {
+  const invalidate = useInvalidateMembers();
+  return useMutation({
+    mutationFn: ({ id, adminId }: { id: string; adminId: string }) => deleteMemberAction(id, adminId),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Membre supprimé.");
+    },
+    onError: (error) => toast.error(error.message),
+  });
+}
+
+export function useRestoreMember() {
+  const invalidate = useInvalidateMembers();
+  return useMutation({
+    mutationFn: (id: string) => restoreMemberAction(id),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Membre restauré.");
     },
     onError: (error) => toast.error(error.message),
   });

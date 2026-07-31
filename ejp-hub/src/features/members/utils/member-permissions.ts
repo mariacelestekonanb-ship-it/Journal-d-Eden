@@ -7,6 +7,7 @@ export interface MemberPermissions {
   canRefuse: boolean;
   canSuspend: boolean;
   canReactivate: boolean;
+  canDelete: boolean;
   canChangeRole: boolean;
   /** Changer l'e-mail d'un autre membre — jamais le sien via cette voie (voir `member-email.schema.ts`). */
   canChangeEmail: boolean;
@@ -18,6 +19,7 @@ const ADMIN: MemberPermissions = {
   canRefuse: true,
   canSuspend: true,
   canReactivate: true,
+  canDelete: true,
   canChangeRole: true,
   canChangeEmail: true,
 };
@@ -28,6 +30,7 @@ const PRAYER_LEADER: MemberPermissions = {
   canRefuse: false,
   canSuspend: false,
   canReactivate: false,
+  canDelete: false,
   canChangeRole: false,
   canChangeEmail: false,
 };

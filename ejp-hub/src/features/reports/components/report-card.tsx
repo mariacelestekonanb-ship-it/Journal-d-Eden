@@ -36,7 +36,9 @@ function ReportCardComponent({ report, className }: ReportCardProps) {
 
         <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <User className="size-3.5 shrink-0" aria-hidden="true" />
-          {report.leader.fullName}
+          <span className={report.leader.isActive === false ? "italic opacity-60" : undefined}>
+            {report.leader.fullName}
+          </span>
           {report.authorId !== report.leader.id && ` · rédigé par ${report.authorName}`}
         </p>
       </AppCardContent>
