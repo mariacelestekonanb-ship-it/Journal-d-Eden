@@ -193,6 +193,43 @@ export async function queryAvailablePlanningSlots(userId: string): Promise<
   }[];
 }
 
+/** Créneaux passés sans compte rendu, tous conducteurs confondus — vue admin (voir `PendingReportsSection`). */
+export async function queryPendingReportSlots(): Promise<
+  { id: string; title: string; slot_date: string; start_time: string; end_time: string; location: string | null; prayer_leader_id: string | null; leader: RawReportProfile | null }[]
+> {
+  const supabase = createClient();
+
+  const { data: reportedRows, error: reportedError } = await supabase.from("reports").select("planning_id");
+  if (reportedError) throw new Error(reportedError.message);
+  const reportedIds = reportedRows.map((row) => row.planning_id);
+
+  let query = supabase
+    .from("planning")
+    .select("id, title, slot_date, start_time, end_time, location, prayer_leader_id, leader:profiles!planning_prayer_leader_id_fkey(id, firstname, lastname)")
+    .lte("slot_date", new Date().toISOString().slice(0, 10))
+    .not("prayer_leader_id", "is", null)
+    .neq("status", "CANCELLED")
+    .order("slot_date", { ascending: true });
+
+  if (reportedIds.length > 0) {
+    query = query.not("id", "in", `(${reportedIds.join(",")})`);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw new Error(error.message);
+  return data as unknown as {
+    id: string;
+    title: string;
+    slot_date: string;
+    start_time: string;
+    end_time: string;
+    location: string | null;
+    prayer_leader_id: string | null;
+    leader: RawReportProfile | null;
+  }[];
+}
+
 export async function queryReportComments(reportId: string): Promise<RawReportComment[]> {
   const supabase = createClient();
   const { data, error } = await supabase

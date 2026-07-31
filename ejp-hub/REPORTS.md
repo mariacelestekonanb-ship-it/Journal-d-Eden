@@ -228,6 +228,7 @@ supplémentaire (jointures, tri applicatif de l'ordre) sans bénéfice réel. Vo
 | `ReportPrayerPointsField` | Points de prière réordonnables, avec leurs références imbriquées |
 | `ReportSummary` | Reconstitution fidèle du déroulé, vue détail et impression |
 | `ReportStatusBadge`, `ReportTimeline`, `ReportComments`, `ReportEmptyState`, `ReportExportMenu` | Briques de présentation réutilisables |
+| `PendingReportsSection` | Vue admin uniquement : créneaux passés sans CR, tous conducteurs confondus, avec relance manuelle (voir ci-dessous) |
 
 ## Services
 
@@ -255,12 +256,21 @@ supplémentaire et `ReportSummary` est déjà pensée pour un rendu imprimable
 3. Remplacer le corps de `ReportExportService.exportToPdf`/`exportToWord` — aucun autre
    fichier du module n'a besoin de changer, `ReportExportMenu` appelle déjà le service.
 
-## Notifications — événements préparés
+## Notifications
 
-Le futur module Notifications consommera les transitions de statut déjà exposées par
-`ReportService`/`use-report-mutations.ts` (CR créé, soumis, validé, rejeté) — aucun
-événement dédié n'est encore émis, mais chaque mutation correspond exactement à un
-événement futur, sans changement de forme nécessaire côté Comptes rendus.
+Les transitions de statut (CR soumis, validé, rejeté) et l'assignation d'un créneau
+déclenchent déjà une notification via des triggers Postgres côté `planning`/`reports` —
+voir NOTIFICATIONS.md. Une relance quotidienne automatique (`pg_cron`,
+`send_report_reminders`) rappelle en plus chaque conducteur tant qu'un créneau passé n'a
+pas de CR.
+
+`PendingReportsSection` (visible uniquement en `ADMIN`) liste ces créneaux en attente,
+tous conducteurs confondus, et permet d'envoyer la même relance **immédiatement** plutôt
+que d'attendre le prochain passage planifié — via `NotificationService.notify(...)`
+(`@/features/notifications`, voir `send-report-reminder.action.ts`). C'est le premier
+appelant réel de cette API, jusqu'ici seulement préparée (voir NOTIFICATIONS.md). Import
+cross-module volontaire, même précédent que `NotificationBell` déjà importé dans
+`shared/components/layout/header.tsx`.
 
 ## Prochaine étape : connexion Supabase réelle
 

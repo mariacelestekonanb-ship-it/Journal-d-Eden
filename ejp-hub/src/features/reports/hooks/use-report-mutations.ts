@@ -7,6 +7,7 @@ import { addCommentAction } from "../actions/add-comment.action";
 import { createReportAction } from "../actions/create-report.action";
 import { deleteReportAction } from "../actions/delete-report.action";
 import { rejectReportAction } from "../actions/reject-report.action";
+import { sendReportReminderAction } from "../actions/send-report-reminder.action";
 import { submitReportAction } from "../actions/submit-report.action";
 import { updateReportAction } from "../actions/update-report.action";
 import { validateReportAction } from "../actions/validate-report.action";
@@ -110,6 +111,14 @@ export function useDeleteReport() {
       queryClient.invalidateQueries({ queryKey: ["reports", "available-slots"] });
       toast.success("Compte rendu supprimé.");
     },
+    onError: (error) => toast.error(error.message),
+  });
+}
+
+export function useSendReportReminder() {
+  return useMutation({
+    mutationFn: (input: { leaderId: string; slotTitle: string; slotDate: string }) => sendReportReminderAction(input),
+    onSuccess: () => toast.success("Relance envoyée."),
     onError: (error) => toast.error(error.message),
   });
 }

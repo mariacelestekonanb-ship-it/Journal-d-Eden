@@ -132,6 +132,14 @@ export const MockReportRepository: ReportRepository = {
     return MOCK_SLOT_OPTIONS.filter((slot) => !takenSlotIds.has(slot.id)).map((slot) => ({ ...slot }));
   },
 
+  async listPendingReportSlots() {
+    const takenSlotIds = new Set(reports.map((report) => report.planningSlot.id));
+    const today = new Date().toISOString().slice(0, 10);
+    return MOCK_SLOT_OPTIONS.filter((slot) => !takenSlotIds.has(slot.id) && slot.date <= today).map((slot) => ({
+      ...slot,
+    }));
+  },
+
   async listComments(reportId) {
     return comments.filter((comment) => comment.reportId === reportId).map((comment) => ({ ...comment }));
   },

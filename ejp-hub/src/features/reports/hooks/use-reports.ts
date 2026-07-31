@@ -36,6 +36,16 @@ export function useAvailableSlots() {
   });
 }
 
+/** Créneaux en attente de compte rendu, tous conducteurs confondus — réservé à l'admin. */
+export function usePendingReportSlots(enabled: boolean) {
+  return useQuery({
+    queryKey: ["reports", "pending-slots"],
+    queryFn: () => ReportService.listPendingReportSlots(),
+    enabled,
+    staleTime: 60 * 1000,
+  });
+}
+
 export function useReportComments(reportId: string | undefined) {
   return useQuery({
     queryKey: ["reports", "comments", reportId],

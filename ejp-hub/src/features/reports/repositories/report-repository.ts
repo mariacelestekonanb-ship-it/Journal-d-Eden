@@ -30,6 +30,8 @@ export interface ReportRepository {
   reject(id: string): Promise<Report>;
   remove(id: string): Promise<void>;
   listAvailableSlots(userId: string): Promise<ReportSlotOption[]>;
+  /** Créneaux passés sans compte rendu, tous conducteurs confondus — réservé à l'admin (relance manuelle). */
+  listPendingReportSlots(): Promise<ReportSlotOption[]>;
   listComments(reportId: string): Promise<ReportComment[]>;
   addComment(reportId: string, author: ReportParticipant, message: string): Promise<ReportComment>;
 }

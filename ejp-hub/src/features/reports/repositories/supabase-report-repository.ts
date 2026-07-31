@@ -7,6 +7,7 @@ import {
   deleteReportQuery,
   queryAllReports,
   queryAvailablePlanningSlots,
+  queryPendingReportSlots,
   queryReportComments,
   updateReportQuery,
   updateReportStatusQuery,
@@ -65,6 +66,20 @@ export const SupabaseReportRepository: ReportRepository = {
 
   async listAvailableSlots(userId) {
     const rows = await queryAvailablePlanningSlots(userId);
+    return rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      date: row.slot_date,
+      startTime: row.start_time,
+      endTime: row.end_time,
+      location: row.location,
+      leaderId: row.leader?.id ?? row.prayer_leader_id ?? "",
+      leaderName: row.leader ? getFullName(row.leader) : "Non assigné",
+    }));
+  },
+
+  async listPendingReportSlots() {
+    const rows = await queryPendingReportSlots();
     return rows.map((row) => ({
       id: row.id,
       title: row.title,

@@ -62,6 +62,10 @@ export const ReportService = {
     return getRepository().listAvailableSlots(userId);
   },
 
+  async listPendingReportSlots(): Promise<ReportSlotOption[]> {
+    return getRepository().listPendingReportSlots();
+  },
+
   async listComments(reportId: string): Promise<ReportComment[]> {
     return getRepository().listComments(reportId);
   },

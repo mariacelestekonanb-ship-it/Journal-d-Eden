@@ -174,7 +174,16 @@ await NotificationService.notify({
 `NotificationValidationService.assertValidInput` (Zod, `validation/create-notification.schema.ts`)
 valide la forme avant tout accès au dépôt — un futur appelant qui se trompe de type ou
 oublie un champ obtient un message clair immédiatement plutôt qu'une erreur de
-contrainte SQL. Aucun appelant n'existe encore ailleurs dans l'application.
+contrainte SQL.
+
+Premier appelant réel : `PendingReportsSection` (module Comptes rendus, réservé à
+l'`ADMIN`) — bouton « Relancer » sur un créneau passé sans CR, voir
+`src/features/reports/actions/send-report-reminder.action.ts` et
+`REPORTS.md#notifications`. Le message reprend exactement celui de la relance
+quotidienne automatique (`send_report_reminders`, ci-dessus), mais envoyé
+immédiatement plutôt qu'au prochain passage planifié. Côté RLS, ce cas est déjà couvert
+par `notifications_insert_self_or_admin` (`is_admin()` bypass) — aucune migration SQL
+n'était nécessaire.
 
 ## Notifications push (Web Push) {#push}
 

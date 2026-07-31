@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/shared/components/confirm-dialog";
 import type { Role } from "@/shared/constants/roles";
 import { Skeleton } from "@/shared/ui/skeleton";
 
+import { PendingReportsSection } from "../components/pending-reports-section";
 import { ReportFilters } from "../components/report-filters";
 import { ReportHeader } from "../components/report-header";
 import { ReportStatistics } from "../components/report-statistics";
@@ -70,6 +71,8 @@ export function ReportsView({ role }: ReportsViewProps) {
   return (
     <div className="space-y-6">
       <ReportHeader permissions={permissions} />
+
+      {permissions.canViewAll && <PendingReportsSection />}
 
       <ReportStatistics stats={stats} isLoading={isStatsLoading} />
 
