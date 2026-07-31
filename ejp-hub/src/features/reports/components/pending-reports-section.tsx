@@ -17,6 +17,12 @@ import { usePendingReportSlots } from "../hooks/use-reports";
  * tableau de bord (qui ne menait nulle part avant que la sélection de
  * créneau ne soit corrigée). « Relancer » envoie la même notification que
  * la relance quotidienne automatique, mais immédiatement.
+ *
+ * Volontairement titré différemment de la carte statistique « En attente »
+ * (`ReportStatistics`, `report.status === "SUBMITTED"`) — un créneau ici n'a
+ * même pas encore de brouillon, alors que « En attente » désigne un CR déjà
+ * rédigé et soumis, qui attend une validation admin. Les deux notions se
+ * ressemblent trop pour partager un même mot sans confusion.
  */
 export function PendingReportsSection() {
   const { data: slots, isLoading } = usePendingReportSlots(true);
@@ -36,7 +42,7 @@ export function PendingReportsSection() {
     <AppCard className="p-4">
       <AppCardHeader className="flex-row items-center justify-between gap-2 p-0 pb-2">
         <AppCardTitle className="text-sm font-medium text-muted-foreground">
-          Comptes rendus en attente ({slots.length})
+          Créneaux sans compte rendu ({slots.length})
         </AppCardTitle>
       </AppCardHeader>
       <AppCardContent className="space-y-2 p-0">
