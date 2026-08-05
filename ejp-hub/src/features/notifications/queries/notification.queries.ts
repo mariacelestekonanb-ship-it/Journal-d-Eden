@@ -72,21 +72,46 @@ export async function deleteNotificationQuery(id: string, userId: string): Promi
   if (error) throw new Error(error.message);
 }
 
+/**
+ * Ne relit **jamais** la ligne insérée (pas de `.select()` après l'insert) :
+ * `notifications_select_own` (`auth.uid() = user_id`) n'a volontairement
+ * pas d'exception admin — les notifications restent strictement
+ * personnelles, y compris pour un administrateur qui en crée une pour
+ * quelqu'un d'autre. Or un `INSERT ... RETURNING` est soumis à la policy
+ * `SELECT` en plus de celle d'`INSERT` : avec `.select()`, la création
+ * réussissait bien niveau `INSERT` (`notifications_insert_self_or_admin`
+ * autorise l'admin), mais Postgres refusait ensuite de relire la ligne pour
+ * la renvoyer, avec ce même message trompeur (« new row violates
+ * row-level security policy ») — alors que la ligne était en réalité bien
+ * créée. On reconstruit donc l'objet retourné à partir de ce qu'on a déjà
+ * fourni, sans jamais demander à la base de nous le confirmer.
+ */
 export async function createNotificationQuery(input: CreateNotificationInput): Promise<RawNotificationRow> {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("notifications")
-    .insert({
-      user_id: input.userId,
-      type: input.type,
-      priority: input.priority ?? "NORMAL",
-      title: input.title,
-      message: input.message,
-      action_url: input.actionUrl ?? null,
-    })
-    .select(NOTIFICATION_SELECT)
-    .single();
+  const id = crypto.randomUUID();
+  const createdAt = new Date().toISOString();
+
+  const { error } = await supabase.from("notifications").insert({
+    id,
+    user_id: input.userId,
+    type: input.type,
+    priority: input.priority ?? "NORMAL",
+    title: input.title,
+    message: input.message,
+    action_url: input.actionUrl ?? null,
+  });
 
   if (error) throw new Error(error.message);
-  return data as unknown as RawNotificationRow;
+
+  return {
+    id,
+    user_id: input.userId,
+    type: input.type,
+    priority: input.priority ?? "NORMAL",
+    title: input.title,
+    message: input.message,
+    action_url: input.actionUrl ?? null,
+    read_at: null,
+    created_at: createdAt,
+  };
 }
