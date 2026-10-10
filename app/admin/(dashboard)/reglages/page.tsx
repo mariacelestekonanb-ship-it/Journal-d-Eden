@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { siteSettingsStore } from "@/lib/admin/repository";
-import { ReglagesForm } from "@/app/admin/reglages/reglages-form";
+import { ReglagesForm } from "@/app/admin/(dashboard)/reglages/reglages-form";
 
 export const metadata: Metadata = { title: "Réglages" };
 

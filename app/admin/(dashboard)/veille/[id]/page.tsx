@@ -4,7 +4,7 @@ import {
   analysesRepository,
   categoriesRepository,
 } from "@/lib/admin/repository";
-import { AnalyseForm } from "@/app/admin/veille/[id]/analyse-form";
+import { AnalyseForm } from "@/app/admin/(dashboard)/veille/[id]/analyse-form";
 
 interface AnalyseAdminPageProps {
   params: Promise<{ id: string }>;

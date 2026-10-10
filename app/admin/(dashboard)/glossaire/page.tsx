@@ -1,5 +1,5 @@
 import { glossaireRepository } from "@/lib/admin/repository";
-import { GlossaireList } from "@/app/admin/glossaire/glossaire-list";
+import { GlossaireList } from "@/app/admin/(dashboard)/glossaire/glossaire-list";
 
 export const metadata = { title: "Glossaire" };
 

@@ -24,11 +24,15 @@ Ces points sont des **prérequis avant toute mise en production commerciale
 réelle** — ils ne sont pas des oublis, mais des choix explicites pour garder
 cette phase focalisée sur l'expérience éditoriale et publique :
 
-1. **Authentification réelle sur `/admin`.** `lib/admin/auth.ts` retourne un
-   utilisateur fixe ; n'importe qui atteignant l'URL a un accès complet.
-   Priorité n°1 avant toute exposition publique de l'admin (NextAuth, Clerk,
-   Supabase Auth… `getCurrentAdminUser()` est le point d'entrée unique à
-   modifier).
+1. **Comptes individuels sur `/admin`.** L'accès est protégé par un mot de
+   passe partagé (`ADMIN_PASSWORD`, voir `middleware.ts` et
+   `lib/admin/session.ts`) — une vraie barrière, mais un seul compte pour
+   tout le monde, pas des comptes individuels avec des droits distincts.
+   `lib/admin/auth.ts` retourne toujours le même profil une fois connecté ;
+   `getCurrentAdminUser()` est le point d'entrée unique à modifier le jour
+   où de vrais comptes (NextAuth, Clerk, Supabase Auth…) sont nécessaires —
+   par exemple pour une équipe à plusieurs éditeurs avec des rôles distincts
+   (le type `AdminUser.role` existe déjà, voir point V2 plus bas).
 2. **Persistance réelle.** `lib/admin/repository.ts` est un dépôt en mémoire
    (perdu au redémarrage). Le remplacer par une vraie base de données ne
    touche que ce fichier et les server actions de `lib/admin/*-actions.ts` —

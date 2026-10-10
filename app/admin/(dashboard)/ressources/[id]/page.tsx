@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ressourcesRepository } from "@/lib/admin/repository";
-import { RessourceForm } from "@/app/admin/ressources/[id]/ressource-form";
+import { RessourceForm } from "@/app/admin/(dashboard)/ressources/[id]/ressource-form";
 
 interface RessourceAdminPageProps {
   params: Promise<{ id: string }>;

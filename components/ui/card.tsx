@@ -32,8 +32,8 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 interface CardTitleProps extends React.ComponentProps<"h3"> {
-  /** Balise HTML rendue — h3 par défaut ; passer h2 quand la carte suit directement un h1 sans titre de section intermédiaire. */
-  as?: "h2" | "h3" | "h4";
+  /** Balise HTML rendue — h3 par défaut ; passer h2 quand la carte suit directement un h1 sans titre de section intermédiaire, ou h1 quand la carte porte le seul titre de page (ex. écran de connexion). */
+  as?: "h1" | "h2" | "h3" | "h4";
 }
 
 function CardTitle({ as: Tag = "h3", className, ...props }: CardTitleProps) {

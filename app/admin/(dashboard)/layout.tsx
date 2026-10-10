@@ -16,9 +16,13 @@ export const metadata: Metadata = {
 };
 
 /**
- * Layout de l'espace d'administration (`/admin`). Aucune authentification
- * n'est implémentée : `getCurrentAdminUser` retourne un utilisateur fixe,
- * point d'entrée unique à remplacer par une vraie session plus tard (voir
+ * Layout des pages protégées de l'espace d'administration — tout ce qui
+ * est sous ce groupe `(dashboard)` exige une session valide, vérifiée en
+ * amont par `middleware.ts` (voir `lib/admin/session.ts`), à l'exception
+ * de `/admin/login` qui vit hors de ce groupe et n'affiche donc pas cette
+ * coquille. `getCurrentAdminUser` retourne en revanche toujours un nom
+ * fixe : l'authentification protège l'accès, mais il n'existe qu'un seul
+ * compte partagé, pas de vrais comptes individuels (voir
  * `lib/admin/auth.ts`). Le site public garde son propre habillage — voir
  * `components/layout/site-chrome.tsx`, qui s'efface sur ces routes.
  */

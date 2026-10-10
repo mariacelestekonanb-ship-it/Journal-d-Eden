@@ -1,5 +1,5 @@
 import { analysesRepository } from "@/lib/admin/repository";
-import { VeilleList } from "@/app/admin/veille/veille-list";
+import { VeilleList } from "@/app/admin/(dashboard)/veille/veille-list";
 
 export const metadata = { title: "Veille juridique" };
 

@@ -16,14 +16,18 @@ Cette Release Candidate est un état fonctionnellement complet pour une
 démonstration, **pas encore prête pour une exposition publique sensible**.
 Les points suivants sont documentés en toute transparence :
 
-- **Aucune authentification réelle sur `/admin`.** `lib/admin/auth.ts`
-  retourne systématiquement un utilisateur fictif ; il n'existe aujourd'hui
-  aucun contrôle d'accès applicatif. `/admin` est explicitement exclu de
-  l'indexation (`robots.ts`, balise `robots: noindex` sur chaque page
-  admin), ce qui réduit la découvrabilité mais **ne remplace pas** un
-  contrôle d'accès. Ne jamais déployer cette RC sur un domaine public sans
-  ajouter une authentification réelle en amont (middleware Next.js, proxy
-  d'authentification, ou solution tierce).
+- **Authentification par mot de passe partagé sur `/admin`, pas de vrais
+  comptes.** `middleware.ts` exige une session valide pour tout `/admin/**`
+  (sauf `/admin/login`) ; la session est un jeton signé (HMAC-SHA256, voir
+  `lib/admin/session.ts`) obtenu en saisissant le mot de passe défini par la
+  variable d'environnement `ADMIN_PASSWORD` (voir `.env.example`). C'est une
+  vraie barrière d'accès, mais un seul mot de passe partagé, pas des comptes
+  individuels avec des droits distincts — `lib/admin/auth.ts` retourne
+  toujours le même profil une fois connecté. Tant que `ADMIN_PASSWORD` n'est
+  pas défini, `/admin` reste **inaccessible à tout le monde, y compris
+  l'éditrice** (échec volontaire par défaut, jamais un admin laissé ouvert).
+  `/admin` reste par ailleurs explicitement exclu de l'indexation
+  (`robots.ts`, balise `robots: noindex` sur chaque page admin).
 - **Persistance en mémoire.** Le dépôt de contenu admin
   (`lib/admin/repository.ts`) vit en mémoire process ; il n'y a ni base de
   données ni chiffrement à auditer à ce stade, mais aussi aucune donnée

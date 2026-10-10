@@ -1,5 +1,5 @@
 import { fichesRepository } from "@/lib/admin/repository";
-import { FichesList } from "@/app/admin/fiches/fiches-list";
+import { FichesList } from "@/app/admin/(dashboard)/fiches/fiches-list";
 
 export const metadata = { title: "Fiches" };
 

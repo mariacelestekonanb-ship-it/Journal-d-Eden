@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { categoriesRepository, fichesRepository } from "@/lib/admin/repository";
-import { FicheForm } from "@/app/admin/fiches/[id]/fiche-form";
+import { FicheForm } from "@/app/admin/(dashboard)/fiches/[id]/fiche-form";
 
 interface FicheAdminPageProps {
   params: Promise<{ id: string }>;

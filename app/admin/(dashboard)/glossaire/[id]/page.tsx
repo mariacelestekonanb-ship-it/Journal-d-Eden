@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { glossaireRepository } from "@/lib/admin/repository";
-import { TermeForm } from "@/app/admin/glossaire/[id]/terme-form";
+import { TermeForm } from "@/app/admin/(dashboard)/glossaire/[id]/terme-form";
 
 interface TermeAdminPageProps {
   params: Promise<{ id: string }>;

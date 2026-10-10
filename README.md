@@ -2,7 +2,7 @@
 
 Plateforme éditoriale de veille juridique et de vulgarisation sur le droit spatial et le droit du numérique.
 
-**Statut : Release Candidate 1 (RC1)** — fonctionnellement complet pour une V1, prêt à être déployé sur un environnement de préproduction. Voir [ROADMAP.md](./ROADMAP.md) pour ce qui reste hors périmètre (authentification réelle, base de données) avant une mise en production commerciale.
+**Statut : Release Candidate 1 (RC1)** — fonctionnellement complet pour une V1, prêt à être déployé sur un environnement de préproduction. Voir [ROADMAP.md](./ROADMAP.md) pour ce qui reste hors périmètre (comptes individuels, base de données) avant une mise en production commerciale.
 
 ---
 
@@ -81,7 +81,7 @@ Points clés :
 | Polices             | [Manrope](https://fonts.google.com/specimen/Manrope) (titres) / [Inter](https://fonts.google.com/specimen/Inter) (texte), via `next/font/google` |
 | Qualité             | ESLint (`next/core-web-vitals`, `next/typescript`), Prettier + `prettier-plugin-tailwindcss`                                                     |
 
-Aucune base de données, aucun ORM, aucun service d'authentification n'est branché à ce stade : voir [ROADMAP.md](./ROADMAP.md).
+Aucune base de données ni ORM n'est branché à ce stade ; `/admin` est protégé par un mot de passe partagé (voir plus bas et [SECURITY.md](./SECURITY.md)), pas encore par de vrais comptes individuels : voir [ROADMAP.md](./ROADMAP.md).
 
 ## Installation
 
@@ -102,13 +102,13 @@ La configuration du site (nom, description, URL canonique, réseaux sociaux, nav
 
 ## Variables d'environnement
 
-Toutes les variables sont **optionnelles** : le site fonctionne intégralement sans elles (aucun script tiers n'est chargé tant qu'une variable n'est pas définie). Copier `.env.example` vers `.env.local` et renseigner ce qui est utile :
+Une seule variable est requise, **`ADMIN_PASSWORD`** (le mot de passe de `/admin`, voir [SECURITY.md](./SECURITY.md)) — toutes les autres sont optionnelles : le site public fonctionne intégralement sans elles (aucun script tiers n'est chargé tant qu'une variable n'est pas définie). Copier `.env.example` vers `.env.local` et renseigner ce qui est utile :
 
 ```bash
 cp .env.example .env.local
 ```
 
-Voir [`.env.example`](./.env.example) pour le détail de chaque variable. Aucun secret réel n'est requis par l'architecture actuelle (pas de clé d'API privée, pas de chaîne de connexion) : toutes les variables consommées sont préfixées `NEXT_PUBLIC_` (identifiants analytics et jetons de vérification webmaster, publics par nature).
+Voir [`.env.example`](./.env.example) pour le détail de chaque variable. `ADMIN_PASSWORD` est un vrai secret, à ne jamais committer ; toutes les autres variables sont préfixées `NEXT_PUBLIC_` et publiques par nature (identifiants analytics, jetons de vérification webmaster).
 
 ## Lancement en développement
 
@@ -116,7 +116,7 @@ Voir [`.env.example`](./.env.example) pour le détail de chaque variable. Aucun 
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000) pour le site public, [http://localhost:3000/admin](http://localhost:3000/admin) pour l'espace d'administration (aucune authentification n'est requise dans cette phase — voir [SECURITY.md](./SECURITY.md)).
+Ouvrir [http://localhost:3000](http://localhost:3000) pour le site public, [http://localhost:3000/admin](http://localhost:3000/admin) pour l'espace d'administration — protégé par un mot de passe défini dans `ADMIN_PASSWORD` (voir [Variables d'environnement](#variables-denvironnement) et [SECURITY.md](./SECURITY.md)). Sans cette variable, `/admin` reste inaccessible.
 
 ## Build de production
 
@@ -213,7 +213,7 @@ Voir [CONTRIBUTING.md](./CONTRIBUTING.md) pour le workflow de contribution, et [
 - [ ] `siteConfig.url` remplacé par le domaine réel de production (`lib/site-config.ts`).
 - [ ] `siteConfig.twitterHandle` remplacé ou retiré s'il n'existe pas de compte réel.
 - [ ] Variables d'environnement analytics/Search Console renseignées si ces outils sont utilisés (voir `.env.example`).
-- [ ] **Authentification réelle mise en place sur `/admin`** — l'espace d'administration n'a aujourd'hui aucun contrôle d'accès (voir [SECURITY.md](./SECURITY.md)) : à ne jamais exposer publiquement en l'état.
+- [ ] **`ADMIN_PASSWORD` défini sur l'hébergeur de production** — sans cette variable, `/admin` reste inaccessible à tout le monde (voir [SECURITY.md](./SECURITY.md)). Un mot de passe partagé protège déjà l'accès, mais de vrais comptes individuels restent à mettre en place avant une équipe à plusieurs éditeurs.
 - [ ] Persistance réelle branchée sur `lib/admin/repository.ts` — le dépôt actuel est en mémoire et perd toute modification au redémarrage du serveur.
 - [ ] **Stockage objet réel branché sur `app/api/upload/route.ts`** (S3, Supabase Storage, Cloudinary…) avant toute mise en ligne sur un hébergeur serverless — l'upload sur disque local (`public/uploads/`) ne survit pas à un système de fichiers éphémère/lecture seule.
 - [ ] `npm run typecheck`, `npm run lint`, `npm run format:check` et `npm run build` passent sans erreur.

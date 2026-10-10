@@ -10,16 +10,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { AdminUser } from "@/lib/admin/auth";
+import { logout } from "@/lib/admin/login-actions";
 
 export interface UserMenuPlaceholderProps {
   user: AdminUser;
 }
 
 /**
- * Emplacement utilisateur, prêt pour une vraie authentification : le nom
- * et le rôle viennent de `getCurrentAdminUser` (voir `lib/admin/auth.ts`),
- * aujourd'hui une constante fixe. Les actions restent désactivées tant
- * qu'aucune session réelle n'existe.
+ * Emplacement utilisateur : le nom et le rôle viennent de
+ * `getCurrentAdminUser` (voir `lib/admin/auth.ts`), aujourd'hui une
+ * constante fixe faute de compte réel — seule la déconnexion (qui efface
+ * le cookie de session, voir `lib/admin/session.ts`) correspond à un état
+ * réel.
  */
 export function UserMenuPlaceholder({ user }: UserMenuPlaceholderProps) {
   return (
@@ -51,7 +53,12 @@ export function UserMenuPlaceholder({ user }: UserMenuPlaceholderProps) {
           Mon profil
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled variant="danger">
+        <DropdownMenuItem
+          variant="danger"
+          onSelect={() => {
+            void logout();
+          }}
+        >
           <LogOut aria-hidden />
           Se déconnecter
         </DropdownMenuItem>

@@ -1,5 +1,5 @@
 import { ressourcesRepository } from "@/lib/admin/repository";
-import { RessourcesList } from "@/app/admin/ressources/ressources-list";
+import { RessourcesList } from "@/app/admin/(dashboard)/ressources/ressources-list";
 
 export const metadata = { title: "Ressources" };
 
