@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { put } from "@vercel/blob";
+import { put, BlobError } from "@vercel/blob";
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
@@ -9,11 +9,15 @@ import path from "node:path";
  * voir `components/admin/content/media-upload-field.tsx`).
  *
  * Deux façons d'écrire le fichier, choisies selon l'environnement :
- * - `BLOB_READ_WRITE_TOKEN` défini (Vercel Blob relié au projet) : le
- *   fichier part sur un vrai stockage objet, qui fonctionne en production
- *   sur Vercel. C'est le cas attendu une fois le store Blob créé et relié
- *   (voir README.md) — Vercel injecte alors cette variable automatiquement,
- *   rien à configurer à la main.
+ * - Store Vercel Blob relié au projet (voir README.md) : le fichier part
+ *   sur un vrai stockage objet, qui fonctionne en production sur Vercel.
+ *   Vercel relie désormais les stores Blob par défaut via OIDC plutôt
+ *   qu'un jeton statique — `@vercel/blob` gère cette authentification lui-
+ *   même (voir sa fonction interne `resolveBlobAuth`), à condition que
+ *   `BLOB_STORE_ID` (OIDC) ou `BLOB_READ_WRITE_TOKEN` (ancien mode, encore
+ *   possible) soit présent ; `put()` échoue sinon avec un message explicite
+ *   plutôt que silencieusement, ce qui sert justement à distinguer les deux
+ *   chemins ci-dessous sans dupliquer sa logique de résolution d'identifiants.
  * - Sinon (développement local sans Blob configuré) : écriture sur le
  *   disque local, sous `public/uploads/`. Ce repli ne fonctionnerait pas
  *   seul en production : les plateformes serverless (Vercel, Netlify) ont
@@ -75,12 +79,23 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer());
   const mediaType = isVideo ? "video" : "image";
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  try {
     const blob = await put(filename, buffer, {
       access: "public",
       contentType: file.type,
     });
     return NextResponse.json({ url: blob.url, type: mediaType });
+  } catch (err) {
+    // `put()` résout lui-même ses identifiants (OIDC via `BLOB_STORE_ID`,
+    // ou `BLOB_READ_WRITE_TOKEN` en mode historique) et lève précisément
+    // cette erreur quand aucun des deux n'est présent — le seul cas où le
+    // repli disque ci-dessous est légitime. Toute autre `BlobError` (store
+    // relié mais en échec réel : suspendu, limite atteinte…) doit remonter
+    // telle quelle plutôt que d'être masquée par un repli silencieux.
+    const noBlobCredentials =
+      err instanceof BlobError &&
+      err.message.includes("No blob credentials found");
+    if (!noBlobCredentials) throw err;
   }
 
   const uploadsDir = path.join(process.cwd(), "public", "uploads");

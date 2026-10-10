@@ -46,13 +46,15 @@ cette phase focalisée sur l'expérience éditoriale et publique :
    à l'espace de rédaction.
 4. **Store Vercel Blob à créer et relier.** `app/api/upload/route.ts` (logo
    et média du héros, `/admin/reglages`) sait déjà écrire sur
-   [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) dès que
-   `BLOB_READ_WRITE_TOKEN` est défini — reste à créer ce store depuis
-   Settings → Storage sur Vercel et à le relier au projet (Vercel injecte
-   alors la variable automatiquement, rien à copier à la main). Tant que ce
-   n'est pas fait, l'upload retombe sur le disque local
-   (`public/uploads/`), qui ne survit pas au système de fichiers
-   éphémère/lecture seule de Vercel en production.
+   [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) — reste à
+   créer ce store depuis Settings → Storage sur Vercel et à le relier au
+   projet. Vercel relie désormais les stores par défaut via OIDC
+   (`BLOB_STORE_ID` injecté automatiquement, pas de jeton à copier à la
+   main) ; `@vercel/blob` gère cette authentification lui-même, y compris
+   le mode historique par jeton (`BLOB_READ_WRITE_TOKEN`) si un projet
+   l'utilise encore. Tant que le store n'est pas relié, l'upload retombe
+   sur le disque local (`public/uploads/`), qui ne survit pas au système de
+   fichiers éphémère/lecture seule de Vercel en production.
 5. **Page Ressources publique complète.** La page liste aujourd'hui un état
    "à venir" ; les données existent (`data/ressources.ts`) et le CRUD admin
    est fonctionnel — il ne manque qu'un explorateur public du même niveau

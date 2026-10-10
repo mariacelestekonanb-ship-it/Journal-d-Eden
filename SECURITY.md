@@ -44,8 +44,10 @@ Les points suivants sont documentés en toute transparence :
   d'écrire le fichier. Il exige désormais une session admin valide (voir
   `middleware.ts`), comme le reste de `/admin`. Deux destinations
   possibles : [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) si
-  `BLOB_READ_WRITE_TOKEN` est défini (store créé et relié au projet sur
-  Vercel — fonctionne en production), sinon repli sur le disque local
+  un store est créé et relié au projet sur Vercel (connexion par défaut via
+  OIDC, qui injecte `BLOB_STORE_ID` ; l'ancien `BLOB_READ_WRITE_TOKEN`
+  fonctionne aussi s'il est présent — fonctionne en production), sinon
+  repli sur le disque local
   (`public/uploads/`), qui ne fonctionne qu'en développement ou sur un
   serveur Node traditionnel : les plateformes serverless (Vercel, Netlify)
   ont un système de fichiers éphémère/lecture seule à l'exécution, d'où la
