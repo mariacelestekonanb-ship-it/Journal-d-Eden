@@ -1,23 +1,29 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { put } from "@vercel/blob";
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 
 /**
  * Upload de fichier pour l'espace d'administration (logo, média du héros —
- * voir `components/admin/content/media-upload-field.tsx`). Écrit le
- * fichier sur le disque local, sous `public/uploads/`.
+ * voir `components/admin/content/media-upload-field.tsx`).
  *
- * Deux limites à connaître avant une mise en ligne réelle (voir
- * `SECURITY.md`) :
- * 1. Comme le reste de l'admin, cette route n'a aucune authentification —
- *    n'importe qui atteignant `/api/upload` peut déposer un fichier tant
- *    qu'aucun contrôle d'accès réel n'existe.
- * 2. L'écriture sur disque local ne fonctionne qu'en développement (ou sur
- *    un serveur Node traditionnel) : les plateformes serverless (Vercel,
- *    Netlify) ont un système de fichiers éphémère/en lecture seule en
- *    production — il faudra alors brancher un vrai service de stockage
- *    (S3, Supabase Storage, Cloudinary…) et ne changer que cette route.
+ * Deux façons d'écrire le fichier, choisies selon l'environnement :
+ * - `BLOB_READ_WRITE_TOKEN` défini (Vercel Blob relié au projet) : le
+ *   fichier part sur un vrai stockage objet, qui fonctionne en production
+ *   sur Vercel. C'est le cas attendu une fois le store Blob créé et relié
+ *   (voir README.md) — Vercel injecte alors cette variable automatiquement,
+ *   rien à configurer à la main.
+ * - Sinon (développement local sans Blob configuré) : écriture sur le
+ *   disque local, sous `public/uploads/`. Ce repli ne fonctionnerait pas
+ *   seul en production : les plateformes serverless (Vercel, Netlify) ont
+ *   un système de fichiers éphémère/en lecture seule à l'exécution.
+ *
+ * Point de sécurité à connaître dans les deux cas (voir `SECURITY.md`) :
+ * comme le reste de l'admin, cette route est protégée par la même session
+ * que `/admin` (voir `middleware.ts`), mais reste un upload non borné à un
+ * utilisateur précis — un seul mot de passe partagé, pas des comptes
+ * individuels.
  */
 
 const MAX_IMAGE_SIZE = 8 * 1024 * 1024; // 8 Mo
@@ -62,18 +68,27 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadsDir, { recursive: true });
-
   // Nom de fichier régénéré (jamais celui envoyé par le client) : évite
   // toute collision et tout risque de chemin malveillant dans le nom
   // d'origine.
   const filename = `${randomUUID()}.${extension}`;
   const buffer = Buffer.from(await file.arrayBuffer());
+  const mediaType = isVideo ? "video" : "image";
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const blob = await put(filename, buffer, {
+      access: "public",
+      contentType: file.type,
+    });
+    return NextResponse.json({ url: blob.url, type: mediaType });
+  }
+
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  await mkdir(uploadsDir, { recursive: true });
   await writeFile(path.join(uploadsDir, filename), buffer);
 
   return NextResponse.json({
     url: `/uploads/${filename}`,
-    type: isVideo ? "video" : "image",
+    type: mediaType,
   });
 }

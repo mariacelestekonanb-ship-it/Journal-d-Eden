@@ -44,14 +44,15 @@ cette phase focalisée sur l'expérience éditoriale et publique :
    site public depuis cette RC. Faire de l'admin la source de vérité réelle
    pour le reste du contenu éditorial est le chantier qui donne tout son sens
    à l'espace de rédaction.
-4. **Stockage objet réel pour les médias uploadés.** Le logo et le média du
-   héros (`/admin/reglages`) sont écrits sur le disque local
-   (`app/api/upload/route.ts`, `public/uploads/`) : cela fonctionne en
-   développement et sur un serveur Node traditionnel, mais pas sur un
-   hébergeur serverless à système de fichiers éphémère/lecture seule (Vercel,
-   Netlify). Priorité avant toute mise en ligne réelle sur ce type
-   d'hébergeur : brancher un stockage objet (S3, Supabase Storage,
-   Cloudinary…) dans cette même route.
+4. **Store Vercel Blob à créer et relier.** `app/api/upload/route.ts` (logo
+   et média du héros, `/admin/reglages`) sait déjà écrire sur
+   [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) dès que
+   `BLOB_READ_WRITE_TOKEN` est défini — reste à créer ce store depuis
+   Settings → Storage sur Vercel et à le relier au projet (Vercel injecte
+   alors la variable automatiquement, rien à copier à la main). Tant que ce
+   n'est pas fait, l'upload retombe sur le disque local
+   (`public/uploads/`), qui ne survit pas au système de fichiers
+   éphémère/lecture seule de Vercel en production.
 5. **Page Ressources publique complète.** La page liste aujourd'hui un état
    "à venir" ; les données existent (`data/ressources.ts`) et le CRUD admin
    est fonctionnel — il ne manque qu'un explorateur public du même niveau
