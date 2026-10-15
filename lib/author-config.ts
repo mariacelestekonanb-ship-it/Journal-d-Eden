@@ -6,8 +6,8 @@
  * présentation de l'auteure sur le site.
  */
 export const authorConfig = {
-  nom: "Prénom Nom",
-  initiales: "PN",
+  nom: "Bénédicte Konan",
+  initiales: "BK",
   /** Chemin vers une vraie photo, une fois disponible — `null` affiche les initiales. */
   photoUrl: null as string | null,
   role: "Autrice de LexWatch",

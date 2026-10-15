@@ -38,6 +38,15 @@ export const categories: Categorie[] = [
     nombreArticles: 16,
   },
   {
+    slug: "telecommunications",
+    titre: "Télécommunications spatiales",
+    description:
+      "Attribution des fréquences et des positions orbitales par l'UIT, coordination entre opérateurs satellitaires.",
+    domaine: "droit-spatial",
+    icone: "Radio",
+    nombreArticles: 1,
+  },
+  {
     slug: "protection-donnees",
     titre: "Protection des données personnelles",
     description:
