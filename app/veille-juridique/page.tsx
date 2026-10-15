@@ -11,6 +11,7 @@ import { veilleItems } from "@/data/veille";
 import { getVeilleALaUne } from "@/lib/content";
 import { buildMetadata } from "@/lib/metadata";
 import { buildCollectionPageJsonLd } from "@/lib/json-ld";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 const TITLE = "Veille juridique";
 const DESCRIPTION =
@@ -36,6 +37,7 @@ export default async function VeilleJuridiquePage({
 }: VeilleJuridiquePageProps) {
   const { domaine, q } = await searchParams;
   const featured = getVeilleALaUne().slice(0, 3);
+  const settings = await siteSettingsStore.get();
 
   return (
     <>
@@ -50,7 +52,9 @@ export default async function VeilleJuridiquePage({
         visuallyHidden
         items={[{ label: "Accueil", href: "/" }, { label: "Veille juridique" }]}
       />
-      <VeilleHero />
+      <VeilleHero
+        backgroundImageUrl={settings.heroBackgrounds.veilleJuridique}
+      />
 
       <SearchExperience
         items={veilleItems.map((item) => ({

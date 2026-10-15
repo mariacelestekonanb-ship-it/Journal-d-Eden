@@ -19,7 +19,7 @@ import { PALETTE_LABELS, PALETTE_SWATCHES } from "@/lib/color-palettes";
 import {
   COLOR_PALETTES,
   type AdminBlock,
-  type HeroMedia,
+  type PageHeroBackgrounds,
   type SiteSettings,
   type SocialLink,
 } from "@/lib/admin/types";
@@ -31,6 +31,7 @@ export interface ReglagesFormProps {
 const TABS = [
   { id: "identite" as const, label: "Identité" },
   { id: "accueil" as const, label: "Page d'accueil" },
+  { id: "fonds" as const, label: "Fonds des pages" },
   { id: "contact" as const, label: "Contact" },
   { id: "legal" as const, label: "Pages légales" },
 ];
@@ -122,6 +123,8 @@ export function ReglagesForm({ settings }: ReglagesFormProps) {
           <IdentiteFields form={form} set={set} />
         ) : tab === "accueil" ? (
           <AccueilFields form={form} set={set} />
+        ) : tab === "fonds" ? (
+          <FondsFields form={form} set={set} />
         ) : tab === "contact" ? (
           <ContactFields form={form} set={set} />
         ) : (
@@ -215,12 +218,6 @@ function IdentiteFields({ form, set }: FieldsProps) {
   );
 }
 
-const HERO_MEDIA_OPTIONS: { value: HeroMedia["type"]; label: string }[] = [
-  { value: "illustration", label: "Illustration animée (par défaut)" },
-  { value: "image", label: "Image" },
-  { value: "video", label: "Vidéo" },
-];
-
 function AccueilFields({ form, set }: FieldsProps) {
   const { hero } = form;
 
@@ -282,70 +279,94 @@ function AccueilFields({ form, set }: FieldsProps) {
 
       <section className="space-y-3">
         <Heading as="h2" size="sm">
-          Média du héros
+          Image de fond
         </Heading>
-        <div
-          className="flex flex-wrap gap-2"
-          role="radiogroup"
-          aria-label="Type de média du héros"
-        >
-          {HERO_MEDIA_OPTIONS.map((option) => {
-            const active = hero.media.type === option.value;
-            return (
-              <button
-                key={option.value}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                onClick={() =>
-                  setHero("media", {
-                    type: option.value,
-                    url:
-                      option.value === "illustration"
-                        ? undefined
-                        : hero.media.url,
-                  })
-                }
-                className={`focus-visible:ring-ring rounded-full border px-4 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                  active
-                    ? "bg-navy-900 border-transparent text-white"
-                    : "border-border text-foreground hover:bg-secondary"
-                }`}
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
+        <Paragraph tone="muted" size="sm">
+          Remplace le fond bleu nuit uni de l&apos;en-tête de l&apos;accueil.
+          Laisser vide pour garder le fond uni actuel.
+        </Paragraph>
+        <MediaUploadField
+          value={
+            hero.backgroundImageUrl
+              ? { url: hero.backgroundImageUrl, type: "image" }
+              : undefined
+          }
+          onChange={(value) => setHero("backgroundImageUrl", value?.url)}
+          accept="image/*"
+          placeholder="Déposer une image de fond"
+        />
+      </section>
+    </div>
+  );
+}
 
-        {hero.media.type !== "illustration" ? (
+const PAGE_HERO_LABELS: Record<
+  keyof PageHeroBackgrounds,
+  { title: string; helper: string }
+> = {
+  comprendre: {
+    title: "Comprendre",
+    helper: "Image de fond de l'en-tête de la page Comprendre.",
+  },
+  veilleJuridique: {
+    title: "Veille juridique",
+    helper: "Image de fond de l'en-tête de la page Veille juridique.",
+  },
+  glossaire: {
+    title: "Glossaire",
+    helper: "Image de fond de l'en-tête de la page Glossaire.",
+  },
+  aPropos: {
+    title: "À propos",
+    helper: "Image de fond de l'en-tête de la page À propos.",
+  },
+};
+
+const PAGE_HERO_KEYS = Object.keys(
+  PAGE_HERO_LABELS,
+) as (keyof PageHeroBackgrounds)[];
+
+/**
+ * Une image de fond par page (hors accueil, réglée dans l'onglet « Page
+ * d'accueil ») — indépendantes les unes des autres, pas d'image partagée.
+ */
+function FondsFields({ form, set }: FieldsProps) {
+  const { heroBackgrounds } = form;
+
+  function setBackground(
+    key: keyof PageHeroBackgrounds,
+    url: string | undefined,
+  ) {
+    set("heroBackgrounds", { ...heroBackgrounds, [key]: url });
+  }
+
+  return (
+    <div className="max-w-2xl space-y-8">
+      <Paragraph tone="muted" size="sm">
+        Chaque page a sa propre image de fond, indépendante des autres. Sans
+        image déposée, l&apos;en-tête garde son fond bleu nuit uni.
+      </Paragraph>
+
+      {PAGE_HERO_KEYS.map((key) => (
+        <section key={key} className="space-y-3">
+          <Heading as="h2" size="sm">
+            {PAGE_HERO_LABELS[key].title}
+          </Heading>
+          <Paragraph tone="muted" size="sm">
+            {PAGE_HERO_LABELS[key].helper}
+          </Paragraph>
           <MediaUploadField
             value={
-              hero.media.url
-                ? { url: hero.media.url, type: hero.media.type }
+              heroBackgrounds[key]
+                ? { url: heroBackgrounds[key] as string, type: "image" }
                 : undefined
             }
-            onChange={(value) =>
-              setHero("media", {
-                type: hero.media.type,
-                url: value?.url,
-              })
-            }
-            accept={hero.media.type === "video" ? "video/*" : "image/*"}
-            placeholder={
-              hero.media.type === "video"
-                ? "Déposer une vidéo"
-                : "Déposer une image"
-            }
-            helperText="Remplace l'illustration animée par défaut dans le héros de l'accueil."
+            onChange={(value) => setBackground(key, value?.url)}
+            accept="image/*"
+            placeholder="Déposer une image de fond"
           />
-        ) : (
-          <Paragraph tone="muted" size="sm">
-            L&apos;illustration vectorielle actuelle reste affichée tant
-            qu&apos;aucune image ou vidéo n&apos;est déposée.
-          </Paragraph>
-        )}
-      </section>
+        </section>
+      ))}
     </div>
   );
 }

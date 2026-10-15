@@ -13,6 +13,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { questions } from "@/data/questions";
 import { buildMetadata } from "@/lib/metadata";
 import { buildCollectionPageJsonLd, buildFaqPageJsonLd } from "@/lib/json-ld";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 const TITLE = "Comprendre";
 const DESCRIPTION =
@@ -38,6 +39,7 @@ export default async function ComprendrePage({
   searchParams,
 }: ComprendrePageProps) {
   const { theme, q } = await searchParams;
+  const settings = await siteSettingsStore.get();
 
   return (
     <>
@@ -63,7 +65,9 @@ export default async function ComprendrePage({
         visuallyHidden
         items={[{ label: "Accueil", href: "/" }, { label: "Comprendre" }]}
       />
-      <ComprendreHero />
+      <ComprendreHero
+        backgroundImageUrl={settings.heroBackgrounds.comprendre}
+      />
       <SearchExperience
         items={questions.map((item) => ({
           key: item.slug,

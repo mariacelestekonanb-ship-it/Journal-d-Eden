@@ -179,7 +179,13 @@ export function seedSiteSettings(): SiteSettings {
         "Comprendre simplement les règles qui encadrent l'espace et les technologies numériques grâce à des fiches pédagogiques et une veille juridique.",
       ctaPrimaryLabel: "Explorer les fiches",
       ctaSecondaireLabel: "Découvrir la veille",
-      media: { type: "illustration" },
+      backgroundImageUrl: undefined,
+    },
+    heroBackgrounds: {
+      comprendre: undefined,
+      veilleJuridique: undefined,
+      glossaire: undefined,
+      aPropos: undefined,
     },
     contact: {
       email: siteConfig.email,

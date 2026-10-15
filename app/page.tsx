@@ -32,7 +32,7 @@ export default async function HomePage() {
         description={settings.hero.description}
         ctaPrimaryLabel={settings.hero.ctaPrimaryLabel}
         ctaSecondaireLabel={settings.hero.ctaSecondaireLabel}
-        media={settings.hero.media}
+        backgroundImageUrl={settings.hero.backgroundImageUrl}
       />
       <SearchSection />
       <PopularQuestions />

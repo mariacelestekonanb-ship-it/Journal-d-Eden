@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Section } from "@/components/ui/section";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { ComprendreIllustration } from "@/components/comprendre/comprendre-illustration";
+import { HeroBackdrop } from "@/components/shared/hero-backdrop";
 import { usePrefersReducedMotion } from "@/hooks/use-media-query";
 
 const fadeUp = {
@@ -13,13 +13,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+export interface ComprendreHeroProps {
+  /** Image de fond déposée depuis /admin/reglages — fond bleu nuit uni tant qu'aucun fichier n'est renseigné. */
+  backgroundImageUrl?: string;
+}
+
 /**
- * Hero de la page Comprendre : promesse pédagogique à gauche, illustration
- * abstraite à droite (`ComprendreIllustration`) — même langage visuel que
- * les autres Hero du site, composition distincte pour ne pas dupliquer
- * celle de l'accueil.
+ * Hero de la page Comprendre : promesse pédagogique sur un fond bleu nuit
+ * uni ou une image déposée depuis `/admin/reglages` (voir `HeroBackdrop`).
  */
-export function ComprendreHero() {
+export function ComprendreHero({ backgroundImageUrl }: ComprendreHeroProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const transition = prefersReducedMotion
     ? { duration: 0 }
@@ -27,50 +30,37 @@ export function ComprendreHero() {
 
   return (
     <Section tone="navy" spacing="lg" className="relative overflow-hidden">
-      <div className="bg-grid-navy absolute inset-0 opacity-40" aria-hidden />
+      <HeroBackdrop imageUrl={backgroundImageUrl} />
 
-      <div className="relative grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
-        <div>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            transition={transition}
-          >
-            <Heading as="h1" size="xl" className="text-white">
-              Comprendre le droit simplement.
-            </Heading>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            transition={{
-              ...transition,
-              delay: prefersReducedMotion ? 0 : 0.1,
-            }}
-          >
-            <Paragraph
-              tone="muted"
-              size="lg"
-              className="mt-6 max-w-xl text-gray-300"
-            >
-              Des fiches pédagogiques pour explorer le droit spatial et le droit
-              du numérique de manière claire, progressive et accessible.
-            </Paragraph>
-          </motion.div>
-        </div>
+      <div className="relative max-w-2xl">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          transition={transition}
+        >
+          <Heading as="h1" size="xl" className="text-white">
+            Comprendre le droit simplement.
+          </Heading>
+        </motion.div>
 
         <motion.div
-          initial={
-            prefersReducedMotion ? undefined : { opacity: 0, scale: 0.94 }
-          }
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.2 }}
-          className="mx-auto hidden w-full max-w-sm md:block lg:max-w-md"
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          transition={{
+            ...transition,
+            delay: prefersReducedMotion ? 0 : 0.1,
+          }}
         >
-          <ComprendreIllustration />
+          <Paragraph
+            tone="muted"
+            size="lg"
+            className="mt-6 max-w-xl text-gray-300"
+          >
+            Des fiches pédagogiques pour explorer le droit spatial et le droit
+            du numérique de manière claire, progressive et accessible.
+          </Paragraph>
         </motion.div>
       </div>
     </Section>

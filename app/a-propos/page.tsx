@@ -14,6 +14,7 @@ import { DisclaimerBox } from "@/components/about/disclaimer-box";
 import { AboutCta } from "@/components/about/about-cta";
 import { buildMetadata } from "@/lib/metadata";
 import { buildAboutPageJsonLd } from "@/lib/json-ld";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 const TITLE = "À propos de LexWatch";
 const DESCRIPTION =
@@ -31,7 +32,9 @@ const DISCLAIMER_ITEMS = [
   "Pour toute situation précise, consultez les textes officiels ou un professionnel du droit.",
 ];
 
-export default function AProposPage() {
+export default async function AProposPage() {
+  const settings = await siteSettingsStore.get();
+
   return (
     <>
       <JsonLd
@@ -46,7 +49,7 @@ export default function AProposPage() {
         items={[{ label: "Accueil", href: "/" }, { label: "À propos" }]}
       />
 
-      <AboutHero />
+      <AboutHero backgroundImageUrl={settings.heroBackgrounds.aPropos} />
       <MissionSection />
       <ProjectSection />
       <AuthorSection />

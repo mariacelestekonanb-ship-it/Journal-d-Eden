@@ -14,6 +14,7 @@ import { slugifyTerme } from "@/lib/format";
 import { getThemeBySlug } from "@/lib/content";
 import { buildMetadata } from "@/lib/metadata";
 import { buildDefinedTermSetJsonLd } from "@/lib/json-ld";
+import { siteSettingsStore } from "@/lib/admin/repository";
 
 const TITLE = "Glossaire";
 const DESCRIPTION =
@@ -42,6 +43,7 @@ export default async function GlossairePage({
   searchParams,
 }: GlossairePageProps) {
   const { theme, q } = await searchParams;
+  const settings = await siteSettingsStore.get();
 
   return (
     <>
@@ -61,7 +63,7 @@ export default async function GlossairePage({
         visuallyHidden
         items={[{ label: "Accueil", href: "/" }, { label: "Glossaire" }]}
       />
-      <GlossaireHero />
+      <GlossaireHero backgroundImageUrl={settings.heroBackgrounds.glossaire} />
 
       <SearchExperience
         items={glossaireTermes.map((terme) => ({

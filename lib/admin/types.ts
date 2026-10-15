@@ -148,28 +148,35 @@ export const COLOR_PALETTES: ColorPalette[] = [
 ];
 
 /**
- * Média illustrant le héros de la page d'accueil. `"illustration"` garde
- * le rendu vectoriel actuel (`OrbitalIllustration`) sans dépendre d'un
- * fichier ; `"image"`/`"video"` affichent le fichier réellement déposé par
- * la rédactrice via l'upload (voir `app/api/upload/route.ts`).
- */
-export interface HeroMedia {
-  type: "illustration" | "image" | "video";
-  url?: string;
-}
-
-/**
  * Libellés seulement — les destinations des deux boutons (`/comprendre`,
  * `/veille-juridique`) restent fixes : ce sont les deux sections
  * structurantes du site, pas des liens éditoriaux (voir
  * `components/home/primary-actions.tsx`).
+ *
+ * `backgroundImageUrl` remplace le fond bleu nuit uni de l'en-tête par
+ * l'image déposée via l'upload (voir `app/api/upload/route.ts`) ; absent,
+ * le fond uni actuel reste inchangé. Même principe pour les en-têtes des
+ * autres pages, voir `PageHeroBackgrounds`.
  */
 export interface SiteSettingsHero {
   headline: string;
   description: string;
   ctaPrimaryLabel: string;
   ctaSecondaireLabel: string;
-  media: HeroMedia;
+  backgroundImageUrl?: string;
+}
+
+/**
+ * Images de fond des en-têtes des pages autres que l'accueil (qui a les
+ * siennes dans `SiteSettingsHero`) — une par page, indépendantes les unes
+ * des autres. Absente pour une page, l'en-tête garde son fond bleu nuit uni
+ * actuel.
+ */
+export interface PageHeroBackgrounds {
+  comprendre?: string;
+  veilleJuridique?: string;
+  glossaire?: string;
+  aPropos?: string;
 }
 
 export interface SocialLink {
@@ -209,6 +216,7 @@ export interface SiteSettingsLegal {
 export interface SiteSettings {
   branding: SiteSettingsBranding;
   hero: SiteSettingsHero;
+  heroBackgrounds: PageHeroBackgrounds;
   contact: SiteSettingsContact;
   legal: SiteSettingsLegal;
   updatedAt: string;

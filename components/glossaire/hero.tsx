@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Section } from "@/components/ui/section";
 import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
-import { OrbitalIllustration } from "@/components/home/orbital-illustration";
+import { HeroBackdrop } from "@/components/shared/hero-backdrop";
 import { usePrefersReducedMotion } from "@/hooks/use-media-query";
 
 const fadeUp = {
@@ -13,12 +13,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+export interface GlossaireHeroProps {
+  /** Image de fond déposée depuis /admin/reglages — fond bleu nuit uni tant qu'aucun fichier n'est renseigné. */
+  backgroundImageUrl?: string;
+}
+
 /**
- * Hero du Glossaire. Même identité visuelle que l'accueil, Comprendre et
- * Veille juridique (illustration orbitale réutilisée), copie propre à cette
- * page.
+ * Hero du Glossaire, sur un fond bleu nuit uni ou une image déposée depuis
+ * `/admin/reglages` (voir `HeroBackdrop`).
  */
-export function GlossaireHero() {
+export function GlossaireHero({ backgroundImageUrl }: GlossaireHeroProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const transition = prefersReducedMotion
     ? { duration: 0 }
@@ -26,50 +30,37 @@ export function GlossaireHero() {
 
   return (
     <Section tone="navy" spacing="lg" className="relative overflow-hidden">
-      <div className="bg-grid-navy absolute inset-0 opacity-40" aria-hidden />
+      <HeroBackdrop imageUrl={backgroundImageUrl} />
 
-      <div className="relative grid items-center gap-16 lg:grid-cols-2 lg:gap-12">
-        <div>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            transition={transition}
-          >
-            <Heading as="h1" size="xl" className="text-white">
-              Glossaire juridique
-            </Heading>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            transition={{
-              ...transition,
-              delay: prefersReducedMotion ? 0 : 0.1,
-            }}
-          >
-            <Paragraph
-              tone="muted"
-              size="lg"
-              className="mt-6 max-w-xl text-gray-300"
-            >
-              Comprenez rapidement les principaux termes du droit spatial et du
-              droit du numérique grâce à des définitions claires et accessibles.
-            </Paragraph>
-          </motion.div>
-        </div>
+      <div className="relative max-w-2xl">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          transition={transition}
+        >
+          <Heading as="h1" size="xl" className="text-white">
+            Glossaire juridique
+          </Heading>
+        </motion.div>
 
         <motion.div
-          initial={
-            prefersReducedMotion ? undefined : { opacity: 0, scale: 0.94 }
-          }
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ ...transition, delay: prefersReducedMotion ? 0 : 0.2 }}
-          className="mx-auto hidden w-full max-w-sm md:block lg:max-w-md"
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          transition={{
+            ...transition,
+            delay: prefersReducedMotion ? 0 : 0.1,
+          }}
         >
-          <OrbitalIllustration />
+          <Paragraph
+            tone="muted"
+            size="lg"
+            className="mt-6 max-w-xl text-gray-300"
+          >
+            Comprenez rapidement les principaux termes du droit spatial et du
+            droit du numérique grâce à des définitions claires et accessibles.
+          </Paragraph>
         </motion.div>
       </div>
     </Section>
