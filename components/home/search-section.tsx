@@ -4,9 +4,19 @@ import { Section } from "@/components/ui/section";
 import { SearchInput } from "@/components/ui/search-input";
 
 const exampleQuestions = [
-  "Peut-on acheter un terrain sur la Lune ?",
-  "À qui appartient l'espace ?",
-  "Une entreprise privée peut-elle lancer une fusée ?",
+  {
+    label: "Qui possède l'espace extra-atmosphérique ?",
+    slug: "qui-possede-l-espace",
+  },
+  {
+    label:
+      "Une entreprise privée peut-elle exploiter des ressources sur la Lune ?",
+    slug: "peut-on-exploiter-lune",
+  },
+  {
+    label: "Faut-il une licence pour lancer une fusée privée ?",
+    slug: "licence-lancement-fusee",
+  },
 ];
 
 /**
@@ -33,12 +43,12 @@ export function SearchSection() {
 
         <ul className="mt-6 flex flex-wrap items-center justify-center gap-3">
           {exampleQuestions.map((question) => (
-            <li key={question}>
+            <li key={question.slug}>
               <Link
-                href={`/comprendre?q=${encodeURIComponent(question)}`}
+                href={`/comprendre/${question.slug}`}
                 className="border-border hover:border-accent/50 hover:bg-secondary text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex rounded-full border px-4 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
-                {question}
+                {question.label}
               </Link>
             </li>
           ))}
