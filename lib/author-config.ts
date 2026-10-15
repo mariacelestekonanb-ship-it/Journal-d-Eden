@@ -14,8 +14,8 @@ export const authorConfig = {
   presentation:
     "Étudiante en droit, passionnée par les zones encore peu balisées du droit — l'espace et le numérique — et convaincue que la rigueur juridique n'exclut pas la clarté.",
   parcours: [
-    "Étudiante en Master de droit — établissement à préciser",
-    "Formation antérieure — à préciser",
+    "Master 2 Droit public — Université Paris-Saclay",
+    "Master 1 Droit public — UVSQ Paris-Saclay",
   ],
   centresInteret: [
     "Droit spatial",

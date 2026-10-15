@@ -773,4 +773,366 @@ export const veilleItems: VeilleItem[] = [
       },
     ],
   },
+  {
+    slug: "recap-juillet-octobre-2026-droit-spatial",
+    titre: "Récap trimestriel : droit spatial, juillet–octobre 2026",
+    resume:
+      "Trois mois de droit spatial en un coup d'œil : la 69ᵉ session du COPUOS à Vienne, un projet de réforme à la FAA, l'EU Space Act toujours sans date d'adoption, et les Accords Artemis qui franchissent les 76 signataires.",
+    pointsCles: [
+      "COPUOS : 69ᵉ session tenue à Vienne du 10 au 18 juin 2026, présidence italienne pour 2026-2027",
+      "EU Space Act : toujours en négociation, aucune date d'adoption fixée à ce stade",
+      "Accords Artemis : 76 signataires au 25 septembre 2026, après quatre adhésions en une semaine",
+      "FAA : projet de réforme pour simplifier les autorisations de lancement (octobre 2026)",
+    ],
+    domaine: "droit-spatial",
+    categorie: "new-space",
+    type: "Institution",
+    date: "2026-10-15",
+    dateMiseAJour: "2026-10-15",
+    source: "Synthèse LexWatch",
+    tempsLecture: 8,
+    chronologie: [
+      {
+        date: "2026-03-03",
+        titre:
+          "Le Parlement européen amende le projet d'EU Space Act en commission",
+      },
+      {
+        date: "2026-05-01",
+        titre: "Rapport d'étape du Conseil de l'UE sur l'EU Space Act",
+      },
+      {
+        date: "2026-06-10",
+        titre: "Ouverture de la 69ᵉ session du COPUOS à Vienne",
+      },
+      {
+        date: "2026-06-18",
+        titre: "Clôture de la 69ᵉ session du COPUOS",
+        description: "L'Italie prend la présidence pour le mandat 2026-2027.",
+      },
+      {
+        date: "2026-08-05",
+        titre: "L'étage supérieur d'une fusée Falcon-9 s'écrase sur la Lune",
+        description:
+          "Relance le débat sur le « dommage spatial environnemental », non couvert explicitement par le traité de 1967.",
+      },
+      {
+        date: "2026-09-25",
+        titre: "Les Accords Artemis franchissent les 76 signataires",
+        description:
+          "Quatre nouveaux pays rejoignent le cadre en une semaine (Albanie, Croatie, Côte d'Ivoire, Saint-Marin).",
+      },
+    ],
+    contexteJuridique: [
+      {
+        type: "Traité",
+        titre:
+          "Traité sur les principes régissant les activités des États en matière d'exploration et d'utilisation de l'espace extra-atmosphérique",
+        citation: "1967",
+        organisme: "ONU / UNOOSA",
+        url: "https://www.unoosa.org/oosa/fr/ourwork/spacelaw/treaties/outerspacetreaty.html",
+      },
+      {
+        type: "Convention",
+        titre: "Accords Artemis",
+        citation: "Principes de coopération lunaire, 2020",
+        organisme: "NASA",
+        url: "https://www.nasa.gov/artemis-accords/",
+      },
+    ],
+    analyse: [
+      { type: "heading", text: "Traités spatiaux internationaux" },
+      {
+        type: "paragraph",
+        text: "Le Comité des Nations unies sur les utilisations pacifiques de l'espace extra-atmosphérique (COPUOS) a tenu sa 69ᵉ session à Vienne du 10 au 18 juin 2026. Teodoro Valente, président de l'Agence spatiale italienne, prend la présidence pour le mandat 2026-2027, succédant au Marocain Rafiq Akram. Les travaux ont porté sur la durabilité à long terme des activités spatiales et l'usage de sources d'énergie nucléaire dans l'espace.",
+      },
+      {
+        type: "paragraph",
+        text: "Le 5 août 2026, l'étage supérieur d'une fusée Falcon-9 (SpaceX) s'est écrasé sur la Lune, relançant le débat sur le « dommage spatial environnemental » : le traité de 1967 ne couvre pas explicitement ce cas de figure.",
+      },
+      {
+        type: "callout",
+        tone: "info",
+        text: "Aucune avancée formelle de codification n'a été enregistrée en 2026 sur ce terrain : le traité de 1967 reste le seul socle contraignant.",
+      },
+      { type: "heading", text: "Débris et durabilité spatiale" },
+      {
+        type: "paragraph",
+        text: "Un expert de l'Académie de l'air et de l'espace alertait début octobre 2026 : les règles internationales existantes « ne sont pas appliquées » face à la croissance des mégaconstellations, citant la France comme l'un des seuls pays à peu près exemplaires sur la désorbitation.",
+      },
+      {
+        type: "callout",
+        tone: "warning",
+        text: "Le risque de collisions en chaîne (« syndrome de Kessler ») revient dans plusieurs analyses 2026 à mesure que les mégaconstellations se densifient.",
+      },
+      { type: "heading", text: "New Space et acteurs privés" },
+      {
+        type: "paragraph",
+        text: "En octobre 2026, la FAA (États-Unis) a engagé un projet de réforme pour simplifier les autorisations de lancement et de rentrée atmosphérique (dépôt électronique, fusion de plusieurs analyses de sécurité en une seule procédure).",
+      },
+      {
+        type: "paragraph",
+        text: "L'EU Space Act reste à l'état de proposition : le Parlement européen n'a pas arrêté sa position en première lecture, et un rapport d'étape du Conseil (1ᵉʳ mai 2026) relève des points encore ouverts (cybersécurité, accès au marché, opérateurs de pays tiers). Aucune date d'adoption n'est fixée à ce stade. Le texte de la proposition prévoit toutefois lui-même une entrée en application au 1ᵉʳ janvier 2030 si elle est adoptée — une information relayée par plusieurs cabinets d'avocats spécialisés (Heuking, King & Spalding), qui ne s'accordent pas en revanche sur la date d'adoption elle-même (Baker McKenzie évoque une adoption possible dès 2026).",
+      },
+      {
+        type: "list",
+        items: [
+          "La GSMA publie en juin 2026 un guide mondial à destination des régulateurs satellites",
+          "États-Unis : SAT Streamlining Act au Sénat (février 2026), pour accélérer les licences FCC",
+          "Japon : réforme de la loi sur les activités spatiales (mars 2026), élargie aux services de réutilisation de lanceurs",
+        ],
+      },
+      {
+        type: "callout",
+        tone: "info",
+        text: "Le rythme des lancements dépasse la capacité des régulateurs — un constat partagé par plusieurs analyses sectorielles 2026.",
+      },
+      { type: "heading", text: "Exploitation des ressources spatiales" },
+      {
+        type: "paragraph",
+        text: "Le débat juridique sur l'appropriation des ressources spatiales se poursuit : plusieurs lectures estiment qu'aucune interdiction explicite ne s'y oppose tant que l'accès à l'espace reste libre au sens de l'article II du traité de 1967, une lecture que plusieurs États contestent. Le groupe de travail de l'ONU sur ce sujet a publié des versions révisées de ses principes recommandés entre février et avril 2026.",
+      },
+      {
+        type: "paragraph",
+        text: "Les Accords Artemis ont franchi les 76 signataires le 25 septembre 2026, avec Saint-Marin comme dernier État en date, après l'Albanie (21/09), la Croatie (23/09) et la Côte d'Ivoire (24/09) — quatre adhésions en une semaine.",
+      },
+      {
+        type: "callout",
+        tone: "warning",
+        text: "Ce terrain juridique reste « non stabilisé », entre droit national, travaux onusiens non contraignants et absence de régime international dédié aux ressources spatiales.",
+      },
+    ],
+    impact: {
+      juridique: [
+        "Aucune norme internationale nouvelle n'a été adoptée sur la gestion des débris ou l'exploitation des ressources spatiales au cours du trimestre.",
+        "Le droit national continue de combler le vide laissé par l'absence de consensus multilatéral (Accords Artemis, lois américaine et japonaise).",
+      ],
+      institutionnel: [
+        "La présidence italienne du COPUOS oriente l'agenda des deux prochaines sessions annuelles.",
+        "Le blocage persistant entre Parlement et Conseil retarde l'harmonisation des régimes nationaux d'autorisation par l'EU Space Act.",
+      ],
+      pratique: [
+        "Les opérateurs spatiaux européens restent soumis à leurs régimes nationaux existants tant que l'EU Space Act n'est pas adopté.",
+      ],
+    },
+    referencesOfficielles: [
+      {
+        type: "Site officiel",
+        titre: "Committee on the Peaceful Uses of Outer Space: 2026",
+        organisme: "UNOOSA",
+        url: "https://www.unoosa.org/oosa/en/ourwork/copuos/2026/index.html",
+      },
+      {
+        type: "Site officiel",
+        titre: "EU Space Act",
+        organisme: "Commission européenne — Défense, Industrie et Espace",
+        url: "https://defence-industry-space.ec.europa.eu/eu-space-act_en",
+      },
+      {
+        type: "Communiqué",
+        titre: "NASA Celebrates as Artemis Accords Surpasses 75 Signatories",
+        organisme: "NASA",
+        url: "https://www.nasa.gov/news-release/nasa-celebrates-as-artemis-accords-surpasses-75-signatories/",
+      },
+      {
+        type: "Communiqué",
+        titre: "NASA Welcomes San Marino Signing the Artemis Accords",
+        organisme: "NASA",
+        url: "https://www.nasa.gov/organizations/oiir/nasa-welcomes-san-marino-signing-the-artemis-accords/",
+      },
+    ],
+  },
+  {
+    slug: "recap-juillet-octobre-2026-droit-numerique",
+    titre: "Récap trimestriel : droit du numérique, juillet–octobre 2026",
+    resume:
+      "Trois mois de droit du numérique en un coup d'œil : 890 millions d'euros d'amende DMA contre Google, un nouveau report du calendrier de l'AI Act, la saisine de la CJUE sur NIS 2, et le Digital Omnibus toujours en négociation.",
+    pointsCles: [
+      "DMA : 890 millions d'euros d'amende infligés à Google le 23 juillet 2026",
+      "AI Act : nouveau report de 16 mois pour les obligations « haut risque », repoussées au 2 décembre 2027",
+      "NIS 2 : la Commission saisit la CJUE contre l'Irlande, l'Espagne, la France et les Pays-Bas",
+      "Digital Omnibus : deux propositions distinctes (RGPD/ePrivacy et IA) toujours en négociation",
+    ],
+    domaine: "droit-numerique",
+    categorie: "intelligence-artificielle",
+    type: "Institution",
+    date: "2026-10-15",
+    dateMiseAJour: "2026-10-15",
+    source: "Synthèse LexWatch",
+    tempsLecture: 8,
+    chronologie: [
+      {
+        date: "2025-11-19",
+        titre: "La Commission publie les deux propositions du Digital Omnibus",
+        description:
+          "COM(2025) 837 (RGPD, ePrivacy, NIS 2, Data Act) et COM(2025) 836 (AI Act).",
+      },
+      {
+        date: "2026-02-12",
+        titre: "Avis conjoint du CEPD et du CEPD/EDPS sur le Digital Omnibus",
+      },
+      {
+        date: "2026-03-19",
+        titre:
+          "La CJUE encadre les demandes d'accès RGPD abusives (affaire C-526/24)",
+      },
+      {
+        date: "2026-05-18",
+        titre: "La CNIL publie son rapport annuel",
+      },
+      {
+        date: "2026-07-08",
+        titre:
+          "Le Tribunal de l'UE rejette les recours d'Apple contre sa désignation DMA, et la Commission saisit la CJUE sur NIS 2",
+      },
+      {
+        date: "2026-07-23",
+        titre:
+          "La Commission inflige 890 millions d'euros à Google au titre du DMA",
+      },
+      {
+        date: "2026-08-02",
+        titre:
+          "Entrée en application de la majorité des dispositions de l'AI Act",
+      },
+    ],
+    contexteJuridique: [
+      {
+        type: "Règlement",
+        titre: "Règlement général sur la protection des données (RGPD)",
+        citation: "Règlement (UE) 2016/679",
+        organisme: "Union européenne",
+        url: "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679",
+      },
+      {
+        type: "Règlement",
+        titre: "Règlement sur les marchés numériques (DMA)",
+        citation: "Règlement (UE) 2022/1925",
+        organisme: "Union européenne",
+        url: "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32022R1925",
+      },
+      {
+        type: "Règlement",
+        titre: "Règlement sur l'intelligence artificielle (AI Act)",
+        citation: "Règlement (UE) 2024/1689",
+        organisme: "Union européenne",
+        url: "https://digital-strategy.ec.europa.eu/fr/policies/regulatory-framework-ai",
+      },
+    ],
+    analyse: [
+      { type: "heading", text: "Intelligence artificielle (AI Act)" },
+      {
+        type: "paragraph",
+        text: "La majorité des dispositions de l'AI Act est applicable depuis le 2 août 2026, dont les obligations de transparence (article 50) et le régime de sanctions. Le règlement (UE) 2026/1744, adopté le 8 juillet et entré en vigueur le 27 juillet 2026, reporte de seize mois les obligations « haut risque » de l'annexe III (recrutement, scoring de crédit, éducation, biométrie) au 2 décembre 2027, et celles de l'annexe II au 2 août 2028.",
+      },
+      {
+        type: "paragraph",
+        text: "En France, la loi désignant les autorités de surveillance du marché n'était toujours pas définitivement adoptée à l'automne 2026, et seuls 8 des 27 États membres avaient désigné leur point de contact unique en mars 2026. La France avait par ailleurs demandé, avec l'Allemagne, un report d'un an de la mise en conformité pour les systèmes à haut risque (novembre 2025).",
+      },
+      {
+        type: "callout",
+        tone: "warning",
+        text: "Le calendrier de l'AI Act devient mouvant : un deuxième report en cours d'année impose une veille active sur les prochaines échéances.",
+      },
+      { type: "heading", text: "Protection des données personnelles (RGPD)" },
+      {
+        type: "paragraph",
+        text: "Le 19 mars 2026, la CJUE (affaire C-526/24) a jugé qu'une demande d'accès RGPD peut être refusée si elle poursuit le seul but de préparer une demande d'indemnisation ; la demande n'a pas à être motivée par son auteur, mais la charge de la preuve de l'abus pèse sur le responsable de traitement (article 12, paragraphe 5, du RGPD).",
+      },
+      {
+        type: "paragraph",
+        text: "Dans son rapport annuel du 18 mai 2026, la CNIL annonce consacrer la moitié de ses contrôles et actions répressives de l'année aux manquements de cybersécurité, et renforcer son rôle dans la régulation de l'intelligence artificielle.",
+      },
+      {
+        type: "paragraph",
+        text: "La Commission a publié le 19 novembre 2025 deux propositions distinctes dites « Digital Omnibus » : l'une modifiant le RGPD, la directive ePrivacy, NIS 2 et le Data Act, l'autre ajustant l'AI Act. Le volet RGPD/ePrivacy reste en négociation — les sources disponibles ne s'accordent pas sur son état exact d'avancement en trilogue. Le CEPD et le CEPD/EDPS ont publié un avis conjoint (12 février 2026) saluant l'objectif de simplification tout en pointant des risques, notamment autour de la redéfinition de la notion de donnée personnelle.",
+      },
+      {
+        type: "callout",
+        tone: "info",
+        text: "Le Digital Omnibus, s'il est adopté en l'état, pourrait redéfinir la notion même de donnée personnelle — un point à surveiller de près.",
+      },
+      { type: "heading", text: "Cybersécurité (NIS 2)" },
+      {
+        type: "paragraph",
+        text: "Le 8 juillet 2026, la Commission a saisi la CJUE contre l'Irlande, l'Espagne, la France et les Pays-Bas pour transposition incomplète de NIS 2, avec demande de sanctions financières journalières jusqu'à régularisation. En France, l'ANSSI a publié dès mars 2026 son référentiel de mesures recommandées (ReCyF) et propose déjà un dispositif d'auto-évaluation en ligne, en amont même du vote de la loi de transposition elle-même, toujours en attente.",
+      },
+      {
+        type: "list",
+        items: [
+          "Sanctions prévues par la directive : jusqu'à 10 M€ ou 2 % du chiffre d'affaires mondial pour les entités essentielles",
+          "7 M€ ou 1,4 % du chiffre d'affaires mondial pour les entités importantes",
+          "Les obligations de fond sont contraignantes depuis octobre 2024, indépendamment du retard de transposition",
+        ],
+      },
+      {
+        type: "heading",
+        text: "Régulation des plateformes numériques (DSA / DMA)",
+      },
+      {
+        type: "paragraph",
+        text: "Le 23 juillet 2026, la Commission inflige à Google 890 millions d'euros au titre du DMA (460 M€ pour l'auto-préférence dans Google Search, 430 M€ pour les restrictions imposées aux développeurs sur Google Play). Google dispose de 60 jours pour se mettre en conformité.",
+      },
+      {
+        type: "callout",
+        tone: "info",
+        text: "En cas de manquement persistant, deux mécanismes distincts du DMA peuvent s'appliquer : l'article 30 permet une amende allant jusqu'à 10 % du chiffre d'affaires mondial annuel (20 % en cas de récidive), tandis que l'article 31 permet, séparément, des astreintes journalières allant jusqu'à 5 % du chiffre d'affaires mondial moyen journalier.",
+      },
+      {
+        type: "paragraph",
+        text: "Le 8 juillet 2026, le Tribunal de l'Union européenne a rejeté l'ensemble des recours d'Apple contre sa désignation comme contrôleur d'accès pour l'App Store et iOS (affaires jointes T-1079/23, T-1080/23, T-214/24) ; les recours relatifs à iMessage ont été jugés irrecevables, ce service n'ayant pas été désigné comme point d'accès important.",
+      },
+      {
+        type: "list",
+        items: [
+          "La Commission a adressé des constats préliminaires d'infraction DSA à Meta et TikTok ; enquêtes en cours",
+          "Une décision sur la désignation d'AWS et de Microsoft Azure comme contrôleurs d'accès au titre du DMA est attendue d'ici fin 2026",
+          "La consultation publique sur le réexamen légal du DMA s'est close le 24 septembre 2026",
+        ],
+      },
+    ],
+    impact: {
+      juridique: [
+        "L'amende Google précise la portée concrète de l'interdiction d'auto-préférence et des restrictions de steering au titre du DMA.",
+        "L'arrêt de la CJUE sur les demandes d'accès RGPD ouvre une voie de défense pour les responsables de traitement confrontés à des demandes stratégiques.",
+      ],
+      institutionnel: [
+        "La Commission démontre sa capacité à sanctionner et à faire respecter les délais de transposition par la voie contentieuse.",
+        "Le calendrier législatif numérique reste chargé et mouvant (AI Act, Digital Omnibus, réexamen du DMA).",
+      ],
+      pratique: [
+        "Les fournisseurs de systèmes d'IA à haut risque de l'annexe III gagnent seize mois de délai supplémentaire.",
+        "Les entités françaises, irlandaises, espagnoles et néerlandaises restent soumises aux obligations NIS 2 malgré l'absence de loi de transposition complète.",
+      ],
+    },
+    referencesOfficielles: [
+      {
+        type: "Communiqué",
+        titre:
+          "Commission fines Google €890 million for breaches of the Digital Markets Act",
+        organisme: "Commission européenne",
+        url: "https://digital-markets-act.ec.europa.eu/commission-fines-google-eur890-million-breaches-digital-markets-act-2026-07-23_en",
+      },
+      {
+        type: "Communiqué",
+        titre:
+          "Commission refers Ireland, Spain, France and the Netherlands to the Court of Justice for failing to transpose the rules on cybersecurity",
+        organisme: "Commission européenne",
+        url: "https://digital-strategy.ec.europa.eu/en/news/commission-refers-ireland-spain-france-and-netherlands-court-justice-failing-transpose-rules",
+      },
+      {
+        type: "Document PDF",
+        titre:
+          "Communiqué de presse, affaires jointes T-1079/23, T-1080/23, T-214/24",
+        organisme: "Tribunal de l'Union européenne (CURIA)",
+        url: "https://curia.europa.eu/site/upload/docs/application/pdf/2026-07/cp260096fr.pdf",
+      },
+      {
+        type: "Site officiel",
+        titre: "CNIL — Sanctions et mesures correctrices",
+        organisme: "CNIL",
+        url: "https://www.cnil.fr/fr/thematique/cnil/sanctions",
+      },
+    ],
+  },
 ];
