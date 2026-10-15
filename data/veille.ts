@@ -73,7 +73,7 @@ export const veilleItems: VeilleItem[] = [
       {
         type: "callout",
         tone: "warning",
-        text: "Google dispose de 60 jours pour se conformer à la décision. À défaut, l'entreprise s'expose à des astreintes journalières — le plafond exact varie selon les sources consultées et mérite d'être vérifié dans le texte officiel de la décision.",
+        text: "Google dispose de 60 jours pour se conformer à la décision. En cas de manquement persistant au DMA, l'article 30 du règlement permet à la Commission d'infliger une amende allant jusqu'à 10 % du chiffre d'affaires mondial annuel — porté à 20 % en cas de récidive sur la même obligation dans les huit années suivant une précédente décision de non-conformité.",
       },
       {
         type: "paragraph",
@@ -548,7 +548,7 @@ export const veilleItems: VeilleItem[] = [
       },
       {
         type: "paragraph",
-        text: "L'Italie a pris la présidence du Comité pour le mandat 2026-2027, l'Agence spatiale italienne ayant désigné Teodoro Valente à cette fonction. Le Comité se réunit chaque année pour traiter de la préservation de l'espace à des fins pacifiques, des débris spatiaux et des questions de droit spatial en général.",
+        text: "Le Comité a élu Teodoro Valente, président de l'Agence spatiale italienne (ASI), à sa présidence pour le mandat 2026-2027 — il succède au Marocain Rafiq Akram. Le COPUOS réunit 110 États membres et se réunit chaque année pour traiter de la préservation de l'espace à des fins pacifiques, des débris spatiaux et des questions de droit spatial en général.",
       },
       {
         type: "list",
@@ -592,8 +592,8 @@ export const veilleItems: VeilleItem[] = [
     domaine: "droit-spatial",
     categorie: "traites-spatiaux",
     type: "Convention",
-    date: "2026-09-30",
-    dateMiseAJour: "2026-09-30",
+    date: "2026-09-25",
+    dateMiseAJour: "2026-09-25",
     source: "NASA",
     tempsLecture: 4,
     chronologie: [
@@ -608,10 +608,22 @@ export const veilleItems: VeilleItem[] = [
         description: "Respectivement 65ᵉ et 66ᵉ signataires, le même jour.",
       },
       {
-        date: "2026-09-30",
-        titre: "Le cap des 75 signataires est dépassé",
+        date: "2026-09-21",
+        titre: "L'Albanie devient le 73ᵉ pays signataire",
+      },
+      {
+        date: "2026-09-23",
+        titre: "La Croatie devient le 74ᵉ pays signataire",
+      },
+      {
+        date: "2026-09-24",
+        titre: "La Côte d'Ivoire devient le 75ᵉ pays signataire",
+      },
+      {
+        date: "2026-09-25",
+        titre: "Saint-Marin devient le 76ᵉ pays signataire",
         description:
-          "Albanie, Croatie, Côte d'Ivoire et Saint-Marin rejoignent le cadre, portant le total à 76 pays selon la NASA.",
+          "Cérémonie de signature à Rimini. La NASA annonce conjointement les quatre adhésions de la semaine, portant le total à 76 pays.",
       },
     ],
     contexteJuridique: [
@@ -633,12 +645,7 @@ export const veilleItems: VeilleItem[] = [
     analyse: [
       {
         type: "paragraph",
-        text: "Le nombre de pays signataires des Accords Artemis a continué de croître tout au long de l'année 2026, pour dépasser le seuil des 75 pays à l'automne.",
-      },
-      {
-        type: "callout",
-        tone: "info",
-        text: "Les sources consultées ne s'accordent pas toutes sur le décompte exact à chaque date (67 puis 76 selon les communiqués successifs de la NASA) : les chiffres ci-dessus reflètent les communiqués officiels NASA les plus récents trouvés, à confirmer sur la page officielle des signataires avant toute citation précise.",
+        text: "Le nombre de pays signataires des Accords Artemis a continué de croître tout au long de l'année 2026. En une semaine à peine, quatre nouveaux pays — l'Albanie, la Croatie, la Côte d'Ivoire puis Saint-Marin — ont rejoint le cadre entre le 21 et le 25 septembre 2026, portant le total à 76 signataires.",
       },
       {
         type: "paragraph",
@@ -677,6 +684,12 @@ export const veilleItems: VeilleItem[] = [
         titre: "NASA Celebrates as Artemis Accords Surpasses 75 Signatories",
         organisme: "NASA",
         url: "https://www.nasa.gov/news-release/nasa-celebrates-as-artemis-accords-surpasses-75-signatories/",
+      },
+      {
+        type: "Communiqué",
+        titre: "NASA Welcomes San Marino Signing the Artemis Accords",
+        organisme: "NASA",
+        url: "https://www.nasa.gov/organizations/oiir/nasa-welcomes-san-marino-signing-the-artemis-accords/",
       },
     ],
   },

@@ -102,8 +102,6 @@ export interface Theme {
   titre: string;
   description: string;
   icone: string;
-  /** Nombre de fiches affiché sur la carte — volontairement indicatif tant que le contenu réel n'est pas connecté. */
-  nombreFichesApprox: number;
   /** Slugs de `categorie` (voir `QuestionItem.categorie` et `VeilleItem.categorie`) rattachés à ce thème. */
   categoriesAssociees: string[];
 }

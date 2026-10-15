@@ -3,6 +3,7 @@ import { Heading } from "@/components/ui/heading";
 import { Paragraph } from "@/components/ui/paragraph";
 import { CategoryCard } from "@/components/comprendre/category-card";
 import { themes } from "@/data/themes";
+import { getQuestionsParTheme } from "@/lib/content";
 
 export interface CategoriesSectionProps {
   activeTheme?: string;
@@ -27,6 +28,7 @@ export function CategoriesSection({ activeTheme }: CategoriesSectionProps) {
           <CategoryCard
             key={theme.slug}
             theme={theme}
+            nombreFiches={getQuestionsParTheme(theme.slug).length}
             active={theme.slug === activeTheme}
           />
         ))}

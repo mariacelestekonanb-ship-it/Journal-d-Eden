@@ -10,17 +10,23 @@ import type { Theme } from "@/types";
 
 export interface CategoryCardProps {
   theme: Theme;
+  /** Nombre réel de fiches rattachées à ce thème (voir `getQuestionsParTheme`) — jamais une estimation. */
+  nombreFiches: number;
   /** Thème actuellement sélectionné dans « Toutes les fiches » (mise en avant visuelle). */
   active?: boolean;
 }
 
 /**
  * Grande carte de thème pour la section Catégories : icône, titre,
- * description et nombre indicatif de fiches. Le lien pointe vers la page
- * elle-même avec `?theme=`, lu côté serveur pour pré-filtrer « Toutes les
- * fiches » sans JavaScript supplémentaire.
+ * description et nombre réel de fiches rattachées. Le lien pointe vers la
+ * page elle-même avec `?theme=`, lu côté serveur pour pré-filtrer « Toutes
+ * les fiches » sans JavaScript supplémentaire.
  */
-export function CategoryCard({ theme, active = false }: CategoryCardProps) {
+export function CategoryCard({
+  theme,
+  nombreFiches,
+  active = false,
+}: CategoryCardProps) {
   const Icon = resolveIcon(theme.icone);
 
   return (
@@ -54,7 +60,7 @@ export function CategoryCard({ theme, active = false }: CategoryCardProps) {
         </div>
 
         <p className="text-muted-foreground mt-6 text-xs font-medium">
-          {theme.nombreFichesApprox} fiches
+          {nombreFiches} {nombreFiches > 1 ? "fiches" : "fiche"}
         </p>
       </Card>
     </Link>
