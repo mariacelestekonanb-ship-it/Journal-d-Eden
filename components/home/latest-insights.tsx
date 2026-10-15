@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { InsightCard } from "@/components/home/insight-card";
 import { veilleItems } from "@/data/veille";
 
-const featuredInsights = veilleItems.filter((item) => item.aLaUne).slice(0, 3);
+const featuredInsights = [...veilleItems]
+  .sort((a, b) => b.date.localeCompare(a.date))
+  .slice(0, 3);
 
 /** Section « Dernières notes de veille » : trois analyses juridiques récentes. */
 export function LatestInsights() {
