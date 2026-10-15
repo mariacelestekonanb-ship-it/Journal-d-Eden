@@ -16,7 +16,10 @@ import type {
   SiteSettings,
 } from "@/lib/admin/types";
 
-const AUTEURS = ["Camille Dupuis", "Younes Haddad", "Léa Moreau"];
+// LexWatch est un projet personnel, porté par une seule personne (voir
+// components/about/project-section.tsx) — un seul nom ici, pas une
+// équipe éditoriale fictive.
+const AUTEURS = ["Bénédicte Konan"];
 
 // Pondéré vers « publié » : le contenu public existant est par nature déjà
 // publié. Quelques entrées sont marquées autrement pour donner un tableau

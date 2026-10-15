@@ -5,17 +5,16 @@ function seedActivity(): ActivityLogEntry[] {
     {
       id: "activity-seed-1",
       date: "2026-07-23T09:14:00.000Z",
-      auteur: "Léa Moreau",
+      auteur: "Bénédicte Konan",
       action: "a publié",
       entityType: "analyse",
-      titre:
-        "L'EDPB adopte des lignes directrices sur les transferts internationaux de données",
-      href: "/admin/veille/edpb-lignes-directrices-transferts-internationaux",
+      titre: "DMA : la Commission inflige 890 millions d'euros à Google",
+      href: "/admin/veille/dma-amende-google-890-millions",
     },
     {
       id: "activity-seed-2",
       date: "2026-07-20T16:42:00.000Z",
-      auteur: "Camille Dupuis",
+      auteur: "Bénédicte Konan",
       action: "a mis à jour",
       entityType: "fiche",
       titre: "Qu'est-ce qu'un système d'IA « à haut risque » selon l'AI Act ?",
@@ -24,7 +23,7 @@ function seedActivity(): ActivityLogEntry[] {
     {
       id: "activity-seed-3",
       date: "2026-07-18T11:05:00.000Z",
-      auteur: "Younes Haddad",
+      auteur: "Bénédicte Konan",
       action: "a envoyé en relecture",
       entityType: "glossaire",
       titre: "Interopérabilité",
@@ -33,11 +32,10 @@ function seedActivity(): ActivityLogEntry[] {
     {
       id: "activity-seed-4",
       date: "2026-07-14T08:30:00.000Z",
-      auteur: "Camille Dupuis",
+      auteur: "Bénédicte Konan",
       action: "a archivé",
       entityType: "ressource",
-      titre:
-        "Publication : gouvernance des données spatiales et souveraineté numérique",
+      titre: "International Institute of Space Law",
       href: "/admin/ressources/ressource-6",
     },
   ];
