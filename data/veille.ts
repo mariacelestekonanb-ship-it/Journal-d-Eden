@@ -476,6 +476,19 @@ export const veilleItems: VeilleItem[] = [
         type: "paragraph",
         text: "Sur le fond, le Conseil propose notamment de retirer les organisations internationales du champ d'application du texte — une divergence supplémentaire avec la position initiale de la Commission.",
       },
+      {
+        type: "heading",
+        text: "Une date d'entrée en application déjà inscrite dans le texte, pas une date d'adoption",
+      },
+      {
+        type: "paragraph",
+        text: "Le texte de la proposition initiale de la Commission prévoit lui-même une entrée en application au 1ᵉʳ janvier 2030, avec des périodes transitoires distinctes selon les catégories d'opérateurs — une analyse relayée par plusieurs cabinets d'avocats spécialisés en droit spatial. Cette date figure dans le projet tel que rédigé : elle ne présume en rien de la date, encore inconnue, à laquelle Parlement et Conseil parviendront effectivement à un accord et adopteront le texte.",
+      },
+      {
+        type: "callout",
+        tone: "info",
+        text: "Les estimations sur la date d'adoption elle-même divergent selon les cabinets : certaines analyses évoquent une adoption possible dès 2026, d'autres restent plus prudentes. Aucune de ces projections n'engage la Commission, le Conseil ou le Parlement.",
+      },
     ],
     impact: {
       juridique: [
