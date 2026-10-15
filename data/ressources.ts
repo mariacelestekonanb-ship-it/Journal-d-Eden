@@ -17,7 +17,7 @@ export const ressources: Ressource[] = [
       "Analyse annuelle de l'Agence spatiale européenne sur la densité orbitale, les débris et les risques de collision.",
     type: "Rapport",
     domaine: "droit-spatial",
-    url: "https://www.esa.int/Space_Safety/Space_Debris/ESA_s_Space_Environment_Report_2026",
+    url: "https://www.esa.int/Space_Safety/Space_Debris/ESA_Space_Environment_Report_2026",
     organisme: "ESA",
   },
   {
@@ -57,10 +57,9 @@ export const ressources: Ressource[] = [
     organisme: "Union européenne",
   },
   {
-    titre:
-      "Publication : gouvernance des données spatiales et souveraineté numérique",
+    titre: "International Institute of Space Law",
     description:
-      "Étude croisant les enjeux du droit spatial et du droit du numérique autour de la souveraineté des infrastructures critiques.",
+      "Association scientifique internationale de référence en droit spatial : colloques, publications et ressources documentaires.",
     type: "Publication",
     domaine: "droit-spatial",
     url: "https://www.iislweb.org/",
