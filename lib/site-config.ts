@@ -5,10 +5,10 @@ export const siteConfig = {
   tagline: "La veille juridique du droit spatial et du numérique",
   description:
     "LexWatch décrypte le droit spatial et le droit du numérique pour les professionnels, chercheurs et curieux : veille juridique, glossaire, ressources et analyses claires.",
-  url: "https://lexwatch.example.com",
-  email: "contact@lexwatch.io",
-  /** Compte X/Twitter de la plateforme — placeholder à remplacer avant mise en production. */
-  twitterHandle: "@lexwatch",
+  url: "https://lexwatch-fr.vercel.app",
+  email: "celestebenedictek@gmail.com",
+  /** Pas de compte X/Twitter réel à ce jour — laissé vide plutôt que d'afficher un identifiant inventé. */
+  twitterHandle: undefined as string | undefined,
   locale: "fr_FR",
   /** Mots-clés par défaut, hérités par toute page qui n'en fournit pas de plus spécifiques (voir `buildMetadata`). */
   keywords: [

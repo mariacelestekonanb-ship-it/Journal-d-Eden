@@ -76,7 +76,9 @@ export function buildMetadata({
       card: "summary_large_image",
       title,
       description,
-      creator: siteConfig.twitterHandle,
+      ...(siteConfig.twitterHandle
+        ? { creator: siteConfig.twitterHandle }
+        : {}),
     },
   };
 }
