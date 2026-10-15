@@ -292,6 +292,13 @@ export const veilleItems: VeilleItem[] = [
     },
     referencesOfficielles: [
       {
+        type: "Communiqué",
+        titre:
+          "Commission refers Ireland, Spain, France and the Netherlands to the Court of Justice for failing to transpose the rules on cybersecurity",
+        organisme: "Commission européenne",
+        url: "https://digital-strategy.ec.europa.eu/en/news/commission-refers-ireland-spain-france-and-netherlands-court-justice-failing-transpose-rules",
+      },
+      {
         type: "Texte officiel",
         titre: "Directive (UE) 2022/2555 (NIS 2) — texte consolidé",
         organisme: "EUR-Lex",
@@ -334,35 +341,41 @@ export const veilleItems: VeilleItem[] = [
       {
         type: "Règlement",
         titre: "Règlement général sur la protection des données (RGPD)",
-        citation: "Règlement (UE) 2016/679, art. 15",
+        citation: "Règlement (UE) 2016/679, art. 12 § 5, al. 2",
         organisme: "Union européenne",
         url: "https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32016R0679",
+      },
+      {
+        type: "Jurisprudence",
+        titre: "Brillen Rottler GmbH & Co. KG contre TC",
+        citation: "CJUE, 4ᵉ chambre, aff. C-526/24, 19 mars 2026",
+        organisme: "Cour de justice de l'Union européenne",
+        url: "https://juricaf.org/arret/CJUE-COURDEJUSTICEDELUNIONEUROPEENNE-20260319-C52624",
       },
     ],
     analyse: [
       {
         type: "paragraph",
-        text: "Dans un arrêt rendu le 19 mars 2026, la Cour de justice de l'Union européenne (CJUE) est venue préciser les limites du droit d'accès garanti par l'article 15 du RGPD.",
-      },
-      {
-        type: "callout",
-        tone: "info",
-        text: "Numéro d'affaire non confirmé auprès d'une source primaire (Curia) au moment de la rédaction — à vérifier avant toute citation dans un cadre professionnel.",
+        text: "Dans l'affaire C-526/24 (Brillen Rottler GmbH & Co. KG c. TC), jugée le 19 mars 2026, la Cour de justice de l'Union européenne (CJUE) est venue préciser les limites du droit d'accès garanti par l'article 15 du RGPD.",
       },
       {
         type: "paragraph",
-        text: "La Cour admet qu'une demande d'accès peut, dans certaines circonstances, être jugée abusive et refusée par le responsable de traitement — notamment lorsqu'elle est introduite dans le seul but de préparer une demande ultérieure d'indemnisation pour une prétendue violation du RGPD.",
+        text: "La juridiction autrichienne à l'origine du renvoi préjudiciel demandait si une demande d'accès unique — non répétée auprès du même responsable de traitement — pouvait être qualifiée d'« excessive » ou d'abusive au sens de l'article 12, paragraphe 5, du RGPD. Dans les faits, une personne s'était abonnée à plusieurs lettres d'information avant d'introduire rapidement des demandes d'accès suivies de réclamations indemnitaires.",
       },
       {
         type: "paragraph",
-        text: "La Cour précise toutefois que le demandeur n'a, en principe, pas à motiver sa demande d'accès : c'est au responsable de traitement qu'il revient de démontrer le caractère abusif de la démarche, cas par cas.",
+        text: "La Cour répond que le simple fait qu'il s'agisse d'une première demande n'exclut pas la possibilité d'un abus : une demande peut être jugée excessive si elle est formulée non pour vérifier la licéité d'un traitement, mais dans une intention abusive.",
+      },
+      {
+        type: "paragraph",
+        text: "La charge de la preuve de ce caractère excessif incombe toutefois au responsable du traitement, conformément à l'article 12, paragraphe 5, second alinéa, du RGPD.",
       },
       {
         type: "list",
         items: [
-          "Le droit d'accès reste un droit non motivé par principe",
-          "Un abus peut être caractérisé si le seul but est de préparer un contentieux indemnitaire",
-          "La charge de la preuve de l'abus pèse sur le responsable de traitement",
+          "Même une première demande d'accès peut être jugée abusive, selon les circonstances",
+          "L'abus suppose une intention autre que la vérification de la licéité du traitement",
+          "La charge de la preuve de l'abus pèse sur le responsable de traitement (art. 12 § 5 RGPD)",
         ],
       },
     ],
@@ -376,6 +389,12 @@ export const veilleItems: VeilleItem[] = [
       ],
     },
     referencesOfficielles: [
+      {
+        type: "Document PDF",
+        titre: "CJUE, aff. C-526/24, 19 mars 2026 — texte de l'arrêt",
+        organisme: "Reproduction Juricaf (texte original : Curia)",
+        url: "https://juricaf.org/arret/CJUE-COURDEJUSTICEDELUNIONEUROPEENNE-20260319-C52624",
+      },
       {
         type: "Site officiel",
         titre: "CURIA — Jurisprudence de la Cour",

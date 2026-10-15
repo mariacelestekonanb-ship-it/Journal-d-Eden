@@ -13,7 +13,7 @@ export const glossaireTermes: GlossaireTerme[] = [
   {
     terme: "Agence spatiale européenne (ESA)",
     definition:
-      "Organisation intergouvernementale réunissant 22 États membres pour coordonner les programmes spatiaux civils européens, de l'observation de la Terre à l'exploration lunaire.",
+      "Organisation intergouvernementale réunissant 23 États membres pour coordonner les programmes spatiaux civils européens, de l'observation de la Terre à l'exploration lunaire.",
     theme: "institutions",
     lettre: "A",
     contenusAssocies: { analyses: ["eu-space-act-toujours-en-negociation"] },
