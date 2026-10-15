@@ -405,13 +405,13 @@ export const veilleItems: VeilleItem[] = [
   },
   {
     slug: "eu-space-act-toujours-en-negociation",
-    titre: "EU Space Act : toujours en négociation, adoption repoussée à 2028",
+    titre: "EU Space Act : toujours en négociation, loin d'être adopté",
     resume:
-      "Contrairement à une idée reçue, l'EU Space Act n'est pas encore adopté : Conseil et Parlement européens restent divisés sur plusieurs points clés, pour une adoption qui ne serait pas espérée avant fin 2028.",
+      "Contrairement à une idée reçue, l'EU Space Act n'est pas encore adopté : Conseil et Parlement européens restent divisés sur plusieurs points clés, sans date d'adoption fixée à ce stade.",
     pointsCles: [
       "Le Parlement européen n'a pas encore arrêté sa position en première lecture",
       "Désaccords persistants sur la cybersécurité et l'accès au marché",
-      "Adoption non attendue avant fin 2028, application visée pour 2030",
+      "Aucune date d'adoption fixée à ce stade",
     ],
     domaine: "droit-spatial",
     categorie: "new-space",
@@ -462,14 +462,14 @@ export const veilleItems: VeilleItem[] = [
       {
         type: "callout",
         tone: "warning",
-        text: "Selon une analyse du cabinet White & Case, l'adoption du texte n'est pas attendue avant fin 2028, pour une application effective à partir du 1er janvier 2030 — un calendrier bien plus lointain que ce que pourrait laisser croire la proximité du nom du texte avec une actualité immédiate.",
+        text: "Malgré son nom, l'EU Space Act n'est donc pas une actualité immédiate : tant que le Parlement et le Conseil n'ont pas chacun arrêté leur position, aucune date d'adoption ni d'entrée en application ne peut être annoncée avec certitude.",
       },
       {
         type: "list",
         items: [
           "Parlement : pas de position de première lecture arrêtée",
           "Conseil : compromis en progrès, points ouverts sur cybersécurité et accès marché",
-          "Adoption espérée au plus tôt fin 2028, application visée 2030",
+          "Aucune date d'adoption fixée à ce stade",
         ],
       },
       {
@@ -492,12 +492,6 @@ export const veilleItems: VeilleItem[] = [
         titre: "EU Space Act",
         organisme: "Commission européenne — Défense, Industrie et Espace",
         url: "https://defence-industry-space.ec.europa.eu/eu-space-act_en",
-      },
-      {
-        type: "Document PDF",
-        titre: "Regulating space: a closer look at the proposed EU Space Act",
-        organisme: "White & Case",
-        url: "https://www.whitecase.com/insight-our-thinking/regulating-space-closer-look-proposed-eu-space-act",
       },
     ],
   },
