@@ -8,7 +8,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     theme: "droit-spatial",
     lettre: "A",
     voirAussi: ["Traité de l'espace"],
-    contenusAssocies: { analyses: ["artemis-accords-nouveaux-signataires"] },
+    contenusAssocies: { analyses: ["artemis-accords-76-signataires"] },
   },
   {
     terme: "Agence spatiale européenne (ESA)",
@@ -16,7 +16,7 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Organisation intergouvernementale réunissant 22 États membres pour coordonner les programmes spatiaux civils européens, de l'observation de la Terre à l'exploration lunaire.",
     theme: "institutions",
     lettre: "A",
-    contenusAssocies: { analyses: ["eu-space-act-adoption"] },
+    contenusAssocies: { analyses: ["eu-space-act-toujours-en-negociation"] },
   },
   {
     terme: "AI Act",
@@ -27,7 +27,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     voirAussi: ["Système à haut risque"],
     contenusAssocies: {
       fiches: ["ia-act-systemes-haut-risque"],
-      analyses: ["ai-act-codes-conduite"],
+      analyses: ["ai-act-report-obligations-haut-risque"],
     },
   },
   {
@@ -44,10 +44,7 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Portion du spectre électromagnétique attribuée par l'UIT à un usage déterminé, dont dépend l'exploitation des liaisons satellitaires et des réseaux terrestres.",
     theme: "telecommunications",
     lettre: "B",
-    contenusAssocies: {
-      fiches: ["attribution-frequences-satellites"],
-      analyses: ["uit-conference-mondiale-radiocommunications"],
-    },
+    contenusAssocies: { fiches: ["attribution-frequences-satellites"] },
   },
   {
     terme: "Charge utile",
@@ -64,7 +61,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     lettre: "C",
     contenusAssocies: {
       fiches: ["quest-ce-que-rgpd"],
-      analyses: ["cnil-sanction-cookies"],
+      analyses: ["cnil-rapport-annuel-2026-cybersecurite"],
     },
   },
   {
@@ -73,7 +70,7 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Comité des Nations Unies sur les utilisations pacifiques de l'espace extra-atmosphérique, principal forum de négociation du droit spatial international depuis 1959.",
     theme: "institutions",
     lettre: "C",
-    contenusAssocies: { analyses: ["onu-comite-copuos-ressources"] },
+    contenusAssocies: { analyses: ["copuos-69e-session-vienne"] },
   },
   {
     terme: "Convention sur la responsabilité",
@@ -90,7 +87,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     theme: "droit-spatial",
     lettre: "D",
     contenusAssocies: {
-      analyses: ["fcc-regles-debris-2026", "eu-space-act-adoption"],
+      analyses: ["eu-space-act-toujours-en-negociation"],
     },
   },
   {
@@ -100,7 +97,6 @@ export const glossaireTermes: GlossaireTerme[] = [
     theme: "droit-spatial",
     lettre: "D",
     voirAussi: ["Débris orbital"],
-    contenusAssocies: { analyses: ["fcc-regles-debris-2026"] },
   },
   {
     terme: "DMA (Digital Markets Act)",
@@ -108,7 +104,7 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Règlement européen visant à garantir des marchés numériques contestables et équitables en encadrant les « contrôleurs d'accès ».",
     theme: "droit-numerique",
     lettre: "D",
-    contenusAssocies: { analyses: ["dma-amende-gatekeeper"] },
+    contenusAssocies: { analyses: ["dma-amende-google-890-millions"] },
   },
   {
     terme: "Données à caractère personnel",
@@ -125,7 +121,7 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Faculté reconnue à toute personne de demander l'effacement de données la concernant ou leur déréférencement par un moteur de recherche, sous certaines conditions.",
     theme: "droit-numerique",
     lettre: "D",
-    contenusAssocies: { analyses: ["cjue-droit-a-loubli-referencement"] },
+    contenusAssocies: { analyses: ["cjue-droit-acces-abusif-rgpd"] },
   },
   {
     terme: "DSA (Digital Services Act)",
@@ -141,9 +137,6 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Organe réunissant les autorités de protection des données des États membres de l'Union européenne, chargé d'assurer une application cohérente du RGPD.",
     theme: "institutions",
     lettre: "E",
-    contenusAssocies: {
-      analyses: ["edpb-lignes-directrices-transferts-internationaux"],
-    },
   },
   {
     terme: "ENISA (Agence de l'Union européenne pour la cybersécurité)",
@@ -153,7 +146,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     lettre: "E",
     contenusAssocies: {
       fiches: ["obligation-notification-incident"],
-      analyses: ["nis2-transposition-etats"],
+      analyses: ["nis2-saisine-cjue-quatre-etats"],
     },
   },
   {
@@ -170,7 +163,6 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Agence fédérale américaine de régulation des communications, compétente notamment pour l'octroi des licences satellitaires et l'encadrement des débris orbitaux.",
     theme: "institutions",
     lettre: "F",
-    contenusAssocies: { analyses: ["fcc-regles-debris-2026"] },
   },
   {
     terme: "Immatriculation spatiale",
@@ -188,7 +180,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     lettre: "I",
     contenusAssocies: {
       fiches: ["dsa-obligations-plateformes"],
-      analyses: ["dma-amende-gatekeeper"],
+      analyses: ["dma-amende-google-890-millions"],
     },
   },
   {
@@ -199,7 +191,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     lettre: "N",
     contenusAssocies: {
       fiches: ["obligation-notification-incident"],
-      analyses: ["nis2-transposition-etats"],
+      analyses: ["nis2-saisine-cjue-quatre-etats"],
     },
   },
   {
@@ -208,9 +200,6 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Mouvement caractérisé par l'essor d'acteurs privés dans le secteur spatial, en rupture avec le modèle historique porté par les États.",
     theme: "droit-spatial",
     lettre: "N",
-    contenusAssocies: {
-      analyses: ["commercial-space-launch-act-mise-a-jour"],
-    },
   },
   {
     terme: "Orbite basse (LEO)",
@@ -219,7 +208,7 @@ export const glossaireTermes: GlossaireTerme[] = [
     theme: "droit-spatial",
     lettre: "O",
     contenusAssocies: {
-      analyses: ["fcc-regles-debris-2026", "eu-space-act-adoption"],
+      analyses: ["eu-space-act-toujours-en-negociation"],
     },
   },
   {
@@ -262,10 +251,7 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Institution spécialisée des Nations Unies chargée de la coordination internationale des télécommunications, notamment l'attribution des fréquences et des positions orbitales géostationnaires.",
     theme: "institutions",
     lettre: "U",
-    contenusAssocies: {
-      fiches: ["attribution-frequences-satellites"],
-      analyses: ["uit-conference-mondiale-radiocommunications"],
-    },
+    contenusAssocies: { fiches: ["attribution-frequences-satellites"] },
   },
   {
     terme: "Zero Debris Charter",
@@ -273,6 +259,6 @@ export const glossaireTermes: GlossaireTerme[] = [
       "Initiative de l'Agence spatiale européenne visant l'absence nette de nouveaux débris orbitaux d'ici 2030.",
     theme: "droit-spatial",
     lettre: "Z",
-    contenusAssocies: { analyses: ["eu-space-act-adoption"] },
+    contenusAssocies: { analyses: ["eu-space-act-toujours-en-negociation"] },
   },
 ];
